@@ -20,6 +20,8 @@ export const theme = createTheme({
   },
   primaryColor: "primary",
 
+  fontFamily: "Inter, sans-serif",
+
   components: {
     Card: {
       defaultProps: {
