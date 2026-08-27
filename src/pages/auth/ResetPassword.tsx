@@ -1,5 +1,6 @@
 import { useResetPasswordForm } from "@/hooks/auth/useResetPasswordForm";
 import {
+  Alert,
   Button,
   Center,
   Paper,
@@ -9,7 +10,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconArrowLeft, IconLock } from "@tabler/icons-react";
+import { IconAlertCircle, IconArrowLeft, IconLock } from "@tabler/icons-react";
 import { Form, Link } from "react-router-dom";
 
 const ResetPassword = () => {
@@ -74,9 +75,15 @@ const ResetPassword = () => {
             />
 
             {error && (
-              <Text c="red" size="sm" ta="center" mt="sm" fw={500}>
+              <Alert
+                variant="light"
+                color="red"
+                radius="md"
+                icon={<IconAlertCircle size={18} />}
+                mt="sm"
+              >
                 {error}
-              </Text>
+              </Alert>
             )}
 
             <Button
