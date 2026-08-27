@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { isValidPhone } from "@/utils/validators";
 import type { RegisterDTO } from "@/types/auth";
+import { useNavigate } from "react-router-dom";
+import { authService } from "@/services/authService";
+import { notifications } from "@mantine/notifications";
+import { getErrorMessage } from "@/utils/getErrorMessage";
+import { IconCheck } from "@tabler/icons-react";
 
 export const useRegisterForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -14,6 +19,8 @@ export const useRegisterForm = () => {
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.currentTarget.value;
@@ -68,12 +75,24 @@ export const useRegisterForm = () => {
         city: locationString,
       };
 
-      // --- REQUEST PLACEHOLDER ---
-      console.log("Sending to backend:", payload);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await authService.register(payload);
+      notifications.show({
+        title: "Succes",
+        message: "Contul a fost creat cu succes.",
+        color: "green",
+        icon: <IconCheck size={18} />,
+        autoClose: 5000,
+      });
+      navigate("/");
     } catch (err) {
       console.error("Eroare la înregistrare:", err);
-      setError("A apărut o eroare la crearea contului. Încearcă din nou.");
+
+      const errorMessage = getErrorMessage(
+        err,
+        "A apărut o eroare la înregistrarea contului. Încearcă din nou.",
+      );
+
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

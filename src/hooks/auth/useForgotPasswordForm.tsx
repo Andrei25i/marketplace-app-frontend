@@ -1,3 +1,5 @@
+import { authService } from "@/services/authService";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { useState } from "react";
 
 export const useForgotPasswordForm = () => {
@@ -23,14 +25,15 @@ export const useForgotPasswordForm = () => {
     setIsLoading(true);
 
     try {
-      // --- REQUEST PLACEHOLDER ---
-      console.log("Request reset password for:", email);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
+      await authService.forgotPassword(email);
       setIsSent(true);
     } catch (err) {
-      console.error("Eroare la Login:", err);
-      setError("A apărut o eroare la conectarea contului. Încearcă din nou.");
+      console.error("Eroare la forgot password:", err);
+      const errorMessage = getErrorMessage(
+        err,
+        "A apărut o eroare la conectarea contului. Încearcă din nou.",
+      );
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import { Select, Flex } from "@mantine/core";
 import { IconMap, IconBuildingCommunity } from "@tabler/icons-react";
-
 import locationsData from "@/data/romanian_locations.json";
+
+const countiesList = Object.keys(locationsData).sort();
 
 interface LocationSelectorProps {
   selectedCounty: string;
@@ -41,8 +42,6 @@ const LocationSelector = ({
     onCityChange("");
   };
 
-  const countiesList = Object.keys(locationsData).sort();
-
   return (
     <Flex gap="md" wrap="wrap">
       <Select
@@ -77,4 +76,4 @@ const LocationSelector = ({
   );
 };
 
-export default LocationSelector;
+export default memo(LocationSelector);

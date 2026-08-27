@@ -1,5 +1,8 @@
 import { useState } from "react";
 import type { LoginDTO } from "@/types/auth";
+import { authService } from "@/services/authService";
+import { useNavigate } from "react-router-dom";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 export const useLoginForm = () => {
   const [email, setEmail] = useState("");
@@ -7,6 +10,8 @@ export const useLoginForm = () => {
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +35,17 @@ export const useLoginForm = () => {
         password: password,
       };
 
-      // --- REQUEST PLACEHOLDER ---
-      console.log("Sending to backend:", payload);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await authService.login(payload);
+      navigate("/");
     } catch (err) {
       console.error("Eroare la Login:", err);
-      setError("A apărut o eroare la conectarea contului. Încearcă din nou.");
+
+      const errorMessage = getErrorMessage(
+        err,
+        "A apărut o eroare la conectarea contului. Încearcă din nou.",
+      );
+
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
