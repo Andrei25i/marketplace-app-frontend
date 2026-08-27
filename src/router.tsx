@@ -4,6 +4,7 @@ import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
+import NotFound from "./pages/notFound/NotFound";
 
 const Home = () => <div>Home</div>;
 const Search = () => <div>Search</div>;
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
   {
     path: "/reset-password",
     element: <ResetPassword />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
