@@ -1,5 +1,5 @@
-import LocationSelector from "@/components/LocationSelector";
-import { useRegisterForm } from "@/hooks/useRegisterForm";
+import LocationSelector from "@/components/ui/LocationSelector";
+import { useRegisterForm } from "@/hooks/auth/useRegisterForm";
 import {
   Button,
   Center,
@@ -46,7 +46,7 @@ const Register = () => {
   } = useRegisterForm();
 
   return (
-    <Center>
+    <Center mih={{ base: "auto", sm: "100vh" }} py={{ base: "xl", sm: 0 }}>
       <Paper
         withBorder
         radius="lg"
