@@ -1,29 +1,27 @@
-import { useLoginForm } from "@/hooks/auth/useLoginForm";
+import { useResetPasswordForm } from "@/hooks/auth/useResetPasswordForm";
 import {
   Button,
   Center,
-  Group,
   Paper,
   PasswordInput,
   Stack,
   Text,
-  TextInput,
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconLock, IconMail, IconUser } from "@tabler/icons-react";
+import { IconArrowLeft, IconLock } from "@tabler/icons-react";
 import { Form, Link } from "react-router-dom";
 
-const Login = () => {
+const ResetPassword = () => {
   const {
-    email,
-    setEmail,
     password,
     setPassword,
+    confirmPassword,
+    setConfirmPassword,
     error,
     isLoading,
     handleSubmit,
-  } = useLoginForm();
+  } = useResetPasswordForm();
 
   return (
     <Center mih={{ base: "auto", sm: "100vh" }} py={{ base: "xl", sm: 0 }}>
@@ -44,30 +42,20 @@ const Login = () => {
             c="primary.6"
             mb="sm"
           >
-            <IconUser size={32} />
+            <IconLock size={32} />
           </ThemeIcon>
 
           <Title ta="center" order={1} size="h3">
-            Conectează-te
+            Resetare parolă
           </Title>
 
           <Text ta="center" c={"dimmed"} size="sm">
-            Conectează-te pentru a începe
+            Introdu o noua parolă pentru contul tău.
           </Text>
         </Stack>
 
         <Form onSubmit={handleSubmit}>
           <Stack gap="md">
-            <TextInput
-              label="Adresă de email"
-              placeholder="nume@exemplu.ro"
-              leftSection={<IconMail size={18} />}
-              type="email"
-              withAsterisk
-              value={email}
-              onChange={(e) => setEmail(e.currentTarget.value)}
-            />
-
             <PasswordInput
               label="Parolă"
               placeholder="••••••••"
@@ -76,18 +64,14 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.currentTarget.value)}
             />
-
-            <Group justify="flex-end" mt={-8}>
-              <Text
-                component={Link}
-                to="/forgot-password"
-                c="primary"
-                size="sm"
-                span
-              >
-                Ai uitat parola?
-              </Text>
-            </Group>
+            <PasswordInput
+              label="Confirmare parolă"
+              placeholder="••••••••"
+              leftSection={<IconLock size={18} />}
+              withAsterisk
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.currentTarget.value)}
+            />
 
             {error && (
               <Text c="red" size="sm" ta="center" mt="sm" fw={500}>
@@ -103,14 +87,25 @@ const Login = () => {
               mt="xl"
               loading={isLoading}
             >
-              Conectează-te
+              Resetează Parola
             </Button>
 
-            <Text c={"dimmed"} ta="center" size="sm" mt="xs">
-              Nu ai un cont?{" "}
-              <Text component={Link} to={"/register"} c="primary" fw={600}>
-                Înregistrează-te
-              </Text>
+            <Text
+              component={Link}
+              to={"/login"}
+              c="primary"
+              fw={600}
+              size="sm"
+              mt="xs"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "6px",
+              }}
+            >
+              <IconArrowLeft size={16} stroke={2} />
+              Înapoi la autentificare
             </Text>
           </Stack>
         </Form>
@@ -119,4 +114,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;
