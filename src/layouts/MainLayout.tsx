@@ -1,7 +1,7 @@
 import { AppShell } from "@mantine/core";
 import { Outlet } from "react-router-dom";
-import DesktopHeader from "./components/DesktopHeader";
-import MobileBottomNav from "./components/MobileBottomNav";
+import DesktopHeader from "../components/layout/DesktopHeader";
+import MobileBottomNav from "../components/layout/MobileBottomNav";
 
 const MainLayout = () => {
   return (
