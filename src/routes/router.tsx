@@ -1,10 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
-import MainLayout from "./layouts/MainLayout";
-import Register from "./pages/auth/Register";
-import Login from "./pages/auth/Login";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import ResetPassword from "./pages/auth/ResetPassword";
-import NotFound from "./pages/notFound/NotFound";
+import MainLayout from "../layouts/MainLayout";
+import ProtectedRoute from "./ProtectedRoute";
+import Register from "../pages/auth/Register";
+import Login from "../pages/auth/Login";
+import ForgotPassword from "../pages/auth/ForgotPassword";
+import ResetPassword from "../pages/auth/ResetPassword";
+import NotFound from "../pages/notFound/NotFound";
 
 const Home = () => <div>Home</div>;
 const Search = () => <div>Search</div>;
@@ -24,13 +25,19 @@ const router = createBrowserRouter([
         path: "search",
         element: <Search />,
       },
+
       {
-        path: "post",
-        element: <Post />,
-      },
-      {
-        path: "profile",
-        element: <Profile />,
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "post",
+            element: <Post />,
+          },
+          {
+            path: "profile",
+            element: <Profile />,
+          },
+        ],
       },
     ],
   },

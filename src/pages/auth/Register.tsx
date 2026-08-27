@@ -83,6 +83,7 @@ const Register = () => {
             <Flex gap="md" wrap="wrap">
               <TextInput
                 label="Nume"
+                autoCapitalize="words"
                 placeholder="Popescu"
                 style={{ flex: "1 1 140px" }}
                 leftSection={<IconIdBadge2 size={18} />}
@@ -92,6 +93,7 @@ const Register = () => {
               />
               <TextInput
                 label="Prenume"
+                autoCapitalize="words"
                 placeholder="Andrei"
                 style={{ flex: "1 1 140px" }}
                 leftSection={<IconIdBadge2 size={18} />}

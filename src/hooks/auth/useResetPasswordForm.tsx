@@ -1,3 +1,5 @@
+import { authService } from "@/services/authService";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { useState } from "react";
@@ -49,9 +51,7 @@ export const useResetPasswordForm = () => {
         newPassword: password,
       };
 
-      // --- REQUEST PLACEHOLDER ---
-      console.log("Sending to backend:", payload);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await authService.resetPassword(payload);
 
       notifications.show({
         title: "Succes",
@@ -63,10 +63,15 @@ export const useResetPasswordForm = () => {
       navigate("/login", { replace: true });
     } catch (err) {
       console.error("Eroare la înregistrare:", err);
-      setError("A apărut o eroare la crearea contului. Încearcă din nou.");
+
+      const errorMessage = getErrorMessage(
+        err,
+        "A apărut o eroare la resetarea parolei. Încearcă din nou.",
+      );
+
       notifications.show({
         title: "Eroare",
-        message: "Token-ul a expirat sau este invalid.",
+        message: errorMessage,
         color: "red",
         icon: <IconX size={18} />,
         autoClose: 5000,
