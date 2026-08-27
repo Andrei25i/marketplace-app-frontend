@@ -1,5 +1,6 @@
 import { useForgotPasswordForm } from "@/hooks/auth/useForgotPasswordForm";
 import {
+  Alert,
   Button,
   Center,
   Paper,
@@ -9,7 +10,12 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconArrowLeft, IconLock, IconMail } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconArrowLeft,
+  IconLock,
+  IconMail,
+} from "@tabler/icons-react";
 import { Form, Link } from "react-router-dom";
 
 const ForgotPassword = () => {
@@ -89,9 +95,15 @@ const ForgotPassword = () => {
               />
 
               {error && (
-                <Text c="red" size="sm" ta="center" mt="sm" fw={500}>
+                <Alert
+                  variant="light"
+                  color="red"
+                  radius="md"
+                  icon={<IconAlertCircle size={18} />}
+                  mt="sm"
+                >
                   {error}
-                </Text>
+                </Alert>
               )}
 
               <Button

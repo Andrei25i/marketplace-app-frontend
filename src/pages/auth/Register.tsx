@@ -1,6 +1,7 @@
 import LocationSelector from "@/components/ui/LocationSelector";
 import { useRegisterForm } from "@/hooks/auth/useRegisterForm";
 import {
+  Alert,
   Button,
   Center,
   Flex,
@@ -14,6 +15,7 @@ import {
   Title,
 } from "@mantine/core";
 import {
+  IconAlertCircle,
   IconIdBadge2,
   IconLock,
   IconMail,
@@ -145,9 +147,15 @@ const Register = () => {
             </SimpleGrid>
 
             {error && (
-              <Text c="red" size="sm" ta="center" mt="sm" fw={500}>
+              <Alert
+                variant="light"
+                color="red"
+                radius="md"
+                icon={<IconAlertCircle size={18} />}
+                mt="sm"
+              >
                 {error}
-              </Text>
+              </Alert>
             )}
 
             <Button
