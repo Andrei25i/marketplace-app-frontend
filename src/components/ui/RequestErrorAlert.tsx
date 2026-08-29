@@ -52,10 +52,9 @@ const RequestErrorAlert = ({
               color="red"
               c="red"
               size="compact-sm"
-              leftSection={<IconRefresh size={14} />}
               onClick={onRetry}
             >
-              {retryLabel}
+              <IconRefresh size={16} />
             </Button>
           )}
         </Group>
