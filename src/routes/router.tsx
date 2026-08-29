@@ -6,6 +6,7 @@ import Login from "../pages/auth/Login";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import NotFound from "../pages/notFound/NotFound";
+import Categories from "@/pages/categories/Categories";
 
 const Home = () => <div>Home</div>;
 const Search = () => <div>Search</div>;
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "search",
         element: <Search />,
+      },
+      {
+        path: "categories",
+        element: <Categories />,
       },
 
       {

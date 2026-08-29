@@ -70,5 +70,14 @@ export const theme = createTheme({
     Select: Select.extend({
       styles: inputStyles,
     }),
+
+    ThemeIcon: {
+      defaultProps: {
+        radius: "100%",
+        variant: "light",
+        color: "primary.1",
+        c: "primary",
+      },
+    },
   },
 });
