@@ -1,6 +1,6 @@
-import { getCategories } from "@/services/categoriesService";
-import type { CategoryDTO } from "@/types/category";
-import { getErrorMessage } from "@/utils/getErrorMessage";
+import { getCategories } from "@/services/categories.service";
+import type { CategoryDTO } from "@/types/category.type";
+import { getErrorMessage } from "@/utils/getErrorMessage.util";
 import { useCallback, useEffect, useState } from "react";
 
 type UseCategoriesOptions = {

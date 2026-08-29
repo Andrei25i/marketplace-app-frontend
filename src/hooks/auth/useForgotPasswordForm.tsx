@@ -1,5 +1,5 @@
-import { authService } from "@/services/authService";
-import { getErrorMessage } from "@/utils/getErrorMessage";
+import { authService } from "@/services/auth.service";
+import { getErrorMessage } from "@/utils/getErrorMessage.util";
 import { useState } from "react";
 
 export const useForgotPasswordForm = () => {

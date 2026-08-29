@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { isValidPhone } from "@/utils/validators";
-import type { RegisterDTO } from "@/types/auth";
+import { isValidPhone } from "@/utils/validators.util";
+import type { RegisterDTO } from "@/types/auth.type";
 import { useNavigate } from "react-router-dom";
-import { authService } from "@/services/authService";
+import { authService } from "@/services/auth.service";
 import { notifications } from "@mantine/notifications";
-import { getErrorMessage } from "@/utils/getErrorMessage";
+import { getErrorMessage } from "@/utils/getErrorMessage.util";
 import { IconCheck } from "@tabler/icons-react";
 
 export const useRegisterForm = () => {

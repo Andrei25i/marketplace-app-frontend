@@ -1,5 +1,5 @@
-import { authService } from "@/services/authService";
-import { getErrorMessage } from "@/utils/getErrorMessage";
+import { authService } from "@/services/auth.service";
+import { getErrorMessage } from "@/utils/getErrorMessage.util";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { useState } from "react";
