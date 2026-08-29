@@ -8,7 +8,7 @@ const MainLayout = () => {
     <AppShell
       header={{ height: { base: 0, sm: 75 } }}
       footer={{ height: { base: 70, sm: 0 } }}
-      padding="md"
+      padding="lg"
     >
       <AppShell.Header visibleFrom="sm">
         <DesktopHeader />

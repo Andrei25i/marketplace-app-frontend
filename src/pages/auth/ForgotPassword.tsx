@@ -34,13 +34,7 @@ const ForgotPassword = () => {
         shadow="sm"
       >
         <Stack align="center" mb={40} gap="xs">
-          <ThemeIcon
-            size={64}
-            radius="100%"
-            color="primary.1"
-            c="primary.6"
-            mb="sm"
-          >
+          <ThemeIcon size={64} mb="sm">
             <IconLock size={32} />
           </ThemeIcon>
 
