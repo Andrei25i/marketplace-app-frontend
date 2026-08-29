@@ -13,4 +13,12 @@
 .card:hover {
   transform: translateY(-6px);
   box-shadow: var(--mantine-shadow-md);
+  border-color: var(--mantine-color-primary-6);
+}
+
+.cardLabel {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

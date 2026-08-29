@@ -1,18 +1,8 @@
-import {
-  Title,
-  Text,
-  Box,
-  SimpleGrid,
-  Card,
-  ThemeIcon,
-  Center,
-  Loader,
-} from "@mantine/core";
-import classes from "./Categories.module.css";
-import { Link } from "react-router-dom";
+import { Title, Text, Box, SimpleGrid, Center, Loader } from "@mantine/core";
 import { useCategories } from "@/hooks/categories/useCategories";
 import { getCategoryIcon } from "@/utils/categoryIconMapper.util";
 import RequestErrorAlert from "@/components/ui/RequestErrorAlert";
+import CategoryCard from "@/components/ui/CategoryCard";
 
 const Categories = () => {
   const { categories, isLoading, error, refetch } = useCategories();
@@ -45,27 +35,12 @@ const Categories = () => {
       ) : (
         <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
           {categories.map((category) => {
-            const CategoryIcon = getCategoryIcon(category.name);
-
             return (
-              <Card
+              <CategoryCard
                 key={category.id}
-                component={Link}
-                to={`/categories/${category.id}`}
-                withBorder
-                radius="lg"
-                padding="xl"
-                bg="white"
-                className={classes.card}
-              >
-                <ThemeIcon size={64} mb="md">
-                  <CategoryIcon size={32} />
-                </ThemeIcon>
-
-                <Text fw={600} size="md" c="dark.8">
-                  {category.name}
-                </Text>
-              </Card>
+                category={category}
+                icon={getCategoryIcon(category.name)}
+              />
             );
           })}
         </SimpleGrid>
