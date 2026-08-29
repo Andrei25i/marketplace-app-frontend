@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { LoginDTO } from "@/types/auth";
-import { authService } from "@/services/authService";
+import type { LoginDTO } from "@/types/auth.type";
+import { authService } from "@/services/auth.service";
 import { useNavigate } from "react-router-dom";
-import { getErrorMessage } from "@/utils/getErrorMessage";
+import { getErrorMessage } from "@/utils/getErrorMessage.util";
 
 export const useLoginForm = () => {
   const [email, setEmail] = useState("");

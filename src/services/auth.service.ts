@@ -5,7 +5,7 @@ import type {
   RegisterDTO,
   ResetPasswordData,
   UpdateUserData,
-} from "@/types/auth";
+} from "@/types/auth.type";
 
 export const authService = {
   login: async (credentials: LoginDTO) => {

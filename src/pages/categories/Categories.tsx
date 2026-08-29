@@ -11,7 +11,7 @@ import {
 import classes from "./Categories.module.css";
 import { Link } from "react-router-dom";
 import { useCategories } from "@/hooks/categories/useCategories";
-import { getCategoryIcon } from "@/utils/categoryIconMapper";
+import { getCategoryIcon } from "@/utils/categoryIconMapper.util";
 import RequestErrorAlert from "@/components/ui/RequestErrorAlert";
 
 const Categories = () => {
