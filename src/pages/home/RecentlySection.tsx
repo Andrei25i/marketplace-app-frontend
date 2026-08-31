@@ -54,7 +54,7 @@ const RecentlySection = () => {
           <Loader color="primary" size="sm" />
         </Center>
       ) : (
-        <ScrollArea type="hover" scrollbarSize={6} offsetScrollbars pb="md">
+        <ScrollArea type="hover" scrollbarSize={10} offsetScrollbars pb="md">
           <Flex gap={{ base: "md", md: "lg", lg: 25 }} wrap="nowrap" pb="md">
             {ads.map((ad) => (
               <Box
