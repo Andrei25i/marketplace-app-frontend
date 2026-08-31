@@ -1,14 +1,17 @@
 import { Title, Text, Box, SimpleGrid, Center, Loader } from "@mantine/core";
 import { useCategories } from "@/hooks/categories/useCategories";
 import { getCategoryIcon } from "@/utils/categoryIconMapper.util";
-import RequestErrorAlert from "@/components/ui/RequestErrorAlert";
-import CategoryCard from "@/components/ui/CategoryCard";
+import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
+import CategoryCard from "@/components/ui/cards/CategoryCard";
+import BackButton from "@/components/navigation/BackButton";
 
 const Categories = () => {
   const { categories, isLoading, error, refetch } = useCategories();
 
   return (
     <Box pt={20} pb={60}>
+      <BackButton />
+
       <Box mb={40}>
         <Title
           order={1}
