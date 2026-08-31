@@ -1,0 +1,115 @@
+.section {
+  width: 100%;
+  padding-top: 20px;
+}
+
+.heroCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: 24px;
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.heroCardCompact {
+  min-height: 310px;
+  justify-content: center;
+}
+
+.heroCardDefault {
+  justify-content: flex-start;
+}
+
+.heroImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contentDefault {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.contentCompact {
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+  font-size: clamp(25px, 4vw, 48px);
+  color: white;
+}
+
+.subtitle {
+  font-size: clamp(14px, 1vw, 18px);
+  line-height: 1.5;
+  color: white;
+}
+
+.searchPanel {
+  width: 100%;
+  max-width: 500px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  backdrop-filter: blur(2px);
+}
+
+.searchForm {
+  position: relative;
+}
+
+.searchInput {
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: var(--mantine-shadow-lg);
+  font-size: 1rem;
+  padding-right: 110px;
+}
+
+.searchInputCompact {
+  font-size: 0.9rem;
+  padding-right: 80px;
+}
+
+.searchSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 6px;
+}
+
+.searchButton {
+  position: static;
+  transform: none;
+  margin: 0;
+}
+
+.linkAction {
+  width: fit-content;
+  color: white;
+  font-weight: 500;
+  margin-top: 24px;
+}
+
+.linkAction:hover {
+  color: var(--mantine-color-gray-2);
+  opacity: 0.9;
+}
