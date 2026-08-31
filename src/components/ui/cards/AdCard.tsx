@@ -1,9 +1,10 @@
-import { Card, Text, ActionIcon, Group, Stack } from "@mantine/core";
-import { IconHeart, IconMapPin } from "@tabler/icons-react";
+import { Card, Text, Group, Stack } from "@mantine/core";
+import { IconMapPin } from "@tabler/icons-react";
 import classes from "./AdCard.module.css";
 import type { AdDTO } from "@/types/ads.type";
 import { Link } from "react-router-dom";
 import { formatPrice, timeAgo } from "@/utils/format.util";
+import FavoriteButton from "./FavoriteButton";
 
 export interface AdCardProps {
   ad: AdDTO;
@@ -21,24 +22,8 @@ const AdCard = ({ ad }: AdCardProps) => {
     >
       <Card.Section className={classes.imageSection}>
         <img src={ad.images[0]?.url} alt={ad.title} className={classes.image} />
-        <ActionIcon
-          variant="filled"
-          color="white"
-          c="dark.3"
-          radius="xl"
-          size="lg"
-          pos="absolute"
-          top={10}
-          right={10}
-          className={classes.favoriteBtn}
-          aria-label="Adaugă la favorite"
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-          }}
-        >
-          <IconHeart size={20} />
-        </ActionIcon>
+
+        <FavoriteButton adId={ad.id} />
       </Card.Section>
 
       <Stack gap="xs" p="xs" style={{ flexGrow: 1 }}>
