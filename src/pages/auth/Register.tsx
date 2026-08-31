@@ -1,4 +1,4 @@
-import LocationSelector from "@/components/ui/LocationSelector";
+import LocationSelector from "@/components/ui/forms/LocationSelector";
 import { useRegisterForm } from "@/hooks/auth/useRegisterForm";
 import {
   Alert,
