@@ -1,0 +1,77 @@
+import { Card, Text, ActionIcon, Group, Stack } from "@mantine/core";
+import { IconHeart, IconMapPin } from "@tabler/icons-react";
+import classes from "./AdCard.module.css";
+import type { AdDTO } from "@/types/ads.type";
+import { Link } from "react-router-dom";
+import { formatPrice, timeAgo } from "@/utils/format.util";
+
+export interface AdCardProps {
+  ad: AdDTO;
+}
+
+const AdCard = ({ ad }: AdCardProps) => {
+  return (
+    <Card
+      component={Link}
+      to={`/ads/${ad.id}`}
+      withBorder
+      radius="md"
+      className={classes.card}
+      padding={0}
+    >
+      <Card.Section className={classes.imageSection}>
+        <img src={ad.images[0]?.url} alt={ad.title} className={classes.image} />
+        <ActionIcon
+          variant="filled"
+          color="white"
+          c="dark.3"
+          radius="xl"
+          size="lg"
+          pos="absolute"
+          top={10}
+          right={10}
+          className={classes.favoriteBtn}
+          aria-label="Adaugă la favorite"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+          }}
+        >
+          <IconHeart size={20} />
+        </ActionIcon>
+      </Card.Section>
+
+      <Stack gap="xs" p="xs" style={{ flexGrow: 1 }}>
+        <Stack gap={4}>
+          <Text fw={700} size="md" lineClamp={1} c="dark.8" lh="tight">
+            {ad.title}
+          </Text>
+
+          <Text c="primary" fw={700} size="md">
+            {formatPrice(ad.price)} {ad.currency}
+          </Text>
+        </Stack>
+
+        <Text size="xs" c="dark.3" lineClamp={2}>
+          {ad.description}
+        </Text>
+
+        <Group justify="space-between" mt="auto" wrap="nowrap">
+          <Group gap={4} wrap="nowrap">
+            <IconMapPin size={16} color="var(--mantine-color-dark-3)" />
+
+            <Text size="xs" c="dark.3" truncate>
+              {ad.city.split(", ")[1]}
+            </Text>
+          </Group>
+
+          <Text size="xs" c="dark.3" style={{ whiteSpace: "nowrap" }}>
+            {timeAgo(ad.created_at)}
+          </Text>
+        </Group>
+      </Stack>
+    </Card>
+  );
+};
+
+export default AdCard;
