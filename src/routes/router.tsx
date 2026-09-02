@@ -8,8 +8,8 @@ import ResetPassword from "../pages/auth/ResetPassword";
 import NotFound from "../pages/notFound/NotFound";
 import Categories from "@/pages/categories/Categories";
 import Home from "@/pages/home/Home";
+import Search from "@/pages/search/Search";
 
-const Search = () => <div>Search</div>;
 const Post = () => <div>Post</div>;
 const Profile = () => <div>Profile</div>;
 

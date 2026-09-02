@@ -6,6 +6,18 @@ export type AdSortOption =
   | "name_asc"
   | "name_desc";
 
+export const AD_SORT_OPTIONS = [
+  { value: "price_asc", label: "Preț: crescător" },
+  { value: "price_desc", label: "Preț: descrescător" },
+  { value: "date_asc", label: "Cele mai vechi" },
+  { value: "date_desc", label: "Adăugate recent" },
+  { value: "name_asc", label: "Nume: A-Z" },
+  { value: "name_desc", label: "Nume: Z-A" },
+] as const satisfies ReadonlyArray<{
+  value: AdSortOption;
+  label: string;
+}>;
+
 export type GetAdsFilters = {
   search?: string;
   category?: string;
