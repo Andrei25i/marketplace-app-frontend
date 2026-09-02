@@ -31,7 +31,7 @@ const RecentlySection = () => {
 
           <Anchor
             component={Link}
-            to="/search"
+            to="/search?sort=date_desc"
             c="primary"
             fw={600}
             size="sm"

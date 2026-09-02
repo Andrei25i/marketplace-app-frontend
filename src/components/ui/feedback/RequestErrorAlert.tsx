@@ -6,6 +6,7 @@ import {
   Title,
   Text,
   Group,
+  Card,
 } from "@mantine/core";
 import { IconAlertCircle, IconRefresh } from "@tabler/icons-react";
 
@@ -26,13 +27,12 @@ const RequestErrorAlert = ({
 }: RequestErrorAlertProps) => {
   if (compact) {
     return (
-      <Box
+      <Card
         p="sm"
         mt="sm"
+        bg="red.0"
         style={{
           border: "1px solid var(--mantine-color-red-2)",
-          borderRadius: "12px",
-          background: "var(--mantine-color-red-0)",
         }}
       >
         <Group justify="space-between" align="center" wrap="nowrap">
@@ -58,12 +58,12 @@ const RequestErrorAlert = ({
             </Button>
           )}
         </Group>
-      </Box>
+      </Card>
     );
   }
 
   return (
-    <Center>
+    <Center h="100%" mih={260}>
       <Box ta="center" style={{ width: "100%" }}>
         <ThemeIcon color="red" c="red" size={84} mb="lg">
           <IconAlertCircle size={42} />
