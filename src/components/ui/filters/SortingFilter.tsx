@@ -24,6 +24,7 @@ const SortingFilter = ({
           onChange?.((nextValue as AdSortOption) || undefined)
         }
         leftSection={<IconArrowsSort size={18} />}
+        comboboxProps={{ withinPortal: false }}
       />
     </Stack>
   );

@@ -5,9 +5,14 @@ import { IconCategory } from "@tabler/icons-react";
 type CategoryFilterProps = {
   value?: string;
   onChange?: (value: string | undefined) => void;
+  searchable?: boolean;
 };
 
-const CategoryFilter = ({ value, onChange }: CategoryFilterProps) => {
+const CategoryFilter = ({
+  value,
+  onChange,
+  searchable = true,
+}: CategoryFilterProps) => {
   const { categories, isLoading, error } = useCategories();
 
   const data = categories.map((category) => ({
@@ -22,7 +27,7 @@ const CategoryFilter = ({ value, onChange }: CategoryFilterProps) => {
       </Text>
 
       <Select
-        searchable
+        searchable={searchable}
         clearable
         nothingFoundMessage={
           error ? "Eroare la încărcare" : "Nicio categorie găsită"
@@ -33,6 +38,7 @@ const CategoryFilter = ({ value, onChange }: CategoryFilterProps) => {
         onChange={(nextValue) => onChange?.(nextValue || undefined)}
         data={data}
         leftSection={<IconCategory size={18} />}
+        comboboxProps={{ withinPortal: false }}
       />
     </Stack>
   );
