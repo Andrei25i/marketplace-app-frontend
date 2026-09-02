@@ -1,55 +1,20 @@
-import AdCard from "@/components/ui/cards/AdCard";
-import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
 import FiltersPanel from "@/components/ui/filters/FiltersPanel";
-import PaginatedGrid from "@/components/ui/PaginatedGrid";
 import useAds from "@/hooks/ads/useAds";
-import { Box, Center, Loader, Stack, Text, Title } from "@mantine/core";
-import { useSearchParams } from "react-router-dom";
-import type { GetAdsFilters } from "@/types/ads.type";
-import EmptyResults from "@/components/ui/feedback/EmptyResults";
-import {
-  parseFiltersFromUrl,
-  parsePageFromUrl,
-  updateUrlWithFilters,
-} from "@/utils/searchFilters.util";
+import { Box, Button, Stack, Text, Title } from "@mantine/core";
+import { useState } from "react";
+import { useMediaQuery } from "@mantine/hooks";
+import { IconAdjustments } from "@tabler/icons-react";
+import { FiltersDrawer } from "@/components/ui/filters/FiltersDrawer";
+import { SearchResults } from "@/components/ui/SearchResults";
+import { useSearchFilters } from "@/hooks/search/useSearchFilters";
 
 const Search = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const filters = parseFiltersFromUrl(searchParams);
-  const page = parsePageFromUrl(searchParams);
-  const query = filters.search ?? "";
-
-  const handleFiltersChange = (nextFilters: GetAdsFilters) => {
-    setSearchParams(
-      (currentParams) => {
-        const nextParams = updateUrlWithFilters(currentParams, nextFilters);
-
-        nextParams.delete("page");
-        return nextParams;
-      },
-      { replace: true },
-    );
-  };
-
-  const handlePageChange = (nextPage: number) => {
-    setSearchParams(
-      (currentParams) => {
-        const nextParams = new URLSearchParams(currentParams);
-
-        if (nextPage === 1) {
-          nextParams.delete("page");
-        } else {
-          nextParams.set("page", String(nextPage));
-        }
-
-        return nextParams;
-      },
-      { replace: true },
-    );
-  };
+  const { filters, page, updateFilters, updatePage } = useSearchFilters();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const { ads, isLoading, error, refetch } = useAds(filters);
+  const query = filters.search ?? "";
 
   return (
     <Box pb={60}>
@@ -75,33 +40,40 @@ const Search = () => {
             gap: 24,
           }}
         >
-          <FiltersPanel value={filters} onChange={handleFiltersChange} />
+          {!isMobile && (
+            <FiltersPanel value={filters} onChange={updateFilters} />
+          )}
+
+          {isMobile && (
+            <Button
+              variant="default"
+              leftSection={<IconAdjustments size={16} />}
+              onClick={() => setIsDrawerOpen(true)}
+              fullWidth
+            >
+              Filtre
+            </Button>
+          )}
 
           <Box style={{ flex: 1, minWidth: 280 }}>
-            {error ? (
-              <RequestErrorAlert
-                message={error}
-                onRetry={() => void refetch()}
-              />
-            ) : isLoading ? (
-              <Center mih={260}>
-                <Loader color="primary" size="lg" />
-              </Center>
-            ) : ads.length === 0 ? (
-              <EmptyResults />
-            ) : (
-              <PaginatedGrid
-                items={ads}
-                itemsPerPage={6}
-                page={page}
-                onPageChange={handlePageChange}
-                cols={{ base: 1, sm: 2, lg: 3 }}
-                renderItem={(ad) => <AdCard key={ad.id} ad={ad} />}
-              />
-            )}
+            <SearchResults
+              ads={ads}
+              isLoading={isLoading}
+              error={error}
+              page={page}
+              onPageChange={updatePage}
+              onRetry={refetch}
+            />
           </Box>
         </Box>
       </Stack>
+
+      <FiltersDrawer
+        opened={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        filters={filters}
+        onApply={updateFilters}
+      />
     </Box>
   );
 };

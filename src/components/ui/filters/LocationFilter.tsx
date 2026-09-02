@@ -9,12 +9,14 @@ type LocationFilterProps = {
   placeholder?: string;
   value?: string;
   onChange?: (value: string | null) => void;
+  searchable?: boolean;
 };
 
 const LocationFilter = ({
   placeholder = "Selectează județul",
   value,
   onChange,
+  searchable = true,
 }: LocationFilterProps) => {
   return (
     <Stack gap="xs">
@@ -23,13 +25,14 @@ const LocationFilter = ({
       </Text>
 
       <Select
-        searchable
+        searchable={searchable}
         clearable
         placeholder={placeholder}
         data={countiesList}
         value={value || null}
         onChange={onChange}
         leftSection={<IconMap size={18} />}
+        comboboxProps={{ withinPortal: false }}
       />
     </Stack>
   );
