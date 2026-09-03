@@ -9,6 +9,7 @@ import NotFound from "../pages/notFound/NotFound";
 import Categories from "@/pages/categories/Categories";
 import Home from "@/pages/home/Home";
 import Search from "@/pages/search/Search";
+import AdDetails from "@/pages/adDetails/AdDetails";
 
 const Post = () => <div>Post</div>;
 const Profile = () => <div>Profile</div>;
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "categories",
         element: <Categories />,
+      },
+      {
+        path: "ads/:id",
+        element: <AdDetails />,
       },
 
       {

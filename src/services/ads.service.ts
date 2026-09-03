@@ -8,7 +8,7 @@ export const adsService = {
   },
 
   getById: async (id: string) => {
-    const response = await api.get(`/ads${id}`);
+    const response = await api.get(`/ads/${id}`);
     return response.data;
   },
 
