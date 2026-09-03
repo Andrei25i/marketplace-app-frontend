@@ -101,7 +101,7 @@ const FiltersPanel = ({
   }
 
   return (
-    <Card w="100%" h="fit-content" p={0} maw={290} withBorder>
+    <Card w="100%" h="fit-content" p={0} maw={{ sm: 250, lg: 290 }} withBorder>
       {content}
     </Card>
   );

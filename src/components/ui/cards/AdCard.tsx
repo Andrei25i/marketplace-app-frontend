@@ -5,12 +5,15 @@ import type { AdDTO } from "@/types/ads.type";
 import { Link } from "react-router-dom";
 import { formatPrice, timeAgo } from "@/utils/format.util";
 import FavoriteButton from "./FavoriteButton";
+import { useMediaQuery } from "@mantine/hooks";
 
 export interface AdCardProps {
   ad: AdDTO;
 }
 
 const AdCard = ({ ad }: AdCardProps) => {
+  const isMobile = useMediaQuery("(max-width: 530px)");
+
   return (
     <Card
       component={Link}
@@ -41,18 +44,20 @@ const AdCard = ({ ad }: AdCardProps) => {
           {ad.description}
         </Text>
 
-        <Group justify="space-between" mt="auto" wrap="nowrap">
+        <Group justify="space-between" align="center" mt="auto" wrap="nowrap">
           <Group gap={4} wrap="nowrap">
-            <IconMapPin size={16} color="var(--mantine-color-dark-3)" />
+            <IconMapPin size={13} color="var(--mantine-color-dark-3)" />
 
             <Text size="xs" c="dark.3" truncate>
               {ad.city.split(", ")[1]}
             </Text>
           </Group>
 
-          <Text size="xs" c="dark.3" style={{ whiteSpace: "nowrap" }}>
-            {timeAgo(ad.created_at)}
-          </Text>
+          {!isMobile && (
+            <Text size="xs" c="dark.3" style={{ whiteSpace: "nowrap" }}>
+              {timeAgo(ad.created_at)}
+            </Text>
+          )}
         </Group>
       </Stack>
     </Card>

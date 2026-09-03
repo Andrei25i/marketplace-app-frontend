@@ -37,7 +37,7 @@ export const SearchResults = ({
       itemsPerPage={6}
       page={page}
       onPageChange={onPageChange}
-      cols={{ base: 1, sm: 2, lg: 3 }}
+      cols={{ base: 2, md: 3 }}
       renderItem={(ad) => <AdCard key={ad.id} ad={ad} />}
     />
   );

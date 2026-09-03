@@ -9,8 +9,11 @@ type PaginatedGridProps<T> = {
   renderItem: (item: T, index: number) => React.ReactNode;
   cols?: {
     base?: number;
+    xs?: number;
     sm?: number;
+    md?: number;
     lg?: number;
+    xl?: number;
   };
 };
 
@@ -34,7 +37,7 @@ const PaginatedGrid = <T,>({
 
   return (
     <>
-      <SimpleGrid cols={cols} spacing="lg">
+      <SimpleGrid cols={cols} spacing="sm">
         {currentItems.map((item, index) => renderItem(item, index))}
       </SimpleGrid>
 
