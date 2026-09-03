@@ -18,6 +18,7 @@ export interface User {
   last_name: string;
   email: string;
   city: string;
+  phone_number: string;
   created_at: string;
 }
 
@@ -36,4 +37,18 @@ export type UpdateUserData = Partial<User>;
 export interface ResetPasswordData {
   token: string;
   newPassword: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  token: string;
+}
+
+export interface RegisterResponse {
+  message: string;
+  user: Pick<User, "id" | "first_name" | "last_name" | "email" | "created_at">;
+}
+
+export interface MessageResponse {
+  message: string;
 }
