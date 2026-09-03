@@ -1,3 +1,5 @@
+import type { CategoryDTO } from "./category.type";
+
 export type AdSortOption =
   | "price_asc"
   | "price_desc"
@@ -58,4 +60,21 @@ export type CreateAdDTO = {
 
 export type UpdateAdDTO = CreateAdDTO & {
   deletedPublicIds?: string[];
+};
+
+export type DeleteAdResponse = {
+  message: string;
+};
+
+export type AdUserDTO = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+};
+
+export type AdDetailsDTO = Omit<AdDTO, "category_id" | "user_id"> & {
+  category: CategoryDTO;
+  user: AdUserDTO;
 };

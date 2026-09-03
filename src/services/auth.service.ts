@@ -1,31 +1,36 @@
 import { api } from "@/api/api";
 import { useAuthStore } from "../store/useAuthStore";
 import type {
+  AuthResponse,
   LoginDTO,
+  MessageResponse,
   RegisterDTO,
+  RegisterResponse,
   ResetPasswordData,
   UpdateUserData,
+  User,
 } from "@/types/auth.type";
 
 export const authService = {
-  login: async (credentials: LoginDTO) => {
-    const response = await api.post("/auth/login", credentials);
+  login: async (credentials: LoginDTO): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>("/auth/login", credentials);
     const { user, token } = response.data;
     useAuthStore.getState().login(user, token);
 
     return response.data;
   },
 
-  register: async (userData: RegisterDTO) => {
-    const response = await api.post("/auth/register", userData);
-    const { user, token } = response.data;
-    useAuthStore.getState().login(user, token);
+  register: async (userData: RegisterDTO): Promise<AuthResponse> => {
+    await api.post<RegisterResponse>("/auth/register", userData);
 
-    return response.data;
+    return await authService.login({
+      email: userData.email,
+      password: userData.password,
+    });
   },
 
-  refreshUser: async () => {
-    const response = await api.get("/user/me");
+  refreshUser: async (): Promise<User> => {
+    const response = await api.get<User>("/user/me");
     const user = response.data;
 
     useAuthStore.getState().setUpdatedUser(user);
@@ -33,8 +38,8 @@ export const authService = {
     return user;
   },
 
-  updateUser: async (updatedData: UpdateUserData) => {
-    const response = await api.put("/user", updatedData);
+  updateUser: async (updatedData: UpdateUserData): Promise<User> => {
+    const response = await api.put<User>("/user", updatedData);
     const user = response.data;
 
     useAuthStore.getState().setUpdatedUser(user);
@@ -42,13 +47,18 @@ export const authService = {
     return user;
   },
 
-  forgotPassword: async (email: string) => {
-    const response = await api.post("/auth/forgot-password", { email });
+  forgotPassword: async (email: string): Promise<MessageResponse> => {
+    const response = await api.post<MessageResponse>("/auth/forgot-password", {
+      email,
+    });
     return response.data;
   },
 
-  resetPassword: async (data: ResetPasswordData) => {
-    const response = await api.post("/auth/reset-password", data);
+  resetPassword: async (data: ResetPasswordData): Promise<MessageResponse> => {
+    const response = await api.post<MessageResponse>(
+      "/auth/reset-password",
+      data,
+    );
     return response.data;
   },
 };
