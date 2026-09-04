@@ -20,7 +20,7 @@ const CategoryCard = ({
   return (
     <Card
       component={Link}
-      to={`/categories/${category.id}`}
+      to={`/search?category=${category.id}`}
       withBorder
       radius="lg"
       bg="white"
