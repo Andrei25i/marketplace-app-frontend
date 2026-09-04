@@ -23,12 +23,11 @@ const ForgotPassword = () => {
     useForgotPasswordForm();
 
   return (
-    <Center mih={{ base: "auto", sm: "100vh" }} py={{ base: "xl", sm: 0 }}>
+    <Center mih={{ base: "auto", sm: "100vh" }}>
       <Paper
         withBorder
         radius="lg"
         p={{ base: "xl", lg: 48 }}
-        m={{ base: "lg", sm: "xl" }}
         w="100%"
         maw={570}
         shadow="sm"
