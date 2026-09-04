@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { isValidPhone } from "@/utils/validators.util";
+import {
+  isValidPhone,
+  normalizeEmail,
+  normalizeLocation,
+  normalizeName,
+  normalizePhone,
+} from "@/utils/validators.util";
 import type { RegisterDTO } from "@/types/auth.type";
 import { useNavigate } from "react-router-dom";
 import { authService } from "@/services/auth.service";
@@ -33,13 +39,20 @@ export const useRegisterForm = () => {
     e.preventDefault();
     setError("");
 
+    const normalizedFirstName = normalizeName(firstName);
+    const normalizedLastName = normalizeName(lastName);
+    const normalizedPhone = normalizePhone(phone);
+    const normalizedCounty = normalizeLocation(county);
+    const normalizedCity = normalizeLocation(city);
+    const normalizedEmail = normalizeEmail(email);
+
     if (
-      !firstName ||
-      !lastName ||
-      !phone ||
-      !county ||
-      !city ||
-      !email ||
+      !normalizedFirstName ||
+      !normalizedLastName ||
+      !normalizedPhone ||
+      !normalizedCounty ||
+      !normalizedCity ||
+      !normalizedEmail ||
       !password ||
       !confirmPassword
     ) {
@@ -47,7 +60,7 @@ export const useRegisterForm = () => {
       return;
     }
 
-    if (!email.includes("@") || !email.includes(".")) {
+    if (!normalizedEmail.includes("@") || !normalizedEmail.includes(".")) {
       setError("Te rugăm să introduci o adresă de email validă.");
       return;
     }
@@ -65,13 +78,14 @@ export const useRegisterForm = () => {
     setIsLoading(true);
 
     try {
-      const locationString = `${city}, ${county}`;
+      const locationString = `${normalizedCity}, ${normalizedCounty}`;
+      
       const payload: RegisterDTO = {
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        phone_number: phone,
-        password: password,
+        first_name: normalizedFirstName,
+        last_name: normalizedLastName,
+        email: normalizedEmail,
+        phone_number: normalizedPhone,
+        password,
         city: locationString,
       };
 

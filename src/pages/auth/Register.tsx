@@ -98,7 +98,7 @@ const Register = () => {
 
             <TextInput
               label="Telefon"
-              placeholder="07xx xxx xxx"
+              placeholder="07xxxxxxxx"
               leftSection={<IconPhone size={18} />}
               withAsterisk
               value={phone}
