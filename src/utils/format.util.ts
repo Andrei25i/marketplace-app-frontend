@@ -53,3 +53,9 @@ export const timeAgo = (dateInput: string | Date | number): string => {
     return rtf.format(-years, "year");
   }
 };
+
+export const memberSince = (date: string) =>
+  new Intl.DateTimeFormat("ro-RO", {
+    month: "long",
+    year: "numeric",
+  }).format(new Date(date));
