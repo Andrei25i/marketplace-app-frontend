@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import { Avatar, Button, Menu } from "@mantine/core";
-import { IconLogout } from "@tabler/icons-react";
+import { IconLogout, IconUser } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const UserMenu = () => {
@@ -24,7 +24,7 @@ const UserMenu = () => {
   }
 
   return (
-    <Menu trigger="hover" openDelay={100} closeDelay={300} withinPortal>
+    <Menu trigger="hover" openDelay={100} closeDelay={100} withinPortal>
       <Menu.Target>
         <Avatar component={Link} to="/profile" color="primary" radius="xl">
           {user?.first_name[0]}
@@ -33,6 +33,14 @@ const UserMenu = () => {
       </Menu.Target>
 
       <Menu.Dropdown>
+        <Menu.Item
+          c={"dark"}
+          leftSection={<IconUser size={14} />}
+          onClick={() => navigate("/profile")}
+        >
+          Profil
+        </Menu.Item>
+
         <Menu.Item
           color="red"
           leftSection={<IconLogout size={14} />}
