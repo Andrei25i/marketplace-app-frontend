@@ -3,6 +3,7 @@ import { Stack } from "@mantine/core";
 import ProfileHeader from "./components/ProfileHeader";
 import FavoriteAdsSection from "./components/FavoriteAdsSection";
 import UserAdsSection from "./components/UserAdsSection";
+import ProfileActions from "./components/ProfileActions";
 
 const MyProfile = () => {
   const user = useAuthStore((state) => state.user);
@@ -12,15 +13,15 @@ const MyProfile = () => {
   }
 
   return (
-    <>
-      <Stack gap="xl" pb={"md"}>
-        <ProfileHeader user={user} showPrivateDetails showActions />
-
-        <UserAdsSection userId={String(user.id)} />
-
-        <FavoriteAdsSection />
-      </Stack>
-    </>
+    <Stack gap="xl" pb={"md"}>
+      <ProfileHeader
+        user={user}
+        showPrivateDetails
+        actions={<ProfileActions />}
+      />
+      <UserAdsSection userId={String(user.id)} isOwner />
+      <FavoriteAdsSection />
+    </Stack>
   );
 };
 

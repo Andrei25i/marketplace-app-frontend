@@ -19,26 +19,23 @@ const useAds = (
 
   const filtersKey = JSON.stringify(filters);
 
-  const fetchAds = useCallback(
-    async (nextFilters: GetAdsFilters = filters) => {
-      setIsLoading(true);
-      setError("");
+  const fetchAds = useCallback(async () => {
+    setIsLoading(true);
+    setError("");
 
-      try {
-        const data = await adsService.getAll(nextFilters);
-        const limitedAds =
-          typeof limit === "number" && limit >= 0 ? data.slice(0, limit) : data;
+    try {
+      const data = await adsService.getAll(filters);
+      const limitedAds =
+        typeof limit === "number" && limit >= 0 ? data.slice(0, limit) : data;
 
-        setAds(limitedAds);
-      } catch (err) {
-        console.error("Eroare la obținerea anunțurilor", err);
-        setError(getErrorMessage(err, "Nu s-au putut obține anunțurile."));
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [filtersKey, limit],
-  );
+      setAds(limitedAds);
+    } catch (err) {
+      console.error("Eroare la obținerea anunțurilor", err);
+      setError(getErrorMessage(err, "Nu s-au putut obține anunțurile."));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [filtersKey, limit]);
 
   useEffect(() => {
     void fetchAds();

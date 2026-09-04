@@ -12,14 +12,17 @@ export interface LoginDTO {
   password: string;
 }
 
-export interface User {
+export interface PublicUser {
   id: string | number;
   first_name: string;
   last_name: string;
-  email: string;
-  city: string;
-  phone_number: string;
   created_at: string;
+}
+
+export interface User extends PublicUser {
+  email: string;
+  phone_number: string;
+  city: string;
 }
 
 export interface AuthState {

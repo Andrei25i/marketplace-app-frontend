@@ -4,6 +4,7 @@ import type {
   AuthResponse,
   LoginDTO,
   MessageResponse,
+  PublicUser,
   RegisterDTO,
   RegisterResponse,
   ResetPasswordData,
@@ -59,6 +60,11 @@ export const authService = {
       "/auth/reset-password",
       data,
     );
+    return response.data;
+  },
+
+  getPublicUser: async (id: string): Promise<PublicUser> => {
+    const response = await api.get<PublicUser>(`/user/${id}`);
     return response.data;
   },
 };
