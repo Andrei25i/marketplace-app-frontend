@@ -11,6 +11,7 @@ import Home from "@/pages/home/Home";
 import Search from "@/pages/search/Search";
 import AdDetails from "@/pages/adDetails/AdDetails";
 import MyProfile from "@/pages/profile/MyProfile";
+import PublicUserProfile from "@/pages/profile/PublicUserProfile";
 
 const Post = () => <div>Post</div>;
 
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "ads/:id",
         element: <AdDetails />,
+      },
+      {
+        path: "/user/:id",
+        element: <PublicUserProfile />,
       },
 
       {

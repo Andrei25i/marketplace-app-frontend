@@ -1,14 +1,17 @@
-import type { User } from "@/types/auth.type";
+import type { PublicUser, User } from "@/types/auth.type";
 import { Divider, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import { IconMail, IconMapPin, IconPhone, IconStar } from "@tabler/icons-react";
 import { memberSince } from "@/utils/format.util";
 
 type ProfileInfoProps = {
-  user: User;
+  user: PublicUser;
   showPrivateDetails?: boolean;
   rating?: number;
   reviewCount?: number;
 };
+
+const isPrivateUser = (user: PublicUser): user is User =>
+  "email" in user && "phone_number" in user && "city" in user;
 
 const ProfileInfo = ({
   user,
@@ -24,7 +27,7 @@ const ProfileInfo = ({
         {fullName}
       </Title>
 
-      {showPrivateDetails && (
+      {showPrivateDetails && isPrivateUser(user) && (
         <Flex
           gap="md"
           wrap="wrap"

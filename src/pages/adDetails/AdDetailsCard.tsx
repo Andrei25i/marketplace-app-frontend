@@ -2,7 +2,7 @@ import FavoriteButton from "@/components/ui/cards/FavoriteButton";
 import type { AdDetailsDTO } from "@/types/ads.type";
 import { formatPrice } from "@/utils/format.util";
 import { Button, Card, Group, Stack, Text, Title } from "@mantine/core";
-import { IconMail, IconMapPin, IconPhone } from "@tabler/icons-react";
+import { IconMapPin, IconMessage, IconPhone } from "@tabler/icons-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -58,7 +58,7 @@ const AdDetailsCard = ({ ad }: AdDetailsCardProps) => {
         </Text>
 
         <Stack gap="xs" pt="xs">
-          <Button size="md" radius="md" leftSection={<IconMail size={18} />}>
+          <Button size="md" radius="md" leftSection={<IconMessage size={18} />}>
             Trimite Mesaj
           </Button>
 

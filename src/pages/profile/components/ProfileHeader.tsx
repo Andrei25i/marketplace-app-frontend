@@ -1,13 +1,12 @@
-import type { User } from "@/types/auth.type";
+import type { PublicUser } from "@/types/auth.type";
 import { Avatar, Box, Divider, Flex, Paper, Stack } from "@mantine/core";
-
-import ProfileActions from "./ProfileActions";
 import ProfileInfo from "./ProfileInfo";
+import type { ReactNode } from "react";
 
 type ProfileHeaderProps = {
-  user: User;
+  user: PublicUser;
   showPrivateDetails?: boolean;
-  showActions?: boolean;
+  actions?: ReactNode;
   rating?: number;
   reviewCount?: number;
 };
@@ -15,7 +14,7 @@ type ProfileHeaderProps = {
 const ProfileHeader = ({
   user,
   showPrivateDetails = false,
-  showActions = false,
+  actions,
   rating = 0,
   reviewCount = 0,
 }: ProfileHeaderProps) => {
@@ -53,21 +52,19 @@ const ProfileHeader = ({
             reviewCount={reviewCount}
           />
 
-          {showActions && (
+          {actions && (
             <Flex visibleFrom="sm" gap="lg">
               <Divider orientation="vertical" />
 
-              <Box w={190}>
-                <ProfileActions />
-              </Box>
+              <Box w={190}>{actions}</Box>
             </Flex>
           )}
         </Flex>
 
-        {showActions && (
+        {actions && (
           <Box hiddenFrom="sm">
             <Divider my="lg" />
-            <ProfileActions />
+            {actions}
           </Box>
         )}
       </Stack>
