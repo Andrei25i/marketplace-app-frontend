@@ -9,7 +9,7 @@ const Categories = () => {
   const { categories, isLoading, error, refetch } = useCategories();
 
   return (
-    <Box pt={20} pb={60}>
+    <Box pt={10} pb={60}>
       <BackButton />
 
       <Box mb={40}>

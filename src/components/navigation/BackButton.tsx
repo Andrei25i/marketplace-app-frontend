@@ -2,7 +2,11 @@ import { ActionIcon } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 
-const BackButton = () => {
+type BackButtonProps = {
+  mb?: string | number;
+};
+
+const BackButton = ({ mb = "lg" }: BackButtonProps) => {
   const navigate = useNavigate();
 
   return (
@@ -10,7 +14,7 @@ const BackButton = () => {
       variant="subtle"
       aria-label="Înapoi"
       onClick={() => navigate(-1)}
-      mb="lg"
+      mb={mb}
       size="lg"
       color="primary"
       c="dark"
@@ -20,5 +24,4 @@ const BackButton = () => {
     </ActionIcon>
   );
 };
-
 export default BackButton;
