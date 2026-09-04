@@ -42,3 +42,20 @@
 .favoriteBtn:hover {
   background-color: var(--mantine-color-gray-3);
 }
+
+.favoriteSubtle {
+  @media (max-width: 400px) {
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    padding: 0;
+
+    :global(.mantine-Button-label) {
+      display: none;
+    }
+
+    :global(.mantine-Button-section) {
+      margin-inline-end: 0;
+    }
+  }
+}

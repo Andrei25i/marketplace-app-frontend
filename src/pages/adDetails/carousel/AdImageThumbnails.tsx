@@ -37,7 +37,7 @@ const AdImageThumbnails = ({
 
   return (
     <ScrollArea
-      type="scroll"
+      type="hover"
       scrollbarSize={10}
       offsetScrollbars="present"
       viewportRef={thumbnailStripRef}
