@@ -12,6 +12,7 @@ import Search from "@/pages/search/Search";
 import AdDetails from "@/pages/adDetails/AdDetails";
 import MyProfile from "@/pages/profile/MyProfile";
 import PublicUserProfile from "@/pages/profile/PublicUserProfile";
+import AuthLayout from "@/layouts/AuthLayout";
 
 const Post = () => <div>Post</div>;
 
@@ -57,25 +58,15 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/login",
-    element: <Login />,
+    element: <AuthLayout />,
+    children: [
+      { path: "/login", element: <Login /> },
+      { path: "/register", element: <Register /> },
+      { path: "/forgot-password", element: <ForgotPassword /> },
+      { path: "/reset-password", element: <ResetPassword /> },
+    ],
   },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/forgot-password",
-    element: <ForgotPassword />,
-  },
-  {
-    path: "/reset-password",
-    element: <ResetPassword />,
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
+  { path: "*", element: <NotFound /> },
 ]);
 
 export default router;
