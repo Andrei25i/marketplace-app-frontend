@@ -18,7 +18,7 @@ const AdImageCarousel = ({ title, images }: AdImageCarouselProps) => {
   const activeIndex = useEmblaActiveIndex(embla);
 
   return (
-    <div style={{ width: "100%", maxWidth: 650 }}>
+    <Box style={{ width: "100%", maxWidth: 650 }}>
       <Box
         pos="relative"
         style={{
@@ -26,7 +26,7 @@ const AdImageCarousel = ({ title, images }: AdImageCarouselProps) => {
           borderRadius: 12,
           overflow: "hidden",
           border: "1px solid var(--mantine-color-gray-2)",
-          backgroundColor: "var(--mantine-color-gray-2)",
+          backgroundColor: "#f1f5f5",
         }}
       >
         <Carousel
@@ -95,7 +95,7 @@ const AdImageCarousel = ({ title, images }: AdImageCarouselProps) => {
         activeIndex={activeIndex}
         onThumbnailClick={(index) => embla?.scrollTo(index)}
       />
-    </div>
+    </Box>
   );
 };
 

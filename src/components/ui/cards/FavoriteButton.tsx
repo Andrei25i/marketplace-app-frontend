@@ -1,4 +1,4 @@
-import { ActionIcon } from "@mantine/core";
+import { ActionIcon, Button } from "@mantine/core";
 import { IconHeart } from "@tabler/icons-react";
 import classes from "./AdCard.module.css";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -9,9 +9,10 @@ import { useNavigate } from "react-router-dom";
 
 type FavoriteButtonProps = {
   adId: string;
+  variant?: "icon" | "subtle";
 };
 
-const FavoriteButton = ({ adId }: FavoriteButtonProps) => {
+const FavoriteButton = ({ adId, variant = "icon" }: FavoriteButtonProps) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isLoaded = useFavoriteAdsStore((state) => state.isLoaded);
   const isFavorite = useFavoriteAdsStore((state) => state.isFavorite(adId));
@@ -60,6 +61,27 @@ const FavoriteButton = ({ adId }: FavoriteButtonProps) => {
       setIsPending(false);
     }
   };
+
+  if (variant === "subtle") {
+    return (
+      <Button
+        className={classes.favoriteSubtle}
+        variant="subtle"
+        color={isFavorite ? "red" : "dark.4"}
+        size="xs"
+        radius="xl"
+        leftSection={
+          <IconHeart size={18} fill={isFavorite ? "currentColor" : "none"} />
+        }
+        aria-label={
+          isFavorite ? "Elimină de la favorite" : "Adaugă la favorite"
+        }
+        onClick={handleClick}
+      >
+        {isFavorite ? "Salvat" : "Salvează"}
+      </Button>
+    );
+  }
 
   return (
     <ActionIcon

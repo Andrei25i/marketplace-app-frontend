@@ -1,30 +1,14 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import BackButton from "@/components/navigation/BackButton";
-import { adsService } from "@/services/ads.service";
-import type { AdDTO } from "@/types/ads.type";
-import { getErrorMessage } from "@/utils/getErrorMessage.util";
 import AdImageCarousel from "./carousel/AdImageCarousel";
+import useAd from "@/hooks/ads/useAd";
+import AdDetailsCard from "./AdDetailsCard";
+import { Box, Container, Flex } from "@mantine/core";
+import SellerInfoCard from "./SellerInfoCard";
 
 const AdDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const [ad, setAd] = useState<AdDTO | null>(null);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (!id) return;
-
-    const fetchAd = async () => {
-      try {
-        const data = await adsService.getById(id);
-        setAd(data);
-      } catch (err) {
-        setError(getErrorMessage(err, "Nu s-a putut obține anunțul."));
-      }
-    };
-
-    void fetchAd();
-  }, [id]);
+  const { ad, isLoading, error, refetch } = useAd(id);
 
   if (error) return <div>{error}</div>;
   if (!ad) return <div>Se încarcă...</div>;
@@ -33,7 +17,24 @@ const AdDetails = () => {
     <>
       <BackButton />
 
-      <AdImageCarousel title={ad.title} images={ad.images} />
+      <Container size="xl" p={0}>
+        <Flex gap="xl" mt="sm" direction={{ base: "column", md: "row" }}>
+          <Box
+            w={{ base: "100%", md: "55%" }}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <AdImageCarousel title={ad.title} images={ad.images} />
+          </Box>
+
+          <Box w={{ base: "100%", md: "45%" }}>
+            <AdDetailsCard ad={ad} />
+            <SellerInfoCard ad={ad} />
+          </Box>
+        </Flex>
+      </Container>
     </>
   );
 };
