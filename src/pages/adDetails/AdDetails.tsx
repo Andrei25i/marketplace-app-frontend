@@ -7,6 +7,7 @@ import { Box, Center, Container, Flex, Loader } from "@mantine/core";
 import SellerInfoCard from "./SellerInfoCard";
 import ExpandableText from "@/components/ui/ExpandableText";
 import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
+import AdActions from "./AdActions";
 
 const AdDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,7 +35,7 @@ const AdDetails = () => {
 
   return (
     <>
-      <BackButton />
+      <AdActions ad={ad} />
 
       <Container size="xl" p={0}>
         <Flex gap="xl" mt="sm" direction={{ base: "column", md: "row" }}>
