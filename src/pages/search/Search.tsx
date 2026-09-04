@@ -1,6 +1,6 @@
 import FiltersPanel from "@/components/ui/filters/FiltersPanel";
 import useAds from "@/hooks/ads/useAds";
-import { Box, Button, Stack, Text, Title } from "@mantine/core";
+import { Box, Button, Indicator, Stack, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import { IconAdjustments } from "@tabler/icons-react";
 import { FiltersDrawer } from "@/components/ui/filters/FiltersDrawer";
@@ -14,6 +14,15 @@ const Search = () => {
 
   const { ads, isLoading, error, refetch } = useAds(filters);
   const query = filters.search ?? "";
+
+  const activeFilterCount = [
+    filters.category,
+    filters.minPrice && Number(filters.minPrice) !== 0
+      ? filters.minPrice
+      : undefined,
+    filters.maxPrice,
+    filters.city,
+  ].filter(Boolean).length;
 
   return (
     <Box pb={60}>
@@ -51,16 +60,25 @@ const Search = () => {
             </Text>
           </Box>
 
-          <Button
+          <Indicator
             hiddenFrom="sm"
-            variant="default"
-            size="xs"
-            leftSection={<IconAdjustments size={16} />}
-            onClick={() => setIsDrawerOpen(true)}
-            style={{ marginTop: 2 }}
+            disabled={activeFilterCount === 0}
+            label={activeFilterCount}
+            size={16}
+            color="primary"
+            offset={4}
           >
-            Filtre
-          </Button>
+            <Button
+              hiddenFrom="sm"
+              variant="default"
+              size="xs"
+              leftSection={<IconAdjustments size={16} />}
+              onClick={() => setIsDrawerOpen(true)}
+              style={{ marginTop: 2 }}
+            >
+              Filtre
+            </Button>
+          </Indicator>
         </Box>
 
         <Box

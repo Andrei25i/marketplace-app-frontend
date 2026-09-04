@@ -102,6 +102,10 @@ export const FiltersDrawer = ({
         p="md"
         style={{ borderTop: "1px solid var(--mantine-color-gray-2)" }}
       >
+        <Button fullWidth onClick={handleApplyFilters} size="md">
+          Aplică Filtre
+        </Button>
+
         <Button
           variant="light"
           fullWidth
@@ -109,9 +113,6 @@ export const FiltersDrawer = ({
           size="md"
         >
           Resetează
-        </Button>
-        <Button fullWidth onClick={handleApplyFilters} size="md">
-          Aplică Filtre
         </Button>
       </Group>
     </Drawer>
