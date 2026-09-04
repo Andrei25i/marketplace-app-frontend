@@ -2,6 +2,7 @@ import { memo, useEffect, useState } from "react";
 import { Select, Flex } from "@mantine/core";
 import { IconMap, IconBuildingCommunity } from "@tabler/icons-react";
 import locationsData from "@/data/romanian_locations.json";
+import { useMediaQuery } from "@mantine/hooks";
 
 const countiesList = Object.keys(locationsData).sort();
 
@@ -42,6 +43,8 @@ const LocationSelector = ({
     onCityChange("");
   };
 
+  const isMobile = useMediaQuery("(max-width: 767px)");
+
   return (
     <Flex gap="md" wrap="wrap">
       <Select
@@ -50,7 +53,7 @@ const LocationSelector = ({
         data={countiesList}
         value={selectedCounty || null}
         onChange={handleCountySelect}
-        searchable
+        searchable={!isMobile}
         clearable
         withAsterisk={register}
         leftSection={<IconMap size={18} />}
@@ -65,7 +68,7 @@ const LocationSelector = ({
         data={availableCities}
         value={selectedCity || null}
         onChange={(val) => onCityChange(val || "")}
-        searchable
+        searchable={!isMobile}
         clearable
         disabled={!selectedCounty}
         withAsterisk={register}

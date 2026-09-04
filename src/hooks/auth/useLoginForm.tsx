@@ -3,6 +3,7 @@ import type { LoginDTO } from "@/types/auth.type";
 import { authService } from "@/services/auth.service";
 import { useNavigate } from "react-router-dom";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { normalizeEmail } from "@/utils/validators.util";
 
 export const useLoginForm = () => {
   const [email, setEmail] = useState("");
@@ -17,12 +18,14 @@ export const useLoginForm = () => {
     e.preventDefault();
     setError("");
 
-    if (!email || !password) {
+    const normalizedEmail = normalizeEmail(email);
+
+    if (!normalizedEmail || !password) {
       setError("Te rugăm să completezi toate câmpurile obligatorii (*).");
       return;
     }
 
-    if (!email.includes("@") || !email.includes(".")) {
+    if (!normalizedEmail.includes("@") || !normalizedEmail.includes(".")) {
       setError("Te rugăm să introduci o adresă de email validă.");
       return;
     }
@@ -31,8 +34,8 @@ export const useLoginForm = () => {
 
     try {
       const payload: LoginDTO = {
-        email: email,
-        password: password,
+        email: normalizedEmail,
+        password,
       };
 
       await authService.login(payload);

@@ -13,6 +13,7 @@ import AdDetails from "@/pages/adDetails/AdDetails";
 import MyProfile from "@/pages/profile/MyProfile";
 import PublicUserProfile from "@/pages/profile/PublicUserProfile";
 import AuthLayout from "@/layouts/AuthLayout";
+import EditProfile from "@/pages/profile/EditProfile";
 
 const Post = () => <div>Post</div>;
 
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
           {
             path: "profile",
             element: <MyProfile />,
+          },
+          {
+            path: "profile/edit",
+            element: <EditProfile />,
           },
         ],
       },

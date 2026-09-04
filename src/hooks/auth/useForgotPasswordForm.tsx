@@ -1,5 +1,6 @@
 import { authService } from "@/services/auth.service";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { normalizeEmail } from "@/utils/validators.util";
 import { useState } from "react";
 
 export const useForgotPasswordForm = () => {
@@ -12,12 +13,14 @@ export const useForgotPasswordForm = () => {
     e.preventDefault();
     setError("");
 
-    if (!email) {
+    const normalizedEmail = normalizeEmail(email);
+
+    if (!normalizedEmail) {
       setError("Te rugăm să completezi toate câmpurile obligatorii (*).");
       return;
     }
 
-    if (!email.includes("@") || !email.includes(".")) {
+    if (!normalizedEmail.includes("@") || !normalizedEmail.includes(".")) {
       setError("Te rugăm să introduci o adresă de email validă.");
       return;
     }
@@ -25,7 +28,7 @@ export const useForgotPasswordForm = () => {
     setIsLoading(true);
 
     try {
-      await authService.forgotPassword(email);
+      await authService.forgotPassword(normalizedEmail);
       setIsSent(true);
     } catch (err) {
       console.error("Eroare la forgot password:", err);
