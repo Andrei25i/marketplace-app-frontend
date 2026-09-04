@@ -10,9 +10,9 @@ import Categories from "@/pages/categories/Categories";
 import Home from "@/pages/home/Home";
 import Search from "@/pages/search/Search";
 import AdDetails from "@/pages/adDetails/AdDetails";
+import MyProfile from "@/pages/profile/MyProfile";
 
 const Post = () => <div>Post</div>;
-const Profile = () => <div>Profile</div>;
 
 const router = createBrowserRouter([
   {
@@ -45,7 +45,7 @@ const router = createBrowserRouter([
           },
           {
             path: "profile",
-            element: <Profile />,
+            element: <MyProfile />,
           },
         ],
       },

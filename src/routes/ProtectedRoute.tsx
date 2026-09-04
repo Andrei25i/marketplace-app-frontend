@@ -1,6 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
-import { notifications } from "@mantine/notifications";
 
 const ProtectedRoute = () => {
   const { isAuthenticated, logout } = useAuthStore();
@@ -22,12 +21,6 @@ const ProtectedRoute = () => {
     if (isAuthenticated && !hasStoredSession) {
       logout();
     }
-
-    notifications.show({
-      title: "Autentificare necesară",
-      message: "Această acțiune necesită autentificare.",
-      color: "yellow",
-    });
 
     return <Navigate to="/login" replace />;
   }
