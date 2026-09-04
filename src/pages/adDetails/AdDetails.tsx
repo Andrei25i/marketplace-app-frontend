@@ -3,16 +3,34 @@ import BackButton from "@/components/navigation/BackButton";
 import AdImageCarousel from "./carousel/AdImageCarousel";
 import useAd from "@/hooks/ads/useAd";
 import AdDetailsCard from "./AdDetailsCard";
-import { Box, Container, Flex } from "@mantine/core";
+import { Box, Center, Container, Flex, Loader } from "@mantine/core";
 import SellerInfoCard from "./SellerInfoCard";
 import ExpandableText from "@/components/ui/ExpandableText";
+import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
 
 const AdDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { ad, isLoading, error, refetch } = useAd(id);
 
-  if (error) return <div>{error}</div>;
-  if (!ad) return <div>Se încarcă...</div>;
+  if (error)
+    return (
+      <>
+        <BackButton />
+        <Center mih="60vh">
+          <RequestErrorAlert message={error} onRetry={refetch} />
+        </Center>
+      </>
+    );
+
+  if (isLoading || !ad)
+    return (
+      <>
+        <BackButton />
+        <Center mih="60vh">
+          <Loader color="primary" size="lg" />
+        </Center>
+      </>
+    );
 
   return (
     <>

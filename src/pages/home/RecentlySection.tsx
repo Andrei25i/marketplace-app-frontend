@@ -21,6 +21,10 @@ const RecentlySection = () => {
   const filters = useMemo<GetAdsFilters>(() => ({ sort: "date_desc" }), []);
   const { ads, isLoading, error, refetch } = useAds(filters, { limit: 5 });
 
+  if (!isLoading && !error && ads.length === 0) {
+    return null;
+  }
+
   return (
     <Box component="section">
       <Box mb="lg">
@@ -38,7 +42,7 @@ const RecentlySection = () => {
             style={{ display: "flex", alignItems: "center", gap: 4 }}
             underline="hover"
           >
-            Vezi mai multe <IconChevronRight size={16} />
+            Vezi tot <IconChevronRight size={16} />
           </Anchor>
         </Group>
 
@@ -66,7 +70,6 @@ const RecentlySection = () => {
                   md: 350,
                 }}
                 style={{
-                  flexGrow: 1,
                   flexShrink: 0,
                 }}
               >
