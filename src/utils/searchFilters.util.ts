@@ -10,7 +10,11 @@ export const DEFAULT_AD_FILTERS: GetAdsFilters = {
 };
 
 const isValidSortOption = (value: string | null): value is AdSortOption => {
-  return AD_SORT_OPTIONS.some((opt) => opt.value === value);
+  return (
+    AD_SORT_OPTIONS.some((option) => option.value === value) ||
+    value === "favorited_date_asc" ||
+    value === "favorited_date_desc"
+  );
 };
 
 const parsePositiveInteger = (value: string | null) => {

@@ -24,7 +24,7 @@ const UserAdsSection = ({ userId, isOwner = false }: UserAdsSectionProps) => {
       error={error}
       onRetry={refetch}
       emptyMessage={emptyMessage}
-      viewAllTo="#"
+      viewAllTo={`/user/${userId}/ads`}
       visibleAdsCount={5}
     />
   );
