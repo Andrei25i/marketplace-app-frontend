@@ -3,11 +3,16 @@ import { Select, Stack, Text } from "@mantine/core";
 import { IconArrowsSort } from "@tabler/icons-react";
 
 type SortingFilterProps = {
+  options?: ReadonlyArray<{
+    value: AdSortOption;
+    label: string;
+  }>;
   value?: AdSortOption;
-  onChange?: (value: string | null) => void;
+  onChange?: (value: AdSortOption | undefined) => void;
 };
 
 const SortingFilter = ({
+  options = AD_SORT_OPTIONS,
   value = "date_desc",
   onChange,
 }: SortingFilterProps) => {
@@ -19,7 +24,7 @@ const SortingFilter = ({
 
       <Select
         value={value}
-        data={AD_SORT_OPTIONS}
+        data={options}
         onChange={(nextValue) =>
           onChange?.((nextValue as AdSortOption) || undefined)
         }

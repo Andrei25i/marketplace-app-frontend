@@ -5,6 +5,15 @@ import EmptyResults from "./feedback/EmptyResults";
 import PaginatedGrid from "./PaginatedGrid";
 import AdCard from "./cards/AdCard";
 
+type GridColumns = {
+  base?: number;
+  xs?: number;
+  sm?: number;
+  md?: number;
+  lg?: number;
+  xl?: number;
+};
+
 interface SearchResultsProps {
   ads: AdDTO[];
   isLoading: boolean;
@@ -12,6 +21,7 @@ interface SearchResultsProps {
   page: number;
   onPageChange: (page: number) => void;
   onRetry: () => void;
+  cols?: GridColumns;
 }
 
 export const SearchResults = ({
@@ -21,6 +31,7 @@ export const SearchResults = ({
   page,
   onPageChange,
   onRetry,
+  cols = { base: 2, md: 3 },
 }: SearchResultsProps) => {
   if (error) return <RequestErrorAlert message={error} onRetry={onRetry} />;
   if (isLoading)
@@ -37,7 +48,7 @@ export const SearchResults = ({
       itemsPerPage={6}
       page={page}
       onPageChange={onPageChange}
-      cols={{ base: 2, md: 3 }}
+      cols={cols}
       renderItem={(ad) => <AdCard key={ad.id} ad={ad} />}
     />
   );

@@ -6,7 +6,9 @@ export type AdSortOption =
   | "date_asc"
   | "date_desc"
   | "name_asc"
-  | "name_desc";
+  | "name_desc"
+  | "favorited_date_asc"
+  | "favorited_date_desc";
 
 export const AD_SORT_OPTIONS = [
   { value: "price_asc", label: "Preț: crescător" },
@@ -15,6 +17,20 @@ export const AD_SORT_OPTIONS = [
   { value: "date_desc", label: "Adăugate recent" },
   { value: "name_asc", label: "Nume: A-Z" },
   { value: "name_desc", label: "Nume: Z-A" },
+] as const satisfies ReadonlyArray<{
+  value: AdSortOption;
+  label: string;
+}>;
+
+export const FAVORITE_AD_SORT_OPTIONS = [
+  { value: "price_asc", label: "Preț: crescător" },
+  { value: "price_desc", label: "Preț: descrescător" },
+  { value: "date_asc", label: "Anunț: cele mai vechi" },
+  { value: "date_desc", label: "Anunț: adăugate recent" },
+  { value: "name_asc", label: "Nume: A-Z" },
+  { value: "name_desc", label: "Nume: Z-A" },
+  { value: "favorited_date_desc", label: "Favorite: adăugate recent" },
+  { value: "favorited_date_asc", label: "Favorite: adăugate de mult" },
 ] as const satisfies ReadonlyArray<{
   value: AdSortOption;
   label: string;

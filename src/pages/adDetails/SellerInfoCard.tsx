@@ -70,7 +70,7 @@ const SellerInfoCard = ({ ad }: SellerInfoCardProps) => {
 
         <Button
           component={Link}
-          to={`/search?user_id=${encodeURIComponent(ad.user.id)}`}
+          to={`/user/${ad.user.id}/ads`}
           variant="default"
           fullWidth
         >

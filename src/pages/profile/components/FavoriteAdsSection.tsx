@@ -12,7 +12,7 @@ const FavoriteAdsSection = () => {
       error={error}
       onRetry={refetch}
       emptyMessage="Nu ai salvat încă niciun anunț."
-      viewAllTo="#"
+      viewAllTo="/profile/favorites"
       visibleAdsCount={5}
     />
   );

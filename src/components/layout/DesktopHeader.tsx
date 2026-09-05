@@ -1,5 +1,5 @@
 import { Group, Text, Button } from "@mantine/core";
-import { Link, useLocation } from "react-router-dom";
+import { Link, matchPath, useLocation } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { IconCirclePlusFilled } from "@tabler/icons-react";
 import UserMenu from "./UserMenu";
@@ -7,13 +7,18 @@ import UserMenu from "./UserMenu";
 const DesktopHeader = () => {
   const { pathname } = useLocation();
 
+  const shouldShowSearchBar =
+    pathname !== "/" &&
+    pathname !== "/profile/favorites" &&
+    !matchPath("/user/:id/ads", pathname);
+
   return (
     <Group h="100%" px="md" justify="space-between" align="center">
       <Text component={Link} to="/" fw={700} size="xl" c="primary">
         Logo
       </Text>
 
-      {pathname !== "/" && <SearchBar />}
+      {shouldShowSearchBar && <SearchBar />}
 
       <Group>
         <Button
