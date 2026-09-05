@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  Alert,
   Button,
   Group,
   Modal,
@@ -8,7 +9,7 @@ import {
   Text,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconTrash } from "@tabler/icons-react";
+import { IconAlertCircle, IconTrash } from "@tabler/icons-react";
 
 import { authService } from "@/services/auth.service";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
@@ -117,11 +118,20 @@ const DeleteAccountModal = ({
                 setError("");
               }
             }}
-            error={error || undefined}
             disabled={isDeleting}
             autoFocus
             required
           />
+
+          {error && (
+            <Alert
+              color="red"
+              icon={<IconAlertCircle size={18} />}
+              title="Ștergerea anunțului a eșuat"
+            >
+              {error}
+            </Alert>
+          )}
 
           <Group justify="flex-end" gap="sm" mt="sm">
             <Button
