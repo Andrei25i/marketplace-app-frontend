@@ -48,6 +48,16 @@ export const authService = {
     return user;
   },
 
+  deleteAccount: async (password: string): Promise<MessageResponse> => {
+    const response = await api.delete<MessageResponse>("/user", {
+      data: { password },
+    });
+
+    useAuthStore.getState().logout();
+
+    return response.data;
+  },
+
   forgotPassword: async (email: string): Promise<MessageResponse> => {
     const response = await api.post<MessageResponse>("/auth/forgot-password", {
       email,
