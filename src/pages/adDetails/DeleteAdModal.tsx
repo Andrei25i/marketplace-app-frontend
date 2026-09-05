@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Button, Group, Modal, Stack, Text } from "@mantine/core";
-import { IconTrash } from "@tabler/icons-react";
+import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
+import { IconAlertCircle, IconTrash } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { getErrorMessage } from "@/utils/getErrorMessage.util";
 
 type DeleteAdModalProps = {
   opened: boolean;
@@ -11,26 +12,42 @@ type DeleteAdModalProps = {
 
 const DeleteAdModal = ({ opened, onClose, onConfirm }: DeleteAdModalProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleConfirm = async () => {
+    setError("");
     setIsDeleting(true);
 
     try {
       await onConfirm();
+
       notifications.show({
         title: "Anunț șters",
         message: "Anunțul a fost șters cu succes.",
         color: "green",
       });
+    } catch (err) {
+      setError(
+        getErrorMessage(err, "Anunțul nu a putut fi șters. Încearcă din nou."),
+      );
     } finally {
       setIsDeleting(false);
     }
   };
 
+  const handleClose = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setError("");
+    onClose();
+  };
+
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={handleClose}
       centered
       title={
         <Text c="red.7" fw={700} size="lg">
@@ -54,11 +71,21 @@ const DeleteAdModal = ({ opened, onClose, onConfirm }: DeleteAdModalProps) => {
           Anunțul și imaginile asociate vor fi șterse definitiv.
         </Text>
 
+        {error && (
+          <Alert
+            color="red"
+            icon={<IconAlertCircle size={18} />}
+            title="Ștergerea anunțului a eșuat"
+          >
+            {error}
+          </Alert>
+        )}
+
         <Group justify="flex-end" gap="sm" mt="sm">
           <Button
             type="button"
             variant="default"
-            onClick={onClose}
+            onClick={handleClose}
             disabled={isDeleting}
           >
             Anulează
