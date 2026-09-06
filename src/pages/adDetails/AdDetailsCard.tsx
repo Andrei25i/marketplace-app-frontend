@@ -69,7 +69,7 @@ const AdDetailsCard = ({ ad }: AdDetailsCardProps) => {
             leftSection={<IconPhone size={18} />}
             onClick={() => setIsPhoneVisible((prev) => !prev)}
           >
-            {isPhoneVisible ? ad.user.phone_number : "Arată numărul de telefon"}
+            {isPhoneVisible ? ad.phone_number : "Arată numărul de telefon"}
           </Button>
         </Stack>
       </Stack>
