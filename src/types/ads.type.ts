@@ -56,6 +56,7 @@ export type AdDTO = {
   title: string;
   description: string;
   price: number;
+  phone_number: string;
   currency: string;
   images: AdImage[];
   category_id: number;
@@ -68,6 +69,7 @@ export type CreateAdDTO = {
   title: string;
   description: string;
   price: number | string;
+  phone_number: string;
   currency?: string;
   images: AdImage[];
   category_id: number | string;
@@ -87,7 +89,6 @@ export type AdUserDTO = {
   first_name: string;
   last_name: string;
   email: string;
-  phone_number: string;
 };
 
 export type AdDetailsDTO = Omit<AdDTO, "category_id" | "user_id"> & {
