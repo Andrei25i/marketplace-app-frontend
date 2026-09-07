@@ -1,5 +1,11 @@
-import { createTheme, TextInput, PasswordInput, Select } from "@mantine/core";
-import type { MantineColorsTuple } from "@mantine/core";
+import {
+  createTheme,
+  TextInput,
+  PasswordInput,
+  Select,
+  NumberInput,
+} from "@mantine/core";
+import { Textarea, type MantineColorsTuple } from "@mantine/core";
 
 const primaryColors: MantineColorsTuple = [
   "#ebf5f4",
@@ -68,6 +74,14 @@ export const theme = createTheme({
     }),
 
     Select: Select.extend({
+      styles: inputStyles,
+    }),
+
+    Textarea: Textarea.extend({
+      styles: inputStyles,
+    }),
+
+    NumberInput: NumberInput.extend({
       styles: inputStyles,
     }),
 

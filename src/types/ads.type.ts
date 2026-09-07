@@ -51,6 +51,11 @@ export type AdImage = {
   public_id?: string;
 };
 
+export type LocalAdImage = {
+  file: File;
+  preview: string;
+};
+
 export type AdDTO = {
   id: string;
   title: string;

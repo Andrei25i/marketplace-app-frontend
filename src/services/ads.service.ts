@@ -2,6 +2,7 @@ import { api } from "@/api/api";
 import type {
   AdDetailsDTO,
   AdDTO,
+  AdImage,
   CreateAdDTO,
   DeleteAdResponse,
   GetAdsFilters,
@@ -32,5 +33,27 @@ export const adsService = {
   delete: async (id: string): Promise<DeleteAdResponse> => {
     const response = await api.delete<DeleteAdResponse>(`/ads/${id}`);
     return response.data;
+  },
+
+  uploadImages: async (files: File[]): Promise<AdImage[]> => {
+    const formData = new FormData();
+
+    files.forEach((file) => {
+      formData.append("images", file);
+    });
+
+    const response = await api.post<AdImage[]>("/ads/images", formData, {
+      headers: {
+        "Content-Type": undefined,
+      },
+    });
+
+    return response.data;
+  },
+
+  deleteImages: async (publicIds: string[]): Promise<void> => {
+    await api.delete("/ads/images", {
+      data: { publicIds },
+    });
   },
 };
