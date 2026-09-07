@@ -16,8 +16,7 @@ import AuthLayout from "@/layouts/AuthLayout";
 import EditProfile from "@/pages/profile/EditProfile";
 import UserAds from "@/pages/profile/UserAds";
 import FavoriteAds from "@/pages/profile/FavoriteAds";
-
-const Post = () => <div>Post</div>;
+import Post from "@/pages/post/Post";
 
 const router = createBrowserRouter([
   {
