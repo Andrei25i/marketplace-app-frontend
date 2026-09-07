@@ -1,10 +1,10 @@
 import LocationSelector from "@/components/ui/forms/LocationSelector";
+import SectionTitle from "@/components/ui/forms/SectionTitle";
 import { useEditProfileForm } from "@/hooks/auth/useEditProfileForm";
 import {
   Alert,
   Button,
   Center,
-  Divider,
   Group,
   Paper,
   SimpleGrid,
@@ -166,14 +166,5 @@ const EditProfile = () => {
     </Center>
   );
 };
-
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <Stack gap={6}>
-    <Text c="primary" fw={700} fz={12} tt="uppercase">
-      {children}
-    </Text>
-    <Divider color="gray.3" />
-  </Stack>
-);
 
 export default EditProfile;

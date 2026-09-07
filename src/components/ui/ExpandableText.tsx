@@ -15,7 +15,7 @@ export default function ExpandableText({
       withBorder
       style={{ borderLeft: "4px solid var(--mantine-color-primary-6)" }}
     >
-      <Title order={3} size="sm" tt="uppercase" lts={2} mb="md">
+      <Title order={3} size="sm" tt="uppercase" mb="md">
         {title}
       </Title>
 
