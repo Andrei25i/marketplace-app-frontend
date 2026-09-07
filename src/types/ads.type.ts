@@ -52,8 +52,9 @@ export type AdImage = {
 };
 
 export type LocalAdImage = {
-  file: File;
+  file?: File;
   preview: string;
+  public_id?: string;
 };
 
 export type AdDTO = {

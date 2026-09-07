@@ -19,7 +19,7 @@ const AdActions = ({ ad }: AdActionsProps) => {
   const isOwner = Boolean(user && String(ad.user.id) === String(user.id));
 
   const handleEdit = () => {
-    console.log("Edit ad:", ad.id);
+    navigate(`/ads/${ad.id}/edit`);
   };
 
   const handleDelete = async () => {

@@ -1,7 +1,5 @@
-import ImageSelector from "@/components/ui/forms/ImageSelector";
-import LocationSelector from "@/components/ui/forms/LocationSelector";
-import SectionTitle from "@/components/ui/forms/SectionTitle";
-import { usePostAdForm } from "@/hooks/ads/usePostAdForm";
+import type { LocalAdImage } from "@/types/ads.type";
+import type { CategoryDTO } from "@/types/category.type";
 import {
   Alert,
   Button,
@@ -25,36 +23,71 @@ import {
   IconSpeakerphone,
   IconTag,
 } from "@tabler/icons-react";
+import SectionTitle from "./SectionTitle";
+import ImageSelector from "./ImageSelector";
+import LocationSelector from "./LocationSelector";
 
-const Post = () => {
-  const {
-    title,
-    setTitle,
-    description,
-    setDescription,
-    images,
-    setImages,
-    price,
-    setPrice,
-    currency,
-    setCurrency,
-    phone,
-    handlePhoneChange,
-    county,
-    setCounty,
-    city,
-    setCity,
-    categoryId,
-    setCategoryId,
-    categories,
-    categoriesLoading,
-    categoriesError,
-    error,
-    isSubmitting,
-    handleSubmit,
-    handleCancel,
-  } = usePostAdForm();
+type AdFormProps = {
+  heading: string;
+  subheading: string;
+  submitLabel: string;
+  title: string;
+  setTitle: (value: string) => void;
+  description: string;
+  setDescription: (value: string) => void;
+  images: LocalAdImage[];
+  setImages: (images: LocalAdImage[]) => void;
+  price: number | string;
+  setPrice: (value: number | string) => void;
+  currency: string;
+  setCurrency: (value: string) => void;
+  phone: string;
+  handlePhoneChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  county: string;
+  setCounty: (value: string) => void;
+  city: string;
+  setCity: (value: string) => void;
+  categoryId: string | null;
+  setCategoryId: (value: string | null) => void;
+  categories: CategoryDTO[];
+  categoriesLoading: boolean;
+  categoriesError: string;
+  error: string;
+  isSubmitting: boolean;
+  handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
+  handleCancel: () => void;
+};
 
+const AdForm = ({
+  heading,
+  subheading,
+  submitLabel,
+  title,
+  setTitle,
+  description,
+  setDescription,
+  images,
+  setImages,
+  price,
+  setPrice,
+  currency,
+  setCurrency,
+  phone,
+  handlePhoneChange,
+  county,
+  setCounty,
+  city,
+  setCity,
+  categoryId,
+  setCategoryId,
+  categories,
+  categoriesLoading,
+  categoriesError,
+  error,
+  isSubmitting,
+  handleSubmit,
+  handleCancel,
+}: AdFormProps) => {
   return (
     <Stack maw={700} mx="auto" gap="lg">
       <Paper
@@ -70,11 +103,11 @@ const Post = () => {
           </ThemeIcon>
 
           <Title ta="center" order={1} size="h3">
-            Postează un anunț
+            {heading}
           </Title>
 
           <Text ta="center" c={"dimmed"} size="sm">
-            Completează detaliile anunțului tău.
+            {subheading}
           </Text>
         </Stack>
 
@@ -124,6 +157,9 @@ const Post = () => {
             <SectionTitle>
               Imagini {images.length > 0 ? `(${images.length})` : ""}
             </SectionTitle>
+            <Text size="xs" c="dimmed">
+              Doar fișiere imagine, maximum 10 imagini, fiecare de cel mult 5MB.
+            </Text>
             <ImageSelector images={images} onChange={setImages} />
           </Stack>
 
@@ -197,7 +233,7 @@ const Post = () => {
               leftSection={<IconDeviceFloppy size={18} />}
               loading={isSubmitting}
             >
-              Postează
+              {submitLabel}
             </Button>
           </Group>
         </Stack>
@@ -206,4 +242,4 @@ const Post = () => {
   );
 };
 
-export default Post;
+export default AdForm;

@@ -16,7 +16,8 @@ import AuthLayout from "@/layouts/AuthLayout";
 import EditProfile from "@/pages/profile/EditProfile";
 import UserAds from "@/pages/profile/UserAds";
 import FavoriteAds from "@/pages/profile/FavoriteAds";
-import Post from "@/pages/post/Post";
+import PostAd from "@/pages/post/PostAd";
+import EditAd from "@/pages/post/EditAd";
 
 const router = createBrowserRouter([
   {
@@ -53,8 +54,9 @@ const router = createBrowserRouter([
         children: [
           {
             path: "post",
-            element: <Post />,
+            element: <PostAd />,
           },
+          { path: "ads/:id/edit", element: <EditAd /> },
           {
             path: "profile",
             element: <MyProfile />,
