@@ -42,7 +42,7 @@ export const adsService = {
       formData.append("images", file);
     });
 
-    const response = await api.post<AdImage[]>("/ads/images", formData, {
+    const response = await api.post<AdImage[]>("/ads/photos", formData, {
       headers: {
         "Content-Type": undefined,
       },
@@ -52,7 +52,7 @@ export const adsService = {
   },
 
   deleteImages: async (publicIds: string[]): Promise<void> => {
-    await api.delete("/ads/images", {
+    await api.delete("/ads/photos", {
       data: { publicIds },
     });
   },
