@@ -11,27 +11,27 @@ import type {
 
 export const adsService = {
   getAll: async (filters: GetAdsFilters = {}): Promise<AdDTO[]> => {
-    const response = await api.get<AdDTO[]>("/ads", { params: filters });
+    const response = await api.get<AdDTO[]>("/listings", { params: filters });
     return response.data;
   },
 
   getById: async (id: string): Promise<AdDetailsDTO> => {
-    const response = await api.get<AdDetailsDTO>(`/ads/${id}`);
+    const response = await api.get<AdDetailsDTO>(`/listings/${id}`);
     return response.data;
   },
 
   create: async (data: CreateAdDTO): Promise<AdDTO> => {
-    const response = await api.post<AdDTO>("/ads", data);
+    const response = await api.post<AdDTO>("/listings", data);
     return response.data;
   },
 
   update: async (id: string, data: UpdateAdDTO): Promise<AdDTO> => {
-    const response = await api.put<AdDTO>(`/ads/${id}`, data);
+    const response = await api.put<AdDTO>(`/listings/${id}`, data);
     return response.data;
   },
 
   delete: async (id: string): Promise<DeleteAdResponse> => {
-    const response = await api.delete<DeleteAdResponse>(`/ads/${id}`);
+    const response = await api.delete<DeleteAdResponse>(`/listings/${id}`);
     return response.data;
   },
 
@@ -42,7 +42,7 @@ export const adsService = {
       formData.append("images", file);
     });
 
-    const response = await api.post<AdImage[]>("/ads/photos", formData, {
+    const response = await api.post<AdImage[]>("/listings/photos", formData, {
       headers: {
         "Content-Type": undefined,
       },
@@ -52,7 +52,7 @@ export const adsService = {
   },
 
   deleteImages: async (publicIds: string[]): Promise<void> => {
-    await api.delete("/ads/photos", {
+    await api.delete("/listings/photos", {
       data: { publicIds },
     });
   },
