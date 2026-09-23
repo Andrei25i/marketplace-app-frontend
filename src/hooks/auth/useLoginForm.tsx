@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { LoginDTO } from "@/types/auth.type";
 import { authService } from "@/services/auth.service";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
 import { normalizeEmail } from "@/utils/validators.util";
 
@@ -13,6 +13,8 @@ export const useLoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname ?? "/";
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,7 +41,7 @@ export const useLoginForm = () => {
       };
 
       await authService.login(payload);
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (err) {
       console.error("Eroare la Login:", err);
 
