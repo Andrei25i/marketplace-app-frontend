@@ -10,7 +10,14 @@ const MainLayout = () => {
       footer={{ height: { base: 70, sm: 0 } }}
       padding="lg"
     >
-      <AppShell.Header visibleFrom="sm">
+      <AppShell.Header
+        visibleFrom="sm"
+        style={{
+          isolation: "isolate",
+          transform: "translateZ(0)",
+          WebkitTransform: "translateZ(0)",
+        }}
+      >
         <DesktopHeader />
       </AppShell.Header>
 
