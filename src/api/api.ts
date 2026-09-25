@@ -11,11 +11,17 @@ export const api = axios.create({
   timeout: 10000,
 });
 
-const isPublicRequest = (url?: string) =>
-  url?.endsWith("/auth/login") ||
-  url?.endsWith("/auth/register") ||
-  url?.endsWith("/auth/forgot-password") ||
-  url?.endsWith("/auth/reset-password");
+const PUBLIC_PATHS = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+];
+
+const isPublicRequest = (url?: string) => {
+  const path = url?.split("?")[0];
+  return path ? PUBLIC_PATHS.some((p) => path.endsWith(p)) : false;
+};
 
 api.interceptors.request.use(
   (config) => {

@@ -23,7 +23,7 @@ const ForgotPassword = () => {
     useForgotPasswordForm();
 
   return (
-    <Center mih={{ base: "auto", sm: "100vh" }}>
+    <Center mih={{ base: "auto", sm: "80vh" }}>
       <Paper
         withBorder
         radius="lg"
