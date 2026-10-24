@@ -7,10 +7,11 @@ import {
   isValidPhone,
   normalizeLocation,
   normalizePhone,
+  splitLocation,
 } from "@/utils/validators.util";
 import { notifications } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const usePostAdForm = () => {
@@ -28,30 +29,16 @@ export const usePostAdForm = () => {
   const [images, setImages] = useState<LocalAdImage[]>([]);
   const [price, setPrice] = useState<number | string>("");
   const [currency, setCurrency] = useState("RON");
-  const [phone, setPhone] = useState(user?.phone_number ?? "");
-  const [county, setCounty] = useState("");
-  const [city, setCity] = useState("");
+  const initialLocation = splitLocation(user?.city);
+  const [phone, setPhone] = useState(() =>
+    normalizePhone(user?.phone_number ?? ""),
+  );
+  const [county, setCounty] = useState(initialLocation.county);
+  const [city, setCity] = useState(initialLocation.city);
+
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    setPhone(normalizePhone(user.phone_number));
-
-    const separatorIndex = user.city.lastIndexOf(", ");
-
-    if (separatorIndex === -1) {
-      setCity(user.city);
-      return;
-    }
-
-    setCity(user.city.slice(0, separatorIndex));
-    setCounty(user.city.slice(separatorIndex + 2));
-  }, [user]);
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;

@@ -1,5 +1,5 @@
 import { Group, RangeSlider, Stack, Text } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const PRICE_SLIDER_MAX = 5000;
 
@@ -14,17 +14,18 @@ const PriceRangeFilter = ({
   maxPrice,
   onChange,
 }: PriceRangeFilterProps) => {
-  const [localRange, setLocalRange] = useState<[number, number]>([
+  const rangeFromProps: [number, number] = [
     Number(minPrice ?? 0),
     Number(maxPrice ?? PRICE_SLIDER_MAX),
-  ]);
+  ];
+  const [localRange, setLocalRange] = useState(rangeFromProps);
+  const propsKey = `${minPrice}-${maxPrice}`;
+  const [prevPropsKey, setPrevPropsKey] = useState(propsKey);
 
-  useEffect(() => {
-    setLocalRange([
-      Number(minPrice ?? 0),
-      Number(maxPrice ?? PRICE_SLIDER_MAX),
-    ]);
-  }, [minPrice, maxPrice]);
+  if (propsKey !== prevPropsKey) {
+    setPrevPropsKey(propsKey);
+    setLocalRange(rangeFromProps);
+  }
 
   return (
     <Stack gap="xs">

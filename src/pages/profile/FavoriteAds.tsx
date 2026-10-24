@@ -14,7 +14,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const FavoriteAds = () => {
   const { filters, page, updateFilters, updatePage } = useSearchFilters();
@@ -22,11 +22,15 @@ const FavoriteAds = () => {
   const { ads: allFavoriteAds, isLoading: isCountLoading } = useFavoriteAds({
     sort: "date_desc",
   });
-  const [searchQuery, setSearchQuery] = useState(filters.search ?? "");
 
-  useEffect(() => {
-    setSearchQuery(filters.search ?? "");
-  }, [filters.search]);
+  const searchFromUrl = filters.search ?? "";
+  const [searchQuery, setSearchQuery] = useState(searchFromUrl);
+  const [prevSearchFromUrl, setPrevSearchFromUrl] = useState(searchFromUrl);
+
+  if (searchFromUrl !== prevSearchFromUrl) {
+    setPrevSearchFromUrl(searchFromUrl);
+    setSearchQuery(searchFromUrl);
+  }
 
   return (
     <>

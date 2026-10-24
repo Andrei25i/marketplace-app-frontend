@@ -3,8 +3,16 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { notifications } from "@mantine/notifications";
 import router from "../routes/router";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+if (!API_BASE_URL) {
+  throw new Error(
+    "VITE_API_BASE_URL nu este setat. Adaugă-l în fișierul .env.",
+  );
+}
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://192.168.1.133:8000/api",
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },

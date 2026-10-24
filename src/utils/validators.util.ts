@@ -19,3 +19,17 @@ export const normalizePhone = (value: string) => {
 export const normalizeLocation = (value: string) => {
   return value.trim().replace(/\s+/g, " ");
 };
+
+export const splitLocation = (value?: string | null) => {
+  const location = value ?? "";
+  const separatorIndex = location.lastIndexOf(", ");
+
+  if (separatorIndex === -1) {
+    return { city: location, county: "" };
+  }
+
+  return {
+    city: location.slice(0, separatorIndex),
+    county: location.slice(separatorIndex + 2),
+  };
+};

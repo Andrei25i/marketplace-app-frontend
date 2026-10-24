@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons-react";
@@ -12,6 +12,7 @@ import {
   normalizeLocation,
   normalizeName,
   normalizePhone,
+  splitLocation,
 } from "@/utils/validators.util";
 import type { UpdateUserData } from "@/types/auth.type";
 
@@ -19,37 +20,16 @@ export const useEditProfileForm = () => {
   const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [county, setCounty] = useState("");
-  const [city, setCity] = useState("");
+  const initialLocation = splitLocation(user?.city);
+  const [firstName, setFirstName] = useState(user?.first_name ?? "");
+  const [lastName, setLastName] = useState(user?.last_name ?? "");
+  const [phone, setPhone] = useState(user?.phone_number ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
+  const [county, setCounty] = useState(initialLocation.county);
+  const [city, setCity] = useState(initialLocation.city);
 
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    setFirstName(user.first_name);
-    setLastName(user.last_name);
-    setPhone(user.phone_number);
-    setEmail(user.email);
-
-    const savedCity = user.city ?? "";
-    const separatorIndex = savedCity.lastIndexOf(", ");
-
-    if (separatorIndex === -1) {
-      setCity(savedCity);
-      return;
-    }
-
-    setCity(savedCity.slice(0, separatorIndex));
-    setCounty(savedCity.slice(separatorIndex + 2));
-  }, [user]);
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value;

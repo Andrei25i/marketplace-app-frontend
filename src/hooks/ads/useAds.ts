@@ -1,47 +1,34 @@
 import { adsService } from "@/services/ads.service";
 import type { AdDTO, GetAdsFilters } from "@/types/ads.type";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 type UseAdsOptions = {
   limit?: number;
 };
 
 const EMPTY_FILTERS: GetAdsFilters = {};
+const NO_ADS: AdDTO[] = [];
 
 const useAds = (
   filters: GetAdsFilters = EMPTY_FILTERS,
   { limit }: UseAdsOptions = {},
 ) => {
-  const [ads, setAds] = useState<AdDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const query = useQuery({
+    queryKey: ["ads", filters],
+    queryFn: () => adsService.getAll(filters),
+    select: (data) =>
+      typeof limit === "number" && limit >= 0 ? data.slice(0, limit) : data,
+  });
 
-  const filtersKey = JSON.stringify(filters);
-
-  const fetchAds = useCallback(async () => {
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const data = await adsService.getAll(filters);
-      const limitedAds =
-        typeof limit === "number" && limit >= 0 ? data.slice(0, limit) : data;
-
-      setAds(limitedAds);
-    } catch (err) {
-      console.error("Eroare la obținerea anunțurilor", err);
-      setError(getErrorMessage(err, "Nu s-au putut obține anunțurile."));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [filtersKey, limit]);
-
-  useEffect(() => {
-    void fetchAds();
-  }, [fetchAds]);
-
-  return { ads, isLoading, error, refetch: fetchAds };
+  return {
+    ads: query.data ?? NO_ADS,
+    isLoading: query.isLoading,
+    error: query.error
+      ? getErrorMessage(query.error, "Nu s-au putut obține anunțurile.")
+      : "",
+    refetch: query.refetch,
+  };
 };
 
 export default useAds;

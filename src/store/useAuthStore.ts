@@ -2,6 +2,7 @@ import type { AuthState } from "@/types/auth.type";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useFavoriteAdsStore } from "./useFavoriteStore";
+import { queryClient } from "@/api/queryClient";
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -18,6 +19,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         set({ user: null, token: null, isAuthenticated: false });
         useFavoriteAdsStore.getState().clearFavorites();
+        queryClient.clear();
       },
 
       setUpdatedUser: (updatedData) => {
