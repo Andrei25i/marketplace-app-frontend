@@ -90,9 +90,6 @@ const FavoriteButton = ({ adId, variant = "icon" }: FavoriteButtonProps) => {
       c={isFavorite ? "red.6" : "dark.3"}
       radius="xl"
       size="lg"
-      pos="absolute"
-      top={10}
-      right={10}
       className={classes.favoriteBtn}
       aria-label={isFavorite ? "Elimină de la favorite" : "Adaugă la favorite"}
       onClick={handleClick}
