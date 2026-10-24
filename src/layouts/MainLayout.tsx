@@ -1,5 +1,5 @@
 import { AppShell } from "@mantine/core";
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import DesktopHeader from "../components/layout/DesktopHeader";
 import MobileBottomNav from "../components/layout/MobileBottomNav";
 
@@ -28,6 +28,8 @@ const MainLayout = () => {
       <AppShell.Footer hiddenFrom="sm" withBorder={false} bg="transparent">
         <MobileBottomNav />
       </AppShell.Footer>
+
+      <ScrollRestoration />
     </AppShell>
   );
 };
