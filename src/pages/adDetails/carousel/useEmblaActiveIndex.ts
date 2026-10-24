@@ -1,27 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 import type { EmblaCarouselType } from "embla-carousel";
 
 const useEmblaActiveIndex = (embla: EmblaCarouselType | null): number => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      if (!embla) return () => {};
 
-  const handleSelect = useCallback(() => {
-    if (embla) {
-      setActiveIndex(embla.selectedScrollSnap());
-    }
-  }, [embla]);
+      embla.on("select", onChange);
+      return () => {
+        embla.off("select", onChange);
+      };
+    },
+    [embla],
+  );
 
-  useEffect(() => {
-    if (!embla) return;
-
-    embla.on("select", handleSelect);
-    handleSelect();
-
-    return () => {
-      embla.off("select", handleSelect);
-    };
-  }, [embla, handleSelect]);
-
-  return activeIndex;
+  return useSyncExternalStore(
+    subscribe,
+    () => embla?.selectedScrollSnap() ?? 0,
+  );
 };
 
 export default useEmblaActiveIndex;

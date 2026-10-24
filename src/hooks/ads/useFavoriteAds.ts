@@ -2,7 +2,7 @@ import { favoritesService } from "@/services/favorites.service";
 import type { GetAdsFilters } from "@/types/ads.type";
 import type { FavoriteAdDTO } from "@/types/favorite.types";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 type UseFavoriteAdsOptions = {
   limit?: number;
@@ -11,46 +11,29 @@ type UseFavoriteAdsOptions = {
 const DEFAULT_FILTERS: GetAdsFilters = {
   sort: "date_desc",
 };
+const NO_ADS: FavoriteAdDTO[] = [];
 
 const useFavoriteAds = (
   filters: GetAdsFilters = DEFAULT_FILTERS,
   { limit }: UseFavoriteAdsOptions = {},
 ) => {
-  const [ads, setAds] = useState<FavoriteAdDTO[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const filtersKey = JSON.stringify(filters);
-
-  const fetchFavoriteAds = useCallback(async () => {
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const data = await favoritesService.getAll(filters);
-      const limitedAds =
-        typeof limit === "number" && limit >= 0 ? data.slice(0, limit) : data;
-
-      setAds(limitedAds);
-    } catch (err) {
-      console.error("Eroare la obținerea anunțurilor favorite", err);
-      setError(
-        getErrorMessage(err, "Nu s-au putut obține anunțurile favorite."),
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, [filtersKey, limit]);
-
-  useEffect(() => {
-    void fetchFavoriteAds();
-  }, [fetchFavoriteAds]);
+  const query = useQuery({
+    queryKey: ["favorites", filters],
+    queryFn: () => favoritesService.getAll(filters),
+    select: (data) =>
+      typeof limit === "number" && limit >= 0 ? data.slice(0, limit) : data,
+  });
 
   return {
-    ads,
-    isLoading,
-    error,
-    refetch: fetchFavoriteAds,
+    ads: query.data ?? NO_ADS,
+    isLoading: query.isLoading,
+    error: query.error
+      ? getErrorMessage(
+          query.error,
+          "Nu s-au putut obține anunțurile favorite.",
+        )
+      : "",
+    refetch: query.refetch,
   };
 };
 

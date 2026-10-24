@@ -1,6 +1,6 @@
 import { ActionIcon, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Form,
   useLocation,
@@ -11,14 +11,16 @@ import {
 const SearchBar = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryFromUrl = searchParams.get("q") ?? "";
-  const [searchQuery, setSearchQuery] = useState(queryFromUrl);
-
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
+  const [searchQuery, setSearchQuery] = useState(queryFromUrl);
+  const [prevQueryFromUrl, setPrevQueryFromUrl] = useState(queryFromUrl);
+
+  if (queryFromUrl !== prevQueryFromUrl) {
+    setPrevQueryFromUrl(queryFromUrl);
     setSearchQuery(queryFromUrl);
-  }, [queryFromUrl]);
+  }
 
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);

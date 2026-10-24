@@ -16,7 +16,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 const UserAds = () => {
@@ -32,11 +32,14 @@ const UserAds = () => {
     sort: "date_desc",
   });
 
-  const [searchQuery, setSearchQuery] = useState(filters.search ?? "");
+  const searchFromUrl = filters.search ?? "";
+  const [searchQuery, setSearchQuery] = useState(searchFromUrl);
+  const [prevSearchFromUrl, setPrevSearchFromUrl] = useState(searchFromUrl);
 
-  useEffect(() => {
-    setSearchQuery(filters.search ?? "");
-  }, [filters.search]);
+  if (searchFromUrl !== prevSearchFromUrl) {
+    setPrevSearchFromUrl(searchFromUrl);
+    setSearchQuery(searchFromUrl);
+  }
 
   if (isUserLoading) {
     return (

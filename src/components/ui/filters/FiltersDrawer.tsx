@@ -9,7 +9,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FiltersPanel from "./FiltersPanel";
 import { DEFAULT_AD_FILTERS } from "@/utils/searchFilters.util";
 
@@ -27,12 +27,14 @@ export const FiltersDrawer = ({
   onApply,
 }: FiltersDrawerProps) => {
   const [tempFilters, setTempFilters] = useState(filters);
+  const [prevOpened, setPrevOpened] = useState(opened);
 
-  useEffect(() => {
+  if (opened !== prevOpened) {
+    setPrevOpened(opened);
     if (opened) {
       setTempFilters(filters);
     }
-  }, [opened, filters]);
+  }
 
   const handleResetFilters = () => {
     const resetFilters = { ...DEFAULT_AD_FILTERS, search: tempFilters.search };

@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useMemo } from "react";
 import { Select, Flex } from "@mantine/core";
 import { IconMap, IconBuildingCommunity } from "@tabler/icons-react";
 import locationsData from "@/data/romanian_locations.json";
@@ -21,21 +21,15 @@ const LocationSelector = ({
   onCityChange,
   register = true,
 }: LocationSelectorProps) => {
-  const [availableCities, setAvailableCities] = useState<string[]>([]);
+  const availableCities = useMemo(() => {
+    if (!selectedCounty) return [];
 
-  useEffect(() => {
-    if (selectedCounty) {
-      const rawCities =
-        (locationsData as Record<string, string[]>)[selectedCounty] || [];
+    const rawCities =
+      (locationsData as Record<string, string[]>)[selectedCounty] || [];
 
-      const uniqueCities = Array.from(new Set(rawCities));
-
-      uniqueCities.sort((a, b) => a.localeCompare(b, "ro"));
-
-      setAvailableCities(uniqueCities);
-    } else {
-      setAvailableCities([]);
-    }
+    return Array.from(new Set(rawCities)).sort((a, b) =>
+      a.localeCompare(b, "ro"),
+    );
   }, [selectedCounty]);
 
   const handleCountySelect = (newCounty: string | null) => {

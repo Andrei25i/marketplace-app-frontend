@@ -1,38 +1,27 @@
 import { authService } from "@/services/auth.service";
-import type { PublicUser } from "@/types/auth.type";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
-import { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 const usePublicUser = (id?: string) => {
-  const [user, setUser] = useState<PublicUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const query = useQuery({
+    queryKey: ["publicUser", id],
+    queryFn: () => authService.getPublicUser(id as string),
+    enabled: Boolean(id),
+  });
 
-  const fetchUser = useCallback(async () => {
-    if (!id) {
-      setError("Utilizator invalid.");
-      setIsLoading(false);
-      return;
-    }
+  let error = "";
+  if (!id) {
+    error = "Utilizator invalid.";
+  } else if (query.error) {
+    error = getErrorMessage(query.error, "Nu s-a putut încărca profilul.");
+  }
 
-    setIsLoading(true);
-    setError("");
-
-    try {
-      const data = await authService.getPublicUser(id);
-      setUser(data);
-    } catch (err) {
-      setError(getErrorMessage(err, "Nu s-a putut încărca profilul."));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    void fetchUser();
-  }, [fetchUser]);
-
-  return { user, isLoading, error, refetch: fetchUser };
+  return {
+    user: query.data ?? null,
+    isLoading: query.isLoading,
+    error,
+    refetch: query.refetch,
+  };
 };
 
 export default usePublicUser;
