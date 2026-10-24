@@ -79,7 +79,7 @@ export const useRegisterForm = () => {
 
     try {
       const locationString = `${normalizedCity}, ${normalizedCounty}`;
-      
+
       const payload: RegisterDTO = {
         first_name: normalizedFirstName,
         last_name: normalizedLastName,
