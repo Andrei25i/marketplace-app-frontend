@@ -1,5 +1,5 @@
 import { AppShell } from "@mantine/core";
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import MinimalHeader from "../components/layout/MinimalHeader";
 
 const AuthLayout = () => (
@@ -10,6 +10,8 @@ const AuthLayout = () => (
     <AppShell.Main>
       <Outlet />
     </AppShell.Main>
+
+    <ScrollRestoration />
   </AppShell>
 );
 
