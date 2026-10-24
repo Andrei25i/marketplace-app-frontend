@@ -31,7 +31,7 @@ export const SearchResults = ({
   page,
   onPageChange,
   onRetry,
-  cols = { base: 2, md: 3 },
+  cols = { base: 2, md: 3, xl: 4 },
 }: SearchResultsProps) => {
   if (error) return <RequestErrorAlert message={error} onRetry={onRetry} />;
   if (isLoading)
@@ -45,7 +45,7 @@ export const SearchResults = ({
   return (
     <PaginatedGrid
       items={ads}
-      itemsPerPage={6}
+      itemsPerPage={12}
       page={page}
       onPageChange={onPageChange}
       cols={cols}
