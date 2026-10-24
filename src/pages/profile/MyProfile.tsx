@@ -14,11 +14,7 @@ const MyProfile = () => {
 
   return (
     <Stack gap="xl" pb={"md"}>
-      <ProfileHeader
-        user={user}
-        showPrivateDetails
-        actions={<ProfileActions />}
-      />
+      <ProfileHeader user={user} showPrivateDetails menu={<ProfileActions />} />
       <UserAdsSection userId={String(user.id)} isOwner />
       <FavoriteAdsSection />
     </Stack>

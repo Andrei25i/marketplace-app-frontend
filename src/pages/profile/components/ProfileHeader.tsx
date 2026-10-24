@@ -7,6 +7,7 @@ type ProfileHeaderProps = {
   user: PublicUser;
   showPrivateDetails?: boolean;
   actions?: ReactNode;
+  menu?: ReactNode;
   rating?: number;
   reviewCount?: number;
 };
@@ -15,6 +16,7 @@ const ProfileHeader = ({
   user,
   showPrivateDetails = false,
   actions,
+  menu,
   rating = 0,
   reviewCount = 0,
 }: ProfileHeaderProps) => {
@@ -22,7 +24,13 @@ const ProfileHeader = ({
     `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
 
   return (
-    <Paper withBorder p={{ base: "md", sm: "lg", md: "xl" }}>
+    <Paper withBorder p={{ base: "md", sm: "lg", md: "xl" }} pos="relative">
+      {menu && (
+        <Box pos="absolute" top={12} right={12}>
+          {menu}
+        </Box>
+      )}
+
       <Stack
         gap="sm"
         style={{ flex: 1, minWidth: 0 }}

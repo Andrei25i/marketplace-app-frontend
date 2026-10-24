@@ -2,7 +2,7 @@ import { Group, Text, Button } from "@mantine/core";
 import { Link, matchPath, useLocation } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { IconCirclePlusFilled } from "@tabler/icons-react";
-import UserMenu from "./UserMenu";
+import UserAvatar from "./UserAvatar";
 
 const DesktopHeader = () => {
   const { pathname } = useLocation();
@@ -30,7 +30,7 @@ const DesktopHeader = () => {
           Postează
         </Button>
 
-        <UserMenu />
+        <UserAvatar />
       </Group>
     </Group>
   );
