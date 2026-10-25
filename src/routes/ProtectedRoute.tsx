@@ -2,26 +2,10 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 
 const ProtectedRoute = () => {
-  const { isAuthenticated, logout } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
   const location = useLocation();
-  let hasStoredSession = false;
 
-  try {
-    const storedAuth = localStorage.getItem("auth-storage");
-
-    if (storedAuth) {
-      const parsedAuth = JSON.parse(storedAuth);
-      hasStoredSession = Boolean(parsedAuth.state?.token);
-    }
-  } catch {
-    hasStoredSession = false;
-  }
-
-  if (!isAuthenticated || !hasStoredSession) {
-    if (isAuthenticated && !hasStoredSession) {
-      logout();
-    }
-
+  if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

@@ -3,15 +3,12 @@ import type { FavoriteAdsState } from "@/types/favorite.types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-const readAuthToken = () => {
+const hasCachedUser = () => {
   try {
     const raw = localStorage.getItem("auth-storage");
-    if (!raw) return null;
-
-    const parsed = JSON.parse(raw);
-    return parsed?.state?.token ?? null;
+    return Boolean(raw && JSON.parse(raw)?.state?.user);
   } catch {
-    return null;
+    return false;
   }
 };
 
@@ -24,9 +21,7 @@ export const useFavoriteAdsStore = create<FavoriteAdsState>()(
       isFavorite: (adId) => get().favoriteIds.includes(adId),
 
       syncFavorites: async () => {
-        const token = readAuthToken();
-
-        if (!token) {
+        if (!hasCachedUser()) {
           set({ favoriteIds: [], isLoaded: true });
           return;
         }
