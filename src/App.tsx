@@ -1,14 +1,12 @@
 import { RouterProvider } from "react-router-dom";
-import router from "./routes/router";
-import { useFavoriteAdsStore } from "./store/useFavoriteStore";
 import { useEffect } from "react";
+import router from "./routes/router";
+import { bootstrapSession } from "./auth/bootstrapSession";
 
 function App() {
-  const syncFavorites = useFavoriteAdsStore((state) => state.syncFavorites);
-
   useEffect(() => {
-    void syncFavorites();
-  }, [syncFavorites]);
+    bootstrapSession();
+  }, []);
 
   return <RouterProvider router={router} />;
 }

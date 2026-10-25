@@ -23,16 +23,20 @@ export interface User extends PublicUser {
   email: string;
   phone_number: string;
   city: string;
+  updated_at: string;
+}
+
+export interface BroadcastOptions {
+  broadcast?: boolean;
 }
 
 export interface AuthState {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
 
-  login: (userData: User, userToken: string) => void;
-  logout: () => void;
-  setUpdatedUser: (updatedData: User) => void;
+  login: (user: User, options?: BroadcastOptions) => void;
+  logout: (options?: BroadcastOptions) => void;
+  setUpdatedUser: (user: User, options?: BroadcastOptions) => void;
 }
 
 export type UpdateUserData = Partial<User>;
@@ -42,14 +46,23 @@ export interface ResetPasswordData {
   newPassword: string;
 }
 
-export interface AuthResponse {
-  user: User;
-  token: string;
+export interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
 }
 
-export interface RegisterResponse {
-  message: string;
-  user: Pick<User, "id" | "first_name" | "last_name" | "email" | "created_at">;
+export interface AuthResponse {
+  user: User;
+}
+
+export interface ActiveSession {
+  id: string;
+  browser: string;
+  os: string;
+  ip: string | null;
+  created_at: string;
+  last_used_at: string;
+  is_current: boolean;
 }
 
 export interface MessageResponse {

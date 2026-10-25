@@ -1,6 +1,6 @@
-import { useAuthStore } from "@/store/useAuthStore";
 import { ActionIcon, Menu } from "@mantine/core";
 import {
+  IconDevices,
   IconDotsVertical,
   IconEdit,
   IconKey,
@@ -11,47 +11,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DeleteAccountModal from "./DeleteAccountModal";
 import { authService } from "@/services/auth.service";
-import { notifications } from "@mantine/notifications";
-import { getErrorMessage } from "@/utils/getErrorMessage.util";
 
 const ProfileActions = () => {
-  const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
-  const logout = useAuthStore((state) => state.logout);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isSendingReset, setIsSendingReset] = useState(false);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await authService.logout();
     navigate("/login", { replace: true });
-  };
-
-  const handleChangePassword = async () => {
-    if (!user?.email || isSendingReset) return;
-
-    setIsSendingReset(true);
-
-    try {
-      await authService.forgotPassword(user.email);
-
-      notifications.show({
-        title: "Email trimis",
-        message: `Vei primi pe adresa de email asociata contului un link pentru schimbarea parolei.`,
-        color: "green",
-        autoClose: 8000,
-      });
-    } catch (err) {
-      notifications.show({
-        title: "Eroare",
-        message: getErrorMessage(
-          err,
-          "Emailul nu a putut fi trimis. Încearcă din nou.",
-        ),
-        color: "red",
-      });
-    } finally {
-      setIsSendingReset(false);
-    }
   };
 
   const handleAccountDeleted = () => {
@@ -60,7 +27,7 @@ const ProfileActions = () => {
 
   return (
     <>
-      <Menu position="bottom-end" shadow="md" width={200} withinPortal>
+      <Menu position="bottom-end" shadow="md" width={220} withinPortal>
         <Menu.Target>
           <ActionIcon
             variant="subtle"
@@ -82,18 +49,24 @@ const ProfileActions = () => {
           </Menu.Item>
 
           <Menu.Item
+            leftSection={<IconKey size={16} />}
+            onClick={() => navigate("/profile/password")}
+          >
+            Schimbă parola
+          </Menu.Item>
+
+          <Menu.Item
+            leftSection={<IconDevices size={16} />}
+            onClick={() => navigate("/profile/sessions")}
+          >
+            Sesiuni active
+          </Menu.Item>
+
+          <Menu.Item
             leftSection={<IconLogout size={16} />}
             onClick={handleLogout}
           >
             Sign out
-          </Menu.Item>
-
-          <Menu.Item
-            leftSection={<IconKey size={16} />}
-            onClick={handleChangePassword}
-            disabled={isSendingReset}
-          >
-            Schimbă parola
           </Menu.Item>
 
           <Menu.Divider />

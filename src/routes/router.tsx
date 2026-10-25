@@ -18,6 +18,8 @@ import UserAds from "@/pages/profile/UserAds";
 import FavoriteAds from "@/pages/profile/FavoriteAds";
 import PostAd from "@/pages/post/PostAd";
 import EditAd from "@/pages/post/EditAd";
+import ChangePassword from "@/pages/profile/ChangePassword";
+import ActiveSessions from "@/pages/profile/ActiveSessions";
 
 const router = createBrowserRouter([
   {
@@ -65,6 +67,8 @@ const router = createBrowserRouter([
             path: "profile/edit",
             element: <EditProfile />,
           },
+          { path: "profile/password", element: <ChangePassword /> },
+          { path: "profile/sessions", element: <ActiveSessions /> },
           {
             path: "profile/favorites",
             element: <FavoriteAds />,
