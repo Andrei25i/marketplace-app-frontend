@@ -32,7 +32,10 @@ const PublicUserProfile = () => {
 
   return (
     <Stack gap="xl" pb={"md"}>
-      <ProfileHeader user={user} actions={<PublicProfileActions />} />
+      <ProfileHeader
+        user={user}
+        actions={<PublicProfileActions userId={String(user.id)} />}
+      />
       <UserAdsSection userId={String(user.id)} />
     </Stack>
   );

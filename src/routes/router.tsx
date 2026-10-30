@@ -20,6 +20,7 @@ import PostAd from "@/pages/post/PostAd";
 import EditAd from "@/pages/post/EditAd";
 import ChangePassword from "@/pages/profile/ChangePassword";
 import ActiveSessions from "@/pages/profile/ActiveSessions";
+import Messages from "@/pages/messages/Messages";
 
 const router = createBrowserRouter([
   {
@@ -73,6 +74,7 @@ const router = createBrowserRouter([
             path: "profile/favorites",
             element: <FavoriteAds />,
           },
+          { path: "messages/:conversationId?", element: <Messages /> },
         ],
       },
     ],

@@ -1,4 +1,6 @@
 import FavoriteButton from "@/components/ui/cards/FavoriteButton";
+import useStartConversation from "@/hooks/chat/useStartConversation";
+import { useAuthStore } from "@/store/useAuthStore";
 import type { AdDetailsDTO } from "@/types/ads.type";
 import { formatPrice } from "@/utils/format.util";
 import { Button, Card, Group, Stack, Text, Title } from "@mantine/core";
@@ -12,6 +14,10 @@ type AdDetailsCardProps = {
 
 const AdDetailsCard = ({ ad }: AdDetailsCardProps) => {
   const [isPhoneVisible, setIsPhoneVisible] = useState(false);
+
+  const user = useAuthStore((state) => state.user);
+  const isOwner = Boolean(user && String(user.id) === String(ad.user.id));
+  const { startConversation, isStarting } = useStartConversation();
 
   return (
     <Card withBorder p={{ base: "md", sm: "xl" }}>
@@ -58,9 +64,22 @@ const AdDetailsCard = ({ ad }: AdDetailsCardProps) => {
         </Text>
 
         <Stack gap="xs" pt="xs">
-          <Button size="md" radius="md" leftSection={<IconMessage size={18} />}>
-            Trimite Mesaj
-          </Button>
+          {!isOwner && (
+            <Button
+              size="md"
+              radius="md"
+              leftSection={<IconMessage size={18} />}
+              loading={isStarting}
+              onClick={() =>
+                startConversation(String(ad.user.id), {
+                  id: ad.id,
+                  title: ad.title,
+                })
+              }
+            >
+              Trimite mesaj
+            </Button>
+          )}
 
           <Button
             size="md"

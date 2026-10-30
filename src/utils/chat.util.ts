@@ -74,3 +74,11 @@ export const getMessagePreview = (
   const text = (message.content ?? "").replace(/\s+/g, " ").trim();
   return isOwnMessage(message, userId) ? `Tu: ${text}` : text;
 };
+
+export const formatUnreadCount = (count: number): string => {
+  if (count > 99) {
+    return "99+";
+  }
+
+  return String(count);
+};
