@@ -1,6 +1,6 @@
-import type { MessageAdRef } from "@/types/chat.type";
+import type { ChatMessage, MessageAdRef } from "@/types/chat.type";
 import classes from "../Messages.module.css";
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { MAX_MESSAGE_LENGTH, MESSAGE_LENGTH_WARNING } from "@/utils/chat.util";
 import {
   ActionIcon,
@@ -11,17 +11,48 @@ import {
   Text,
   Textarea,
 } from "@mantine/core";
-import { IconSend } from "@tabler/icons-react";
+import { IconCheck, IconPencil, IconSend } from "@tabler/icons-react";
 
 type MessageComposerProps = {
   onSend: (content: string) => boolean;
   ad: MessageAdRef | null;
   onRemoveAd: () => void;
+  editing: ChatMessage | null;
+  isSavingEdit: boolean;
+  onSaveEdit: (content: string) => void;
+  onCancelEdit: () => void;
 };
 
-const MessageComposer = ({ onSend, ad, onRemoveAd }: MessageComposerProps) => {
+const MessageComposer = ({
+  onSend,
+  ad,
+  onRemoveAd,
+  editing,
+  isSavingEdit,
+  onSaveEdit,
+  onCancelEdit,
+}: MessageComposerProps) => {
   const [value, setValue] = useState("");
+  const [draft, setDraft] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const currentEditId = editing?.id ?? null;
+  if (currentEditId !== editingId) {
+    setEditingId(currentEditId);
+
+    if (editing) {
+      if (editingId === null) setDraft(value);
+      setValue(editing.content ?? "");
+    } else {
+      setValue(draft);
+      setDraft("");
+    }
+  }
+
+  useEffect(() => {
+    if (currentEditId) textareaRef.current?.focus();
+  }, [currentEditId]);
 
   const length = value.trim().length;
   const isTooLong = length > MAX_MESSAGE_LENGTH;
@@ -30,6 +61,12 @@ const MessageComposer = ({ onSend, ad, onRemoveAd }: MessageComposerProps) => {
   const submit = () => {
     if (!canSend) return;
 
+    if (editing) {
+      if (value.trim() === (editing.content ?? "").trim()) onCancelEdit();
+      else onSaveEdit(value);
+      return;
+    }
+
     if (onSend(value)) {
       setValue("");
       textareaRef.current?.focus();
@@ -37,6 +74,12 @@ const MessageComposer = ({ onSend, ad, onRemoveAd }: MessageComposerProps) => {
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Escape" && editing) {
+      event.preventDefault();
+      onCancelEdit();
+      return;
+    }
+
     if (
       event.key === "Enter" &&
       !event.shiftKey &&
@@ -49,7 +92,33 @@ const MessageComposer = ({ onSend, ad, onRemoveAd }: MessageComposerProps) => {
 
   return (
     <Box className={classes.composer} px="md" py="sm">
-      {ad && (
+      {editing && (
+        <Group
+          justify="space-between"
+          wrap="nowrap"
+          mb="xs"
+          className={classes.editBanner}
+        >
+          <Box style={{ minWidth: 0 }}>
+            <Group gap={4} wrap="nowrap">
+              <IconPencil size={14} color="var(--mantine-color-primary-6)" />
+              <Text size="xs" fw={600} c="primary">
+                Editezi mesajul
+              </Text>
+            </Group>
+            <Text size="xs" c="dimmed" lineClamp={1}>
+              {editing.content}
+            </Text>
+          </Box>
+          <CloseButton
+            size="sm"
+            onClick={onCancelEdit}
+            aria-label="Anulează editarea"
+          />
+        </Group>
+      )}
+
+      {ad && !editing && (
         <Group mb="xs">
           <Badge
             variant="light"
@@ -75,7 +144,7 @@ const MessageComposer = ({ onSend, ad, onRemoveAd }: MessageComposerProps) => {
           value={value}
           onChange={(event) => setValue(event.currentTarget.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Scrie un mesaj..."
+          placeholder={editing ? "Editează mesajul..." : "Scrie un mesaj..."}
           aria-label="Mesaj"
           autosize
           minRows={1}
@@ -90,9 +159,10 @@ const MessageComposer = ({ onSend, ad, onRemoveAd }: MessageComposerProps) => {
           color="primary"
           onClick={submit}
           disabled={!canSend}
-          aria-label="Trimite mesajul"
+          loading={isSavingEdit}
+          aria-label={editing ? "Salvează modificarea" : "Trimite mesajul"}
         >
-          <IconSend size={18} />
+          {editing ? <IconCheck size={18} /> : <IconSend size={18} />}
         </ActionIcon>
       </Group>
 

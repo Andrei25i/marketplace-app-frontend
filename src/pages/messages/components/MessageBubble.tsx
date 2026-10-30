@@ -24,6 +24,8 @@ type MessageBubbleProps = {
   onRetry: (message: ChatMessage) => void;
   onDiscard: (message: ChatMessage) => void;
   actions?: ReactNode;
+  editing?: boolean;
+  tail?: boolean;
 };
 
 const MessageBubble = ({
@@ -33,6 +35,8 @@ const MessageBubble = ({
   onRetry,
   onDiscard,
   actions,
+  editing = false,
+  tail = false,
 }: MessageBubbleProps) => {
   const status = getDisplayStatus(message);
   const isDeleted = isDeletedMessage(message);
@@ -48,6 +52,7 @@ const MessageBubble = ({
         wrap="nowrap"
         justify={isOwn ? "flex-end" : "flex-start"}
         w="100%"
+        className={classes.messageRow}
       >
         {isOwn && actions}
 
@@ -56,6 +61,8 @@ const MessageBubble = ({
           data-own={isOwn || undefined}
           data-deleted={isDeleted || undefined}
           style={{ opacity: message.local_status === "sending" ? 0.75 : 1 }}
+          data-editing={editing || undefined}
+          data-tail={tail || undefined}
         >
           {message.ad && !isDeleted && (
             <Anchor

@@ -70,24 +70,28 @@
 }
 
 .bubble {
+  --bubble-bg: var(--mantine-color-white);
+
+  position: relative;
   max-width: min(75%, 560px);
   padding: 6px 10px 4px;
   border-radius: 14px;
-  background-color: var(--mantine-color-white);
-  border: 1px solid var(--mantine-color-gray-2);
+  background-color: var(--bubble-bg);
   color: var(--mantine-color-dark-7);
+  filter: drop-shadow(0 1px 1px rgba(15, 23, 42, 0.12));
 }
 
 .bubble[data-own] {
-  background-color: var(--mantine-color-primary-6);
-  border-color: var(--mantine-color-primary-6);
+  --bubble-bg: var(--mantine-color-primary-6);
   color: var(--mantine-color-white);
+  filter: none;
 }
 
 .bubble[data-deleted] {
-  background-color: transparent;
+  --bubble-bg: transparent;
   border: 1px dashed var(--mantine-color-gray-4);
   color: var(--mantine-color-dimmed);
+  filter: none;
 }
 
 .content {
@@ -129,3 +133,58 @@
   border-top: 1px solid var(--mantine-color-gray-3);
   background-color: var(--mantine-color-white);
 }
+
+.menuTrigger {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.messageRow:hover .menuTrigger,
+.menuTrigger[data-expanded],
+.menuTrigger:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .menuTrigger {
+    opacity: 0.6;
+  }
+}
+
+.bubble[data-editing] {
+  box-shadow: 0 0 0 3px var(--mantine-color-primary-3);
+}
+
+.editBanner {
+  border-left: 3px solid var(--mantine-color-primary-6);
+  padding-left: var(--mantine-spacing-xs);
+}
+
+.bubble[data-tail]:not([data-deleted]):not([data-own]) {
+  border-top-left-radius: 4px;
+}
+
+.bubble[data-tail][data-own]:not([data-deleted]) {
+  border-top-right-radius: 4px;
+}
+
+.bubble[data-tail]:not([data-deleted])::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -10px;
+  width: 13px;
+  height: 13px;
+  background-color: var(--bubble-bg);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 0 H16 V16 C13 8 7 4 1.5 2.6 Q0 2 0 1 Q0 0 2 0 Z'/%3E%3C/svg%3E")
+    no-repeat center / 100% 100%;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 0 H16 V16 C13 8 7 4 1.5 2.6 Q0 2 0 1 Q0 0 2 0 Z'/%3E%3C/svg%3E")
+    no-repeat center / 100% 100%;
+}
+
+.bubble[data-tail][data-own]:not([data-deleted])::before {
+  left: auto;
+  right: -10px;
+  transform: scaleX(-1);
+}
+

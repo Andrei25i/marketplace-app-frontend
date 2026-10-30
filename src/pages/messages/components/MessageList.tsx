@@ -8,6 +8,7 @@ import { isSameDay } from "@/utils/chatTime.util";
 import { isOwnMessage } from "@/utils/chat.util";
 import MessageBubble from "./MessageBubble";
 import DaySeparator from "./DaySeparator";
+import MessageMenu from "./MessageMenu";
 
 type MessageListProps = {
   messages: ChatMessage[];
@@ -19,6 +20,9 @@ type MessageListProps = {
   onScroll: () => void;
   onRetry: (messages: ChatMessage) => void;
   onDiscard: (message: ChatMessage) => void;
+  editingId: string | null;
+  onEdit: (message: ChatMessage) => void;
+  onDelete: (message: ChatMessage) => void;
 };
 
 const MessageList = ({
@@ -31,6 +35,9 @@ const MessageList = ({
   onScroll,
   onRetry,
   onDiscard,
+  editingId,
+  onEdit,
+  onDelete,
 }: MessageListProps) => {
   const userId = useAuthStore((state) => state.user?.id);
 
@@ -56,9 +63,10 @@ const MessageList = ({
       viewportRef={viewportRef}
       onScrollPositionChange={onScroll}
       scrollbars="y"
+      scrollbarSize={6}
       type="auto"
     >
-      <Stack gap={4} px={{ base: "sm", sm: "lg" }} py="md">
+      <Stack gap={4} px="lg" py="md">
         {isLoadingOlder && (
           <Center py="xs">
             <Loader size="sm" color="primary" />
@@ -82,15 +90,28 @@ const MessageList = ({
             !previous || !isSameDay(previous.created_at, message.created_at);
           const grouped = !newDay && previous?.sender_id === message.sender_id;
 
+          const isOwn = isOwnMessage(message, userId);
           return (
             <Fragment key={message.client_id ?? message.id}>
               {newDay && <DaySeparator date={message.created_at} />}
               <MessageBubble
                 message={message}
-                isOwn={isOwnMessage(message, userId)}
+                isOwn={isOwn}
                 grouped={grouped}
+                tail={!grouped}
+                editing={message.id === editingId}
                 onRetry={onRetry}
                 onDiscard={onDiscard}
+                actions={
+                  isOwn ? (
+                    <MessageMenu
+                      message={message}
+                      userId={userId}
+                      onEdit={onEdit}
+                      onDelete={onDelete}
+                    />
+                  ) : undefined
+                }
               />
             </Fragment>
           );

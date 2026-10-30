@@ -44,7 +44,7 @@ const ConversationList = ({ activeId }: ConversationListProps) => {
         </Title>
       </Group>
 
-      <ScrollArea className={classes.scroll} type="auto">
+      <ScrollArea className={classes.scroll} type="auto" scrollbarSize={6}>
         {isLoading && (
           <Center py="xl">
             <Loader color="primary" />
