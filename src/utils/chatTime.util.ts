@@ -65,3 +65,14 @@ export const formatLastSeen = (
     return `Văzut ${formatRelativeTime(user.last_seen_at)}`;
   return "";
 };
+
+export const formatDetailTime = (iso: string, referenceIso: string): string => {
+  const time = formatMessageTime(iso);
+  if (isSameDay(iso, referenceIso)) return time;
+
+  const date = new Date(iso).toLocaleDateString("ro-RO", {
+    day: "2-digit",
+    month: "2-digit",
+  });
+  return `${date}, ${time}`;
+};

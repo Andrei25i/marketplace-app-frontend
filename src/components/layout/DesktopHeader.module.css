@@ -1,0 +1,7 @@
+.messagesIndicator:active {
+  transform: translateY(calc(0.0625rem * var(--mantine-scale)));
+}
+
+.messagesIndicator :global(.mantine-active):active {
+  transform: none;
+}

@@ -16,6 +16,7 @@ import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
 import { IconMessage } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import ConversationListItem from "./ConversationListItem";
+import BackButton from "@/components/navigation/BackButton";
 
 type ConversationListProps = {
   activeId?: string;
@@ -37,6 +38,7 @@ const ConversationList = ({ activeId }: ConversationListProps) => {
   return (
     <>
       <Group h={64} px="md" py="sm" className={classes.listHeader}>
+        <BackButton mb={0} />
         <Title order={2} size="h4">
           Mesaje
         </Title>

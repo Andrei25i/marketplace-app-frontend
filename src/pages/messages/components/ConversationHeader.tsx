@@ -39,9 +39,12 @@ const ConversationHeader = ({
         <ActionIcon
           component={Link}
           to="/messages"
+          replace
+          hiddenFrom="sm"
           variant="subtle"
           color="gray"
           size="lg"
+          aria-label="Înapoi la conversații"
         >
           <IconArrowLeft size={20} />
         </ActionIcon>
@@ -73,7 +76,7 @@ const ConversationHeader = ({
           </Group>
         )}
       </Group>
-      
+
       {actions}
     </Group>
   );

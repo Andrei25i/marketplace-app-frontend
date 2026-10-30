@@ -6,6 +6,7 @@ import UserAvatar from "./UserAvatar";
 import { useAuthStore } from "@/store/useAuthStore";
 import useUnreadCount from "@/hooks/chat/useUnreadCount";
 import { formatUnreadCount } from "@/utils/chat.util";
+import classes from "./DesktopHeader.module.css";
 
 const DesktopHeader = () => {
   const { pathname } = useLocation();
@@ -34,6 +35,8 @@ const DesktopHeader = () => {
             offset={5}
             color="red"
             disabled={unreadCount === 0}
+            className={classes.messagesIndicator}
+            styles={{ indicator: { pointerEvents: "none" } }}
           >
             <ActionIcon
               component={Link}

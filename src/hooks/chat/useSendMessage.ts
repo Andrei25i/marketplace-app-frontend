@@ -80,7 +80,7 @@ const useSendMessage = (conversationId?: string) => {
     if (!text || text.length > MAX_MESSAGE_LENGTH) return false;
 
     mutate(buildLocalMessage(conversationId, String(userId), text, ad));
-    return false;
+    return true;
   };
 
   const retry = (message: ChatMessage) => {

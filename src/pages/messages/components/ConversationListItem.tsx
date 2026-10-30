@@ -35,6 +35,7 @@ const ConversationListItem = ({
     <UnstyledButton
       component={Link}
       to={`/messages/${conversation.id}`}
+      replace
       className={classes.item}
       data-active={active || undefined}
     >
