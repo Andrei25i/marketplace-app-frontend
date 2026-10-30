@@ -12,12 +12,11 @@ const BackButton = ({ mb = "lg" }: BackButtonProps) => {
   return (
     <ActionIcon
       variant="subtle"
+      color="gray"
       aria-label="Înapoi"
       onClick={() => navigate(-1)}
       mb={mb}
       size="lg"
-      color="primary"
-      c="dark"
       radius="md"
     >
       <IconArrowLeft size={18} />
