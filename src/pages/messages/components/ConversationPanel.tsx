@@ -1,4 +1,4 @@
-import { Box, Button, Center, Text } from "@mantine/core";
+import { Box, Button, Center, Text, Transition } from "@mantine/core";
 import { IconArrowDown } from "@tabler/icons-react";
 import { useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -178,17 +178,20 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
           isTyping={isOtherTyping}
         />
 
-        {hasNewBelow && (
-          <Button
-            size="xs"
-            radius="xl"
-            leftSection={<IconArrowDown size={14} />}
-            className={classes.jumpButton}
-            onClick={scrollToBottom}
-          >
-            Mesaje noi
-          </Button>
-        )}
+        <Transition mounted={hasNewBelow} transition="slide-up" duration={200}>
+          {(transitionStyles) => (
+            <Button
+              size="xs"
+              radius="xl"
+              leftSection={<IconArrowDown size={14} />}
+              className={classes.jumpButton}
+              style={transitionStyles}
+              onClick={scrollToBottom}
+            >
+              Mesaje noi
+            </Button>
+          )}
+        </Transition>
       </Box>
 
       <MessageComposer
