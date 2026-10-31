@@ -13,6 +13,7 @@ const useConversation = (conversationId?: string) => {
     placeholderData: () =>
       conversationId ? getCachedConversation(conversationId) : undefined,
     refetchOnWindowFocus: shouldRefetchOnFocus,
+    refetchOnMount: shouldRefetchOnFocus,
   });
 
   return {

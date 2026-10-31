@@ -25,7 +25,7 @@ const useMessages = (conversationId?: string) => {
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     enabled: Boolean(conversationId),
     refetchOnWindowFocus: shouldRefetchOnFocus,
-    gcTime: 0,
+    refetchOnMount: shouldRefetchOnFocus,
   });
 
   const pending = useChatOutboxStore((state) =>

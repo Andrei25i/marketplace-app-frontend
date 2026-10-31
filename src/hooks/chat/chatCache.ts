@@ -291,5 +291,10 @@ export const invalidateUnread = () => {
 };
 
 export const invalidateChat = () => {
+  queryClient.removeQueries({
+    queryKey: [...chatKeys.all, "messages"],
+    type: "inactive",
+  });
+
   void queryClient.invalidateQueries({ queryKey: chatKeys.all });
 };
