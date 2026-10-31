@@ -8,6 +8,7 @@ import { upsertMessage } from "./chatCache";
 import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
 import { useCallback } from "react";
+import axios from "axios";
 
 const outbox = () => useChatOutboxStore.getState();
 
@@ -63,13 +64,18 @@ const useSendMessage = (conversationId?: string) => {
         "failed",
       );
 
+      const isRateLimited =
+        axios.isAxiosError(error) && error.response?.status === 429;
+
       notifications.show({
         color: "red",
         title: "Mesajul nu a fost trimis",
-        message: getErrorMessage(
-          error,
-          "Verifică conexiunea și încearcă din nou.",
-        ),
+        message: isRateLimited
+          ? getErrorMessage(
+              error,
+              "Trimiți mesaje prea repede. Așteaptă câteva momente.",
+            )
+          : "Încearcă să îl trimiți din nou.",
       });
     },
   });
