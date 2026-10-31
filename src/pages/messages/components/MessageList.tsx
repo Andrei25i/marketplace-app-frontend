@@ -9,6 +9,7 @@ import { isOwnMessage } from "@/utils/chat.util";
 import MessageBubble from "./MessageBubble";
 import DaySeparator from "./DaySeparator";
 import UnreadSeparator from "./UnreadSeparator";
+import TypingBubble from "./TypingBubble";
 
 type MessageListProps = {
   messages: ChatMessage[];
@@ -25,6 +26,7 @@ type MessageListProps = {
   onDelete: (message: ChatMessage) => void;
   unreadMarkerId: string | null;
   unreadCount: number;
+  isTyping: boolean;
 };
 
 const MessageList = ({
@@ -42,6 +44,7 @@ const MessageList = ({
   onDelete,
   unreadMarkerId,
   unreadCount,
+  isTyping,
 }: MessageListProps) => {
   const userId = useAuthStore((state) => state.user?.id);
 
@@ -121,6 +124,8 @@ const MessageList = ({
             </Fragment>
           );
         })}
+        
+        {isTyping && <TypingBubble />}
       </Stack>
     </ScrollArea>
   );

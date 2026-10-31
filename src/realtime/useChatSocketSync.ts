@@ -16,6 +16,7 @@ import { notifyIncomingMessage } from "./messageNotifications";
 import { isReadingConversation } from "@/hooks/chat/activeConversation";
 import { usePresenceStore } from "@/store/usePresenceStore";
 import { resubscribePresence } from "./presence";
+import { useTypingStore } from "@/store/useTypingStore";
 
 const currentUserId = (): string | null => {
   const id = useAuthStore.getState().user?.id;
@@ -36,6 +37,7 @@ const onMessageNew: ServerToClientEvents["message:new"] = ({
 
   if (!fromOther) return;
 
+  useTypingStore.getState().setTyping(conversation.id, false);
   socket.emit("message:received", { messageIds: [message.id] });
 
   if (!isReading) {
@@ -69,6 +71,17 @@ const onPresenceUpdate: ServerToClientEvents["presence:update"] = (
   usePresenceStore.getState().set(presence);
 };
 
+const onTyping: ServerToClientEvents["typing"] = ({
+  conversationId,
+  userId,
+  isTyping,
+}) => {
+  if (userId === currentUserId()) return;
+  useTypingStore.getState().setTyping(conversationId, isTyping);
+};
+
+const clearTyping = () => useTypingStore.getState().clear();
+
 const useChatSocketSync = () => {
   useEffect(() => {
     socket.on("message:new", onMessageNew);
@@ -79,6 +92,8 @@ const useChatSocketSync = () => {
     socket.on("unread:updated", onUnreadUpdated);
     socket.on("presence:update", onPresenceUpdate);
     socket.on("connect", resubscribePresence);
+    socket.on("typing", onTyping);
+    socket.on("disconnect", clearTyping);
 
     return () => {
       socket.off("message:new", onMessageNew);
@@ -89,6 +104,8 @@ const useChatSocketSync = () => {
       socket.off("unread:updated", onUnreadUpdated);
       socket.off("presence:update", onPresenceUpdate);
       socket.off("connect", resubscribePresence);
+      socket.off("typing", onTyping);
+      socket.off("disconnect", clearTyping);
     };
   }, []);
 };

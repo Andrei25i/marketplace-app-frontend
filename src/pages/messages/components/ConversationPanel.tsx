@@ -21,6 +21,8 @@ import ConversationMenu from "./ConversationMenu";
 import ChatConfirmModal from "./ChatConfirmModal";
 import { isOwnMessage } from "@/utils/chat.util";
 import usePresenceSubscription from "@/hooks/chat/usePresenceSubscription";
+import useTypingEmitter from "@/hooks/chat/useTypingEmitter";
+import { useIsTyping } from "@/store/useTypingStore";
 
 type ConversationPanelProps = {
   conversationId: string;
@@ -65,7 +67,12 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     });
   }
 
-  const { send, retry, discard } = useSendMessage(conversationId);
+  const { notifyTyping, stopTyping, markSent, sendFailed } =
+    useTypingEmitter(conversationId);
+  const { send, retry, discard } = useSendMessage(conversationId, {
+    onFailed: sendFailed,
+  });
+
   const { editMessage, deleteMessage } = useMessageActions(conversationId);
   const hideConversation = useHideConversation();
 
@@ -77,6 +84,7 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     void loadOlder();
   }, [loadOlder]);
 
+  const isOtherTyping = useIsTyping(conversationId);
   const { viewportRef, onScroll, isAtBottom, hasNewBelow, scrollToBottom } =
     useChatScroll({
       messages,
@@ -84,6 +92,7 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
       hasOlder,
       isLoadingOlder,
       loadOlder: loadOlderPage,
+      isTyping: isOtherTyping,
     });
 
   useMarkConversationRead(conversationId, messages, isAtBottom);
@@ -100,6 +109,7 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
   const handleSend = (content: string) => {
     const started = send(content, ad);
     if (!started) return false;
+    markSent();
 
     if (ad) clearAd();
     if (unreadMarker?.messageId) setUnreadMarker({ messageId: null, count: 0 });
@@ -165,6 +175,7 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
           onDelete={setDeleting}
           unreadMarkerId={unreadMarker?.messageId ?? null}
           unreadCount={unreadMarker?.count ?? 0}
+          isTyping={isOtherTyping}
         />
 
         {hasNewBelow && (
@@ -188,6 +199,8 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
         isSavingEdit={editMessage.isPending}
         onSaveEdit={handleSaveEdit}
         onCancelEdit={() => setEditing(null)}
+        onTyping={notifyTyping}
+        onTypingStop={stopTyping}
       />
 
       <ChatConfirmModal

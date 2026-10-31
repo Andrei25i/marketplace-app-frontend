@@ -37,7 +37,14 @@ const buildLocalMessage = (
   };
 };
 
-const useSendMessage = (conversationId?: string) => {
+type UseSendMessageOptions = {
+  onFailed?: () => void;
+};
+
+const useSendMessage = (
+  conversationId?: string,
+  { onFailed }: UseSendMessageOptions = {},
+) => {
   const userId = useAuthStore((state) => state.user?.id);
 
   const { mutate } = useMutation({
@@ -58,6 +65,8 @@ const useSendMessage = (conversationId?: string) => {
     },
 
     onError: (error, message) => {
+      onFailed?.();
+
       outbox().setStatus(
         message.conversation_id,
         message.client_id as string,

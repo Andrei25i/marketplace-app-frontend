@@ -12,6 +12,7 @@ type UseChatScrollOptions = {
   hasOlder: boolean;
   isLoadingOlder: boolean;
   loadOlder: () => void;
+  isTyping: boolean;
 };
 
 const useChatScroll = ({
@@ -20,6 +21,7 @@ const useChatScroll = ({
   hasOlder,
   isLoadingOlder,
   loadOlder,
+  isTyping,
 }: UseChatScrollOptions) => {
   const viewportRef = useRef<HTMLDivElement>(null);
 
@@ -31,6 +33,7 @@ const useChatScroll = ({
   const lastIdRef = useRef<string | null>(null);
   const heightBeforeOlderRef = useRef<number | null>(null);
   const wasLoadingOlderRef = useRef(false);
+  const wasTypingRef = useRef(false);
 
   const requestOlder = useCallback(() => {
     const viewport = viewportRef.current;
@@ -108,10 +111,23 @@ const useChatScroll = ({
     firstIdRef.current = first.id;
     lastIdRef.current = last.id;
 
+    if (isTyping && !wasTypingRef.current && isAtBottom) {
+      viewport.scrollTo({ top: viewport.scrollHeight, behavior: "smooth" });
+    }
+    wasTypingRef.current = isTyping;
+
     if (viewport.scrollHeight <= viewport.clientHeight + TOP_THRESHOLD_PX) {
       requestOlder();
     }
-  }, [messages, isAtBottom, isLoadingOlder, userId, requestOlder, onScroll]);
+  }, [
+    messages,
+    isAtBottom,
+    isLoadingOlder,
+    userId,
+    requestOlder,
+    onScroll,
+    isTyping,
+  ]);
 
   const lastMessage = messages.at(-1);
   const hasNewBelow =
