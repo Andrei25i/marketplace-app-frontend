@@ -81,7 +81,11 @@ const useChatScroll = ({
       }
 
       initializedRef.current = true;
-      requestAnimationFrame(onScroll);
+      const initialLastId = last.id;
+      requestAnimationFrame(() => {
+        setSeenLastId(initialLastId);
+        onScroll();
+      });
     } else if (
       heightBeforeOlderRef.current !== null &&
       first.id !== firstIdRef.current
