@@ -20,6 +20,7 @@ import useHideConversation from "@/hooks/chat/useHideConversation";
 import ConversationMenu from "./ConversationMenu";
 import ChatConfirmModal from "./ChatConfirmModal";
 import { isOwnMessage } from "@/utils/chat.util";
+import usePresenceSubscription from "@/hooks/chat/usePresenceSubscription";
 
 type ConversationPanelProps = {
   conversationId: string;
@@ -35,6 +36,8 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     error: conversationError,
     refetch: refetchConversation,
   } = useConversation(conversationId);
+
+  usePresenceSubscription(conversation ? [conversation.other_user.id] : []);
 
   const {
     messages,

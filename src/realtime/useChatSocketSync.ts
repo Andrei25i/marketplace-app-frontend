@@ -14,6 +14,8 @@ import router from "@/routes/router";
 import { useEffect } from "react";
 import { notifyIncomingMessage } from "./messageNotifications";
 import { isReadingConversation } from "@/hooks/chat/activeConversation";
+import { usePresenceStore } from "@/store/usePresenceStore";
+import { resubscribePresence } from "./presence";
 
 const currentUserId = (): string | null => {
   const id = useAuthStore.getState().user?.id;
@@ -61,6 +63,12 @@ const onUnreadUpdated: ServerToClientEvents["unread:updated"] = ({ total }) => {
   setUnreadTotal(total);
 };
 
+const onPresenceUpdate: ServerToClientEvents["presence:update"] = (
+  presence,
+) => {
+  usePresenceStore.getState().set(presence);
+};
+
 const useChatSocketSync = () => {
   useEffect(() => {
     socket.on("message:new", onMessageNew);
@@ -69,6 +77,8 @@ const useChatSocketSync = () => {
     socket.on("conversation:read", applyConversationRead);
     socket.on("conversation:hidden", onConversationHidden);
     socket.on("unread:updated", onUnreadUpdated);
+    socket.on("presence:update", onPresenceUpdate);
+    socket.on("connect", resubscribePresence);
 
     return () => {
       socket.off("message:new", onMessageNew);
@@ -77,6 +87,8 @@ const useChatSocketSync = () => {
       socket.off("conversation:read", applyConversationRead);
       socket.off("conversation:hidden", onConversationHidden);
       socket.off("unread:updated", onUnreadUpdated);
+      socket.off("presence:update", onPresenceUpdate);
+      socket.off("connect", resubscribePresence);
     };
   }, []);
 };

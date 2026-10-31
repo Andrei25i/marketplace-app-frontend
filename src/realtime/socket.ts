@@ -7,6 +7,7 @@ import type {
 } from "@/types/socket.type";
 import { notifications } from "@mantine/notifications";
 import { io, type Socket } from "socket.io-client";
+import { usePresenceStore } from "@/store/usePresenceStore";
 
 export type ChatSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -89,6 +90,7 @@ socket.on("disconnect", (reason) => {
 export const resetSocketState = () => {
   recoveryAttempts = 0;
   hasConnectedBefore = false;
+  usePresenceStore.getState().clear();
 };
 
 export const shouldRefetchOnFocus = () => !socket.connected;
