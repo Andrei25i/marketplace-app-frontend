@@ -124,7 +124,7 @@ const MessageList = ({
             </Fragment>
           );
         })}
-        
+
         {isTyping && <TypingBubble />}
       </Stack>
     </ScrollArea>
