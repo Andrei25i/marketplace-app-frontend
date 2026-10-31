@@ -96,8 +96,12 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
 
   const handleSend = (content: string) => {
     const started = send(content, ad);
-    if (started && ad) clearAd();
-    return started;
+    if (!started) return false;
+
+    if (ad) clearAd();
+    if (unreadMarker?.messageId) setUnreadMarker({ messageId: null, count: 0 });
+
+    return true;
   };
 
   const handleSaveEdit = (content: string) => {
