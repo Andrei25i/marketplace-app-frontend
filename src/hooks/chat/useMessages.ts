@@ -5,6 +5,7 @@ import { chatService } from "@/services/chat.service";
 import { useChatOutboxStore } from "@/store/useChatOutboxStore";
 import { useMemo } from "react";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { shouldRefetchOnFocus } from "@/realtime/socket";
 
 const NO_MESSAGES: ChatMessage[] = [];
 
@@ -23,7 +24,8 @@ const useMessages = (conversationId?: string) => {
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
     enabled: Boolean(conversationId),
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: shouldRefetchOnFocus,
+    gcTime: 0,
   });
 
   const pending = useChatOutboxStore((state) =>

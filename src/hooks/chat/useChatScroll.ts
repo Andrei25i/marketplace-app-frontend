@@ -4,6 +4,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 const BOTTOM_THRESHOLD_PX = 80;
 const TOP_THRESHOLD_PX = 150;
+const UNREAD_MARKER_OFFSET_PX = 16;
 
 type UseChatScrollOptions = {
   messages: ChatMessage[];
@@ -66,8 +67,21 @@ const useChatScroll = ({
     if (!viewport || !first || !last) return;
 
     if (!initializedRef.current) {
-      viewport.scrollTop = viewport.scrollHeight;
+      const marker = viewport.querySelector<HTMLElement>(
+        "[data-unread-marker]",
+      );
+
+      if (marker) {
+        const offset =
+          marker.getBoundingClientRect().top -
+          viewport.getBoundingClientRect().top;
+        viewport.scrollTop += offset - UNREAD_MARKER_OFFSET_PX;
+      } else {
+        viewport.scrollTop = viewport.scrollHeight;
+      }
+
       initializedRef.current = true;
+      requestAnimationFrame(onScroll);
     } else if (
       heightBeforeOlderRef.current !== null &&
       first.id !== firstIdRef.current
@@ -93,7 +107,7 @@ const useChatScroll = ({
     if (viewport.scrollHeight <= viewport.clientHeight + TOP_THRESHOLD_PX) {
       requestOlder();
     }
-  }, [messages, isAtBottom, isLoadingOlder, userId, requestOlder]);
+  }, [messages, isAtBottom, isLoadingOlder, userId, requestOlder, onScroll]);
 
   const lastMessage = messages.at(-1);
   const hasNewBelow =

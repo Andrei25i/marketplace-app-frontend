@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { upsertMessage } from "./chatCache";
 import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { useCallback } from "react";
 
 const outbox = () => useChatOutboxStore.getState();
 
@@ -83,13 +84,16 @@ const useSendMessage = (conversationId?: string) => {
     return true;
   };
 
-  const retry = (message: ChatMessage) => {
-    mutate({ ...message, local_status: "sending" });
-  };
+  const retry = useCallback(
+    (message: ChatMessage) => {
+      mutate({ ...message, local_status: "sending" });
+    },
+    [mutate],
+  );
 
-  const discard = (message: ChatMessage) => {
+  const discard = useCallback((message: ChatMessage) => {
     outbox().remove(message.conversation_id, message.client_id as string);
-  };
+  }, []);
 
   return { send, retry, discard };
 };

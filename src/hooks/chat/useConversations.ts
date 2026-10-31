@@ -4,6 +4,7 @@ import { chatKeys } from "./chatKeys";
 import { chatService } from "@/services/chat.service";
 import { useMemo } from "react";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { shouldRefetchOnFocus } from "@/realtime/socket";
 
 const NO_CONVERSATIONS: ConversationSummaryDTO[] = [];
 
@@ -13,7 +14,7 @@ const useConversations = () => {
     queryFn: ({ pageParam }) => chatService.getConversations(pageParam),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: shouldRefetchOnFocus,
   });
 
   const conversations = useMemo(() => {

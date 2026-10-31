@@ -90,3 +90,5 @@ export const resetSocketState = () => {
   recoveryAttempts = 0;
   hasConnectedBefore = false;
 };
+
+export const shouldRefetchOnFocus = () => !socket.connected;

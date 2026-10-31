@@ -19,6 +19,7 @@ import useMessageActions from "@/hooks/chat/useMessageActions";
 import useHideConversation from "@/hooks/chat/useHideConversation";
 import ConversationMenu from "./ConversationMenu";
 import ChatConfirmModal from "./ChatConfirmModal";
+import { isOwnMessage } from "@/utils/chat.util";
 
 type ConversationPanelProps = {
   conversationId: string;
@@ -44,6 +45,22 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     hasOlder,
     isLoadingOlder,
   } = useMessages(conversationId);
+
+  const [unreadMarker, setUnreadMarker] = useState<{
+    messageId: string | null;
+    count: number;
+  } | null>(null);
+
+  if (unreadMarker === null && !isLoading && messages.length > 0) {
+    const unread = messages.filter(
+      (m) => !m.local_status && !m.read_at && !isOwnMessage(m, userId),
+    );
+
+    setUnreadMarker({
+      messageId: unread[0]?.id ?? null,
+      count: Math.max(unread.length, conversation?.unread_count ?? 0),
+    });
+  }
 
   const { send, retry, discard } = useSendMessage(conversationId);
   const { editMessage, deleteMessage } = useMessageActions(conversationId);
@@ -139,6 +156,8 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
           editingId={editing?.id ?? null}
           onEdit={setEditing}
           onDelete={setDeleting}
+          unreadMarkerId={unreadMarker?.messageId ?? null}
+          unreadCount={unreadMarker?.count ?? 0}
         />
 
         {hasNewBelow && (

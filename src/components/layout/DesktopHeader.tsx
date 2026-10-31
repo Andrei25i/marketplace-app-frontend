@@ -47,7 +47,7 @@ const DesktopHeader = () => {
               radius="xl"
               aria-label="Mesaje"
             >
-              <IconMessage size={25} />
+              <IconMessage size={22} />
             </ActionIcon>
           </Indicator>
         )}

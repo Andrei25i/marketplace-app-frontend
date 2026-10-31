@@ -1,3 +1,7 @@
+.viewport {
+  overflow-anchor: none;
+}
+
 .container {
   display: flex;
   overflow: hidden;

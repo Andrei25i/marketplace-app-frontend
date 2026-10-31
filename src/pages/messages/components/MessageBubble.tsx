@@ -9,13 +9,14 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { type ReactNode } from "react";
 import classes from "../Messages.module.css";
 import { Link } from "react-router-dom";
 import { IconBan, IconRefresh, IconX } from "@tabler/icons-react";
 import { formatMessageTime } from "@/utils/chatTime.util";
 import MessageStatusIcon from "./MessageStatusIcon";
 import MessageTimeDetails from "./MessageTimeDetails";
+import MessageMenu from "./MessageMenu";
+import { memo } from "react";
 
 type MessageBubbleProps = {
   message: ChatMessage;
@@ -23,7 +24,9 @@ type MessageBubbleProps = {
   grouped: boolean;
   onRetry: (message: ChatMessage) => void;
   onDiscard: (message: ChatMessage) => void;
-  actions?: ReactNode;
+  userId: string | number | null | undefined;
+  onEdit: (message: ChatMessage) => void;
+  onDelete: (message: ChatMessage) => void;
   editing?: boolean;
   tail?: boolean;
 };
@@ -34,12 +37,23 @@ const MessageBubble = ({
   grouped,
   onRetry,
   onDiscard,
-  actions,
+  userId,
+  onEdit,
+  onDelete,
   editing = false,
   tail = false,
 }: MessageBubbleProps) => {
   const status = getDisplayStatus(message);
   const isDeleted = isDeletedMessage(message);
+
+  const menu = isOwn ? (
+    <MessageMenu
+      message={message}
+      userId={userId}
+      onEdit={onEdit}
+      onDelete={onDelete}
+    />
+  ) : null;
 
   return (
     <Stack
@@ -54,7 +68,7 @@ const MessageBubble = ({
         w="100%"
         className={classes.messageRow}
       >
-        {isOwn && actions}
+        {isOwn && menu}
 
         <Box
           className={classes.bubble}
@@ -112,7 +126,7 @@ const MessageBubble = ({
           </Group>
         </Box>
 
-        {!isOwn && actions}
+        {!isOwn && menu}
       </Group>
 
       {status === "failed" && (
@@ -140,4 +154,4 @@ const MessageBubble = ({
   );
 };
 
-export default MessageBubble;
+export default memo(MessageBubble);

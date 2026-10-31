@@ -1,11 +1,19 @@
-import { chatService } from "@/services/chat.service";
-import { useAuthStore } from "@/store/useAuthStore";
-import type { ChatMessage } from "@/types/chat.type";
 import { useDocumentVisibility } from "@mantine/hooks";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef } from "react";
-import { applyConversationRead } from "./chatCache";
+import { socket } from "@/realtime/socket";
+import { chatService } from "@/services/chat.service";
+import { useAuthStore } from "@/store/useAuthStore";
+import type { ChatMessage } from "@/types/chat.type";
 import { isOwnMessage } from "@/utils/chat.util";
+import { setReadingConversation } from "./activeConversation";
+import {
+  applyConversationRead,
+  changeUnreadTotal,
+  getCachedConversation,
+  invalidateChat,
+  invalidateUnread,
+} from "./chatCache";
 
 const READ_DEBOUNCE_MS = 300;
 
@@ -23,23 +31,41 @@ const useMarkConversationRead = (
   const visibility = useDocumentVisibility();
   const requestUpTo = useRef<string | null>(null);
 
+  const isReading =
+    Boolean(conversationId) && enabled && visibility === "visible";
+
+  useEffect(() => {
+    if (!isReading || !conversationId) return;
+
+    setReadingConversation(conversationId);
+    return () => setReadingConversation(null);
+  }, [isReading, conversationId]);
+
   const { mutate } = useMutation({
     mutationFn: ({ upToMessageId }: ReadVariables) =>
       chatService.markRead(conversationId as string, upToMessageId),
 
-    onSuccess: (result, { upTo }) => {
+    onMutate: ({ upTo }) => {
       if (!conversationId || userId == null) return;
+
+      const unread = getCachedConversation(conversationId)?.unread_count ?? 0;
+      if (unread > 0) changeUnreadTotal(-unread);
 
       applyConversationRead({
         conversationId,
         readerId: String(userId),
-        readAt: result.readAt ?? new Date().toISOString(),
+        readAt: new Date().toISOString(),
         upTo,
       });
     },
 
+    onSuccess: () => {
+      if (!socket.connected) invalidateUnread();
+    },
+
     onError: () => {
       requestUpTo.current = null;
+      invalidateChat();
     },
   });
 
@@ -52,16 +78,16 @@ const useMarkConversationRead = (
   );
 
   useEffect(() => {
-    if (!conversationId || !enabled || visibility !== "visible") return;
-    if (!lastUnread || requestUpTo.current === lastUnread.id) return;
+    if (!isReading || !lastUnread) return;
+    if (requestUpTo.current === lastUnread.id) return;
 
     const timer = setTimeout(() => {
       requestUpTo.current = lastUnread.id;
       mutate({ upToMessageId: lastUnread.id, upTo: lastUnread.created_at });
     }, READ_DEBOUNCE_MS);
 
-    return () => clearInterval(timer);
-  }, [conversationId, enabled, visibility, lastUnread, mutate]);
+    return () => clearTimeout(timer);
+  }, [isReading, lastUnread, mutate]);
 };
 
 export default useMarkConversationRead;
