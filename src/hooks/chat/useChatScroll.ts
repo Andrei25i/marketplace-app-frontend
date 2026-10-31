@@ -4,6 +4,7 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 const BOTTOM_THRESHOLD_PX = 80;
 const TOP_THRESHOLD_PX = 150;
+const UNREAD_MARKER_OFFSET_PX = 16;
 
 type UseChatScrollOptions = {
   messages: ChatMessage[];
@@ -11,6 +12,7 @@ type UseChatScrollOptions = {
   hasOlder: boolean;
   isLoadingOlder: boolean;
   loadOlder: () => void;
+  isTyping: boolean;
 };
 
 const useChatScroll = ({
@@ -19,6 +21,7 @@ const useChatScroll = ({
   hasOlder,
   isLoadingOlder,
   loadOlder,
+  isTyping,
 }: UseChatScrollOptions) => {
   const viewportRef = useRef<HTMLDivElement>(null);
 
@@ -30,6 +33,7 @@ const useChatScroll = ({
   const lastIdRef = useRef<string | null>(null);
   const heightBeforeOlderRef = useRef<number | null>(null);
   const wasLoadingOlderRef = useRef(false);
+  const wasTypingRef = useRef(false);
 
   const requestOlder = useCallback(() => {
     const viewport = viewportRef.current;
@@ -66,8 +70,25 @@ const useChatScroll = ({
     if (!viewport || !first || !last) return;
 
     if (!initializedRef.current) {
-      viewport.scrollTop = viewport.scrollHeight;
+      const marker = viewport.querySelector<HTMLElement>(
+        "[data-unread-marker]",
+      );
+
+      if (marker) {
+        const offset =
+          marker.getBoundingClientRect().top -
+          viewport.getBoundingClientRect().top;
+        viewport.scrollTop += offset - UNREAD_MARKER_OFFSET_PX;
+      } else {
+        viewport.scrollTop = viewport.scrollHeight;
+      }
+
       initializedRef.current = true;
+      const initialLastId = last.id;
+      requestAnimationFrame(() => {
+        setSeenLastId(initialLastId);
+        onScroll();
+      });
     } else if (
       heightBeforeOlderRef.current !== null &&
       first.id !== firstIdRef.current
@@ -90,10 +111,23 @@ const useChatScroll = ({
     firstIdRef.current = first.id;
     lastIdRef.current = last.id;
 
+    if (isTyping && !wasTypingRef.current && isAtBottom) {
+      viewport.scrollTo({ top: viewport.scrollHeight, behavior: "smooth" });
+    }
+    wasTypingRef.current = isTyping;
+
     if (viewport.scrollHeight <= viewport.clientHeight + TOP_THRESHOLD_PX) {
       requestOlder();
     }
-  }, [messages, isAtBottom, isLoadingOlder, userId, requestOlder]);
+  }, [
+    messages,
+    isAtBottom,
+    isLoadingOlder,
+    userId,
+    requestOlder,
+    onScroll,
+    isTyping,
+  ]);
 
   const lastMessage = messages.at(-1);
   const hasNewBelow =

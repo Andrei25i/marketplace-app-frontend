@@ -3,6 +3,7 @@ import { chatKeys } from "./chatKeys";
 import { chatService } from "@/services/chat.service";
 import { getCachedConversation } from "./chatCache";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { shouldRefetchOnFocus } from "@/realtime/socket";
 
 const useConversation = (conversationId?: string) => {
   const query = useQuery({
@@ -11,7 +12,8 @@ const useConversation = (conversationId?: string) => {
     enabled: Boolean(conversationId),
     placeholderData: () =>
       conversationId ? getCachedConversation(conversationId) : undefined,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: shouldRefetchOnFocus,
+    refetchOnMount: shouldRefetchOnFocus,
   });
 
   return {

@@ -7,6 +7,8 @@ import { useMutation } from "@tanstack/react-query";
 import { upsertMessage } from "./chatCache";
 import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { useCallback } from "react";
+import axios from "axios";
 
 const outbox = () => useChatOutboxStore.getState();
 
@@ -35,7 +37,14 @@ const buildLocalMessage = (
   };
 };
 
-const useSendMessage = (conversationId?: string) => {
+type UseSendMessageOptions = {
+  onFailed?: () => void;
+};
+
+const useSendMessage = (
+  conversationId?: string,
+  { onFailed }: UseSendMessageOptions = {},
+) => {
   const userId = useAuthStore((state) => state.user?.id);
 
   const { mutate } = useMutation({
@@ -56,19 +65,26 @@ const useSendMessage = (conversationId?: string) => {
     },
 
     onError: (error, message) => {
+      onFailed?.();
+
       outbox().setStatus(
         message.conversation_id,
         message.client_id as string,
         "failed",
       );
 
+      const isRateLimited =
+        axios.isAxiosError(error) && error.response?.status === 429;
+
       notifications.show({
         color: "red",
         title: "Mesajul nu a fost trimis",
-        message: getErrorMessage(
-          error,
-          "Verifică conexiunea și încearcă din nou.",
-        ),
+        message: isRateLimited
+          ? getErrorMessage(
+              error,
+              "Trimiți mesaje prea repede. Așteaptă câteva momente.",
+            )
+          : "Încearcă să îl trimiți din nou.",
       });
     },
   });
@@ -83,13 +99,16 @@ const useSendMessage = (conversationId?: string) => {
     return true;
   };
 
-  const retry = (message: ChatMessage) => {
-    mutate({ ...message, local_status: "sending" });
-  };
+  const retry = useCallback(
+    (message: ChatMessage) => {
+      mutate({ ...message, local_status: "sending" });
+    },
+    [mutate],
+  );
 
-  const discard = (message: ChatMessage) => {
+  const discard = useCallback((message: ChatMessage) => {
     outbox().remove(message.conversation_id, message.client_id as string);
-  };
+  }, []);
 
   return { send, retry, discard };
 };

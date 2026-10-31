@@ -2,13 +2,14 @@ import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
 import { useAuthStore } from "@/store/useAuthStore";
 import type { ChatMessage } from "@/types/chat.type";
 import { Center, Loader, ScrollArea, Stack, Text } from "@mantine/core";
-import { Fragment, type RefObject } from "react";
+import { Fragment, memo, type RefObject } from "react";
 import classes from "../Messages.module.css";
 import { isSameDay } from "@/utils/chatTime.util";
 import { isOwnMessage } from "@/utils/chat.util";
 import MessageBubble from "./MessageBubble";
 import DaySeparator from "./DaySeparator";
-import MessageMenu from "./MessageMenu";
+import UnreadSeparator from "./UnreadSeparator";
+import TypingBubble from "./TypingBubble";
 
 type MessageListProps = {
   messages: ChatMessage[];
@@ -23,6 +24,9 @@ type MessageListProps = {
   editingId: string | null;
   onEdit: (message: ChatMessage) => void;
   onDelete: (message: ChatMessage) => void;
+  unreadMarkerId: string | null;
+  unreadCount: number;
+  isTyping: boolean;
 };
 
 const MessageList = ({
@@ -38,6 +42,9 @@ const MessageList = ({
   editingId,
   onEdit,
   onDelete,
+  unreadMarkerId,
+  unreadCount,
+  isTyping,
 }: MessageListProps) => {
   const userId = useAuthStore((state) => state.user?.id);
 
@@ -60,6 +67,7 @@ const MessageList = ({
   return (
     <ScrollArea
       className={classes.scroll}
+      classNames={{ viewport: classes.viewport }}
       viewportRef={viewportRef}
       onScrollPositionChange={onScroll}
       scrollbars="y"
@@ -93,7 +101,14 @@ const MessageList = ({
           const isOwn = isOwnMessage(message, userId);
           return (
             <Fragment key={message.client_id ?? message.id}>
-              {newDay && <DaySeparator date={message.created_at} />}
+              {newDay && !isLoadingOlder && (
+                <DaySeparator date={message.created_at} />
+              )}
+
+              {message.id === unreadMarkerId && (
+                <UnreadSeparator count={unreadCount} />
+              )}
+
               <MessageBubble
                 message={message}
                 isOwn={isOwn}
@@ -102,23 +117,18 @@ const MessageList = ({
                 editing={message.id === editingId}
                 onRetry={onRetry}
                 onDiscard={onDiscard}
-                actions={
-                  isOwn ? (
-                    <MessageMenu
-                      message={message}
-                      userId={userId}
-                      onEdit={onEdit}
-                      onDelete={onDelete}
-                    />
-                  ) : undefined
-                }
+                userId={userId}
+                onEdit={onEdit}
+                onDelete={onDelete}
               />
             </Fragment>
           );
         })}
+
+        {isTyping && <TypingBubble />}
       </Stack>
     </ScrollArea>
   );
 };
 
-export default MessageList;
+export default memo(MessageList);

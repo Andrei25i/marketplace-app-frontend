@@ -17,6 +17,7 @@ import { IconMessage } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import ConversationListItem from "./ConversationListItem";
 import BackButton from "@/components/navigation/BackButton";
+import usePresenceSubscription from "@/hooks/chat/usePresenceSubscription";
 
 type ConversationListProps = {
   activeId?: string;
@@ -32,6 +33,8 @@ const ConversationList = ({ activeId }: ConversationListProps) => {
     fetchNextPage,
     isFetchingNextPage,
   } = useConversations();
+
+  usePresenceSubscription(conversations.map((c) => c.other_user.id));
 
   const isEmpty = !isLoading && !error && conversations.length === 0;
 

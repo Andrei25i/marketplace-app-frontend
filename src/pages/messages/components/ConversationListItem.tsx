@@ -13,6 +13,7 @@ import classes from "../Messages.module.css";
 import ChatAvatar from "./ChatAvatar";
 import { formatConversationTime } from "@/utils/chatTime.util";
 import MessageStatusIcon from "./MessageStatusIcon";
+import { useIsTyping } from "@/store/useTypingStore";
 
 type ConversationListItemProps = {
   conversation: ConversationSummaryDTO;
@@ -30,6 +31,7 @@ const ConversationListItem = ({
   const isDeleted = Boolean(lastMessage?.deleted_at);
   const showStatus =
     lastMessage !== null && !isDeleted && isOwnMessage(lastMessage, userId);
+  const isTyping = useIsTyping(conversation.id);
 
   return (
     <UnstyledButton
@@ -62,22 +64,30 @@ const ConversationListItem = ({
 
           <Group justify="space-between" wrap="nowrap" gap="xs" mt={2}>
             <Group gap={4} wrap="nowrap" style={{ minWidth: 0 }}>
-              {showStatus && (
-                <MessageStatusIcon
-                  status={getDisplayStatus(lastMessage)}
-                  size={14}
-                />
-              )}
+              {isTyping ? (
+                <Text size="sm" c="primary" fs="italic" truncate>
+                  scrie...
+                </Text>
+              ) : (
+                <>
+                  {showStatus && (
+                    <MessageStatusIcon
+                      status={getDisplayStatus(lastMessage)}
+                      size={14}
+                    />
+                  )}
 
-              <Text
-                size="sm"
-                c={hasUnread ? "dark" : "dimmed"}
-                fw={hasUnread ? 600 : 400}
-                fs={isDeleted ? "italic" : undefined}
-                truncate
-              >
-                {getMessagePreview(lastMessage, userId)}
-              </Text>
+                  <Text
+                    size="sm"
+                    c={hasUnread ? "dark" : "dimmed"}
+                    fw={hasUnread ? 600 : 400}
+                    fs={isDeleted ? "italic" : undefined}
+                    truncate
+                  >
+                    {getMessagePreview(lastMessage, userId)}
+                  </Text>
+                </>
+              )}
             </Group>
 
             {hasUnread && (

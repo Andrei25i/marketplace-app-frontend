@@ -21,6 +21,8 @@ type MessageComposerProps = {
   isSavingEdit: boolean;
   onSaveEdit: (content: string) => void;
   onCancelEdit: () => void;
+  onTyping: () => void;
+  onTypingStop: () => void;
 };
 
 const MessageComposer = ({
@@ -31,6 +33,8 @@ const MessageComposer = ({
   isSavingEdit,
   onSaveEdit,
   onCancelEdit,
+  onTyping,
+  onTypingStop,
 }: MessageComposerProps) => {
   const [value, setValue] = useState("");
   const [draft, setDraft] = useState("");
@@ -142,7 +146,15 @@ const MessageComposer = ({
         <Textarea
           ref={textareaRef}
           value={value}
-          onChange={(event) => setValue(event.currentTarget.value)}
+          onChange={(event) => {
+            const next = event.currentTarget.value;
+            setValue(next);
+
+            if (editing) return;
+            if (next.trim()) onTyping();
+            else onTypingStop();
+          }}
+
           onKeyDown={handleKeyDown}
           placeholder={editing ? "Editează mesajul..." : "Scrie un mesaj..."}
           aria-label="Mesaj"

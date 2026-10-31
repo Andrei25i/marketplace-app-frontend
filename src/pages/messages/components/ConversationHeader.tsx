@@ -8,12 +8,14 @@ import {
   Text,
   UnstyledButton,
 } from "@mantine/core";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import classes from "../Messages.module.css";
 import { Link } from "react-router-dom";
 import { IconArrowLeft } from "@tabler/icons-react";
 import ChatAvatar from "./ChatAvatar";
 import { getFullName } from "@/utils/chat.util";
+import usePresence from "@/hooks/chat/usePresence";
+import { useIsTyping } from "@/store/useTypingStore";
 
 type ConversationHeaderProps = {
   conversation: ConversationSummaryDTO | null;
@@ -25,7 +27,15 @@ const ConversationHeader = ({
   actions,
 }: ConversationHeaderProps) => {
   const otherUser = conversation?.other_user;
-  const lastSeen = otherUser ? formatLastSeen(otherUser) : "";
+  const presence = usePresence(otherUser);
+  const lastSeen = presence ? formatLastSeen(presence) : "";
+  const isTyping = useIsTyping(conversation?.id);
+
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((tick) => tick + 1), 60_000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <Group
@@ -61,10 +71,19 @@ const ConversationHeader = ({
                 <Text fw={600} truncate>
                   {getFullName(otherUser)}
                 </Text>
-                {lastSeen && (
-                  <Text size="xs" c={otherUser.is_online ? "green" : "dimmed"}>
-                    {lastSeen}
+                {isTyping ? (
+                  <Text size="xs" c="primary" fs="italic">
+                    scrie...
                   </Text>
+                ) : (
+                  lastSeen && (
+                    <Text
+                      size="xs"
+                      c={presence?.is_online ? "green" : "dimmed"}
+                    >
+                      {lastSeen}
+                    </Text>
+                  )
                 )}
               </Box>
             </Group>

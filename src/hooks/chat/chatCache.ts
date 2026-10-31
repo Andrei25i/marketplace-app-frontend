@@ -246,8 +246,6 @@ export const applyConversationRead = ({
     last_message: conv.last_message ? markRead(conv.last_message) : null,
     unread_count: readByMe ? 0 : conv.unread_count,
   }));
-
-  if (readByMe) invalidateUnread();
 };
 
 export const applyMessagesDelivered = ({
@@ -277,10 +275,26 @@ export const setUnreadTotal = (total: number) => {
   queryClient.setQueryData(chatKeys.unread(), total);
 };
 
+export const changeUnreadTotal = (delta: number) => {
+  const current = queryClient.getQueryData<number>(chatKeys.unread());
+
+  if (current === undefined) {
+    invalidateUnread();
+    return;
+  }
+
+  setUnreadTotal(Math.max(0, current + delta));
+};
+
 export const invalidateUnread = () => {
   void queryClient.invalidateQueries({ queryKey: chatKeys.unread() });
 };
 
 export const invalidateChat = () => {
+  queryClient.removeQueries({
+    queryKey: [...chatKeys.all, "messages"],
+    type: "inactive",
+  });
+
   void queryClient.invalidateQueries({ queryKey: chatKeys.all });
 };
