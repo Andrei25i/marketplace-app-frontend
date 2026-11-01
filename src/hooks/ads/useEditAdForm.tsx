@@ -26,7 +26,6 @@ export const useEditAdForm = (adId: string) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<LocalAdImage[]>([]);
-  const [initialPublicIds, setInitialPublicIds] = useState<string[]>([]);
   const [price, setPrice] = useState<number | string>("");
   const [currency, setCurrency] = useState("RON");
   const [phone, setPhone] = useState("");
@@ -73,11 +72,6 @@ export const useEditAdForm = (adId: string) => {
         }));
 
         setImages(existingImages);
-        setInitialPublicIds(
-          ad.images
-            .map((img) => img.public_id)
-            .filter((id): id is string => Boolean(id)),
-        );
       } catch {
         if (isMounted) setNotFound(true);
       } finally {
@@ -154,14 +148,6 @@ export const useEditAdForm = (adId: string) => {
           : { url: image.preview, public_id: image.public_id },
       );
 
-      const keptPublicIds = finalImages
-        .map((image) => image.public_id)
-        .filter((id): id is string => Boolean(id));
-
-      const deletedPublicIds = initialPublicIds.filter(
-        (id) => !keptPublicIds.includes(id),
-      );
-
       const updatedAd = await adsService.update(adId, {
         title: normalizedTitle,
         description: normalizedDescription,
@@ -171,7 +157,6 @@ export const useEditAdForm = (adId: string) => {
         images: finalImages,
         category_id: categoryId,
         city: `${normalizedCity}, ${normalizedCounty}`,
-        deletedPublicIds,
       });
 
       notifications.show({
