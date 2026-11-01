@@ -82,9 +82,7 @@ export type CreateAdDTO = {
   city: string;
 };
 
-export type UpdateAdDTO = CreateAdDTO & {
-  deletedPublicIds?: string[];
-};
+export type UpdateAdDTO = CreateAdDTO;
 
 export type DeleteAdResponse = {
   message: string;
