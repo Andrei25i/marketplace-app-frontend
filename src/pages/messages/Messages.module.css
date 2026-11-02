@@ -241,3 +241,22 @@
 .composerImages {
   padding-bottom: var(--mantine-spacing-xs);
 }
+
+.messageImage {
+  width: 260px;
+  max-width: 100%;
+  margin-bottom: 4px;
+}
+
+.moreImages {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.35);
+  color: var(--mantine-color-white);
+  font-size: 26px;
+  font-weight: 700;
+  pointer-events: none;
+}

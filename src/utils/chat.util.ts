@@ -76,6 +76,9 @@ export const getFullName = (user: NamedUser): string =>
 export const getInitials = (user: NamedUser): string =>
   `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
 
+export const countImages = (message: Pick<MessageDTO, "attachments">) =>
+  message.attachments.filter((a) => a.kind === "image").length;
+
 export const getMessagePreview = (
   message: MessageDTO | null,
   userId: UserId,
@@ -84,7 +87,11 @@ export const getMessagePreview = (
   if (isDeletedMessage(message)) return "Mesaj șters";
 
   const text = (message.content ?? "").replace(/\s+/g, " ").trim();
-  return isOwnMessage(message, userId) ? `Tu: ${text}` : text;
+  const images = countImages(message);
+  const label = images === 1 ? "Fotografie" : `${images} fotografii`;
+  const preview = text || (images > 0 ? label : "");
+
+  return isOwnMessage(message, userId) ? `Tu: ${preview}` : preview;
 };
 
 export const formatUnreadCount = (count: number): string => {

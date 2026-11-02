@@ -18,7 +18,7 @@
 }
 
 .button:not(:disabled) {
-  cursor: zoom-in;
+  cursor: pointer;
 }
 
 .image {

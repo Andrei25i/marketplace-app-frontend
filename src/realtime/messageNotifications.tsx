@@ -3,7 +3,7 @@ import { IconMessageCircle } from "@tabler/icons-react";
 import type { MouseEvent } from "react";
 import router from "@/routes/router";
 import type { ConversationSummaryDTO, MessageDTO } from "@/types/chat.type";
-import { getFullName } from "@/utils/chat.util";
+import { getFullName, getMessagePreview } from "@/utils/chat.util";
 import classes from "./messageNotifications.module.css";
 
 const PREVIEW_LENGTH = 120;
@@ -34,7 +34,7 @@ export const notifyIncomingMessage = (
   const notification = {
     id,
     title: count > 1 ? `${name} · ${count} mesaje noi` : name,
-    message: truncate(message.content ?? ""),
+    message: truncate(getMessagePreview(message, null)),
     icon: <IconMessageCircle size={18} />,
     color: "primary",
     autoClose: AUTO_CLOSE_MS,
