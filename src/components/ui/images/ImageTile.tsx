@@ -17,6 +17,7 @@ type ImageTileProps = {
   loading?: boolean;
   selected?: boolean;
   children?: ReactNode;
+  thumbWidth?: number;
 };
 
 const ImageTile = ({
@@ -31,8 +32,10 @@ const ImageTile = ({
   loading = false,
   selected = false,
   children,
+  thumbWidth,
 }: ImageTileProps) => {
-  const thumbWidth = typeof width === "number" ? width * 2 : 800;
+  const requestedWidth =
+    thumbWidth ?? (typeof width === "number" ? width * 2 : 800);
 
   return (
     <Box
@@ -47,7 +50,7 @@ const ImageTile = ({
         aria-label={alt}
       >
         <LoadingImage
-          src={cloudinaryUrl(src, { width: thumbWidth })}
+          src={cloudinaryUrl(src, { width: requestedWidth })}
           alt={alt}
           className={classes.image}
           style={{ objectFit: fit }}

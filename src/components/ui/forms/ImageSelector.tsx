@@ -6,6 +6,7 @@ import {
   Center,
   SimpleGrid,
   Text,
+  Tooltip,
   UnstyledButton,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
@@ -14,9 +15,11 @@ import {
   IconPhotoPlus,
   IconStar,
   IconStarFilled,
-  IconX,
 } from "@tabler/icons-react";
 import { useRef } from "react";
+import ImageTile from "@/components/ui/images/ImageTile";
+import ImageLightbox from "@/components/ui/images/ImageLightbox";
+import useImageLightbox from "@/components/ui/images/useImageLightbox";
 
 interface ImageSelectorProps {
   images: LocalAdImage[];
@@ -30,6 +33,7 @@ const ImageSelector = ({
   maxImages = 10,
 }: ImageSelectorProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const lightbox = useImageLightbox();
 
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
@@ -79,66 +83,60 @@ const ImageSelector = ({
           e.currentTarget.value = "";
         }}
       />
+
       <SimpleGrid cols={{ base: 3, sm: 4 }} spacing="sm">
-        {images.map((image, index) => (
-          <Box
-            key={image.preview}
-            pos="relative"
-            style={{
-              aspectRatio: "1/1",
-              borderRadius: "var(--mantine-radius-md)",
-              overflow: "hidden",
-              border:
-                index === 0
-                  ? "3px solid var(--mantine-color-primary-6)"
-                  : "3px solid var(--mantine-color-gray-3)",
-            }}
-          >
-            <img
+        {images.map((image, index) => {
+          const isCover = index === 0;
+
+          return (
+            <ImageTile
+              key={image.preview}
               src={image.preview}
-              alt={`Imagine ${index + 1}`}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-
-            <ActionIcon
-              size="sm"
-              variant="filled"
-              color="dark"
-              radius="xl"
-              pos="absolute"
-              top={4}
-              right={4}
-              onClick={() => handleRemove(index)}
-              aria-label="Șterge imaginea"
+              alt={`Imaginea ${index + 1}`}
+              thumbWidth={400}
+              selected={isCover}
+              onClick={() => lightbox.open(index)}
+              onRemove={() => handleRemove(index)}
+              removeLabel="Șterge imaginea"
             >
-              <IconX size={14} />
-            </ActionIcon>
-
-            <ActionIcon
-              size="sm"
-              variant="filled"
-              color={index === 0 ? "yellow" : "dark"}
-              radius="xl"
-              pos="absolute"
-              bottom={4}
-              left={4}
-              onClick={() => handleSetThumbnail(index)}
-              aria-label="Setează ca imagine principală"
-            >
-              {index === 0 ? (
-                <IconStarFilled size={14} />
-              ) : (
-                <IconStar size={14} />
+              {isCover && (
+                <Badge
+                  pos="absolute"
+                  top={6}
+                  left={6}
+                  size="xs"
+                  color="primary"
+                  style={{ pointerEvents: "none" }}
+                >
+                  Copertă
+                </Badge>
               )}
-            </ActionIcon>
 
-            {index === 0 && (
-              <Badge pos="absolute" top={4} left={4} size="xs" color="primary">
-                Copertă
-              </Badge>
-            )}
-          </Box>
-        ))}
+              <Tooltip
+                label={isCover ? "Imagine principală" : "Setează ca copertă"}
+                openDelay={400}
+              >
+                <ActionIcon
+                  size="sm"
+                  variant="filled"
+                  color={isCover ? "yellow" : "dark"}
+                  radius="xl"
+                  pos="absolute"
+                  bottom={6}
+                  left={6}
+                  onClick={() => handleSetThumbnail(index)}
+                  aria-label="Setează ca imagine principală"
+                >
+                  {isCover ? (
+                    <IconStarFilled size={14} />
+                  ) : (
+                    <IconStar size={14} />
+                  )}
+                </ActionIcon>
+              </Tooltip>
+            </ImageTile>
+          );
+        })}
 
         {images.length < maxImages && (
           <UnstyledButton
@@ -161,6 +159,16 @@ const ImageSelector = ({
           </UnstyledButton>
         )}
       </SimpleGrid>
+
+      <ImageLightbox
+        images={images.map((image, index) => ({
+          src: image.preview,
+          alt: `Imaginea ${index + 1}`,
+        }))}
+        opened={lightbox.opened}
+        initialIndex={lightbox.initialIndex}
+        onClose={lightbox.close}
+      />
     </Box>
   );
 };
