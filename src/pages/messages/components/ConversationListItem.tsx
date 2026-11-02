@@ -1,6 +1,7 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import type { ConversationSummaryDTO } from "@/types/chat.type";
 import {
+  countImages,
   formatUnreadCount,
   getDisplayStatus,
   getFullName,
@@ -14,6 +15,7 @@ import ChatAvatar from "./ChatAvatar";
 import { formatConversationTime } from "@/utils/chatTime.util";
 import MessageStatusIcon from "./MessageStatusIcon";
 import { useIsTyping } from "@/store/useTypingStore";
+import { IconPhoto } from "@tabler/icons-react";
 
 type ConversationListItemProps = {
   conversation: ConversationSummaryDTO;
@@ -76,6 +78,16 @@ const ConversationListItem = ({
                       size={14}
                     />
                   )}
+
+                  {lastMessage &&
+                    !isDeleted &&
+                    countImages(lastMessage) > 0 && (
+                      <IconPhoto
+                        size={14}
+                        color="var(--mantine-color-dimmed)"
+                        style={{ flexShrink: 0 }}
+                      />
+                    )}
 
                   <Text
                     size="sm"

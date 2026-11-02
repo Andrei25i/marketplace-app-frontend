@@ -17,6 +17,7 @@ import MessageStatusIcon from "./MessageStatusIcon";
 import MessageTimeDetails from "./MessageTimeDetails";
 import MessageMenu from "./MessageMenu";
 import { memo } from "react";
+import MessageImages from "./MessageImages";
 
 type MessageBubbleProps = {
   message: ChatMessage;
@@ -89,6 +90,15 @@ const MessageBubble = ({
               Despre: {message.ad.title}
             </Anchor>
           )}
+          {!isDeleted && (
+            <Box pb="2px">
+              <MessageImages
+                attachments={message.attachments}
+                sending={message.local_status === "sending"}
+              />
+            </Box>
+          )}
+
           {isDeleted ? (
             <Group gap={4} wrap="nowrap">
               <IconBan size={14} />
@@ -97,9 +107,11 @@ const MessageBubble = ({
               </Text>
             </Group>
           ) : (
-            <Text size="sm" className={classes.content}>
-              {message.content}
-            </Text>
+            message.content && (
+              <Text size="sm" className={classes.content}>
+                {message.content}
+              </Text>
+            )
           )}
 
           <Group gap={4} justify="flex-end" wrap="nowrap" mt={2}>

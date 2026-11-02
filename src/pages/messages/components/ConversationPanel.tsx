@@ -106,8 +106,8 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     navigate(location.pathname, { replace: true, state: null });
   };
 
-  const handleSend = (content: string) => {
-    const started = send(content, ad);
+  const handleSend = (content: string, files: File[]) => {
+    const started = send(content, ad, files);
     if (!started) return false;
     markSent();
 

@@ -2,6 +2,7 @@ import { api } from "@/api/api";
 import type {
   ConversationSummaryDTO,
   MarkReadResponse,
+  MessageAttachment,
   MessageDTO,
   Paginated,
   SendMessagePayload,
@@ -101,5 +102,20 @@ export const chatService = {
 
   hideConversation: async (conversationId: string): Promise<void> => {
     await api.delete(`/conversations/${conversationId}`);
+  },
+
+  uploadAttachments: async (
+    conversationId: string,
+    files: File[],
+  ): Promise<MessageAttachment[]> => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append("images", file));
+
+    const { data } = await api.post<MessageAttachment[]>(
+      `/conversations/${conversationId}/attachments`,
+      formData,
+      { headers: { "Content-Type": undefined } },
+    );
+    return data;
   },
 };

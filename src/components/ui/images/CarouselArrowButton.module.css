@@ -1,0 +1,5 @@
+@media (hover: none), (pointer: coarse) {
+  .button {
+    display: none;
+  }
+}

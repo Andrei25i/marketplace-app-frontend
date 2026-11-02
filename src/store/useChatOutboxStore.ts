@@ -9,6 +9,11 @@ type ChatOutboxState = {
     clientId: string,
     status: LocalMessageStatus,
   ) => void;
+  patch: (
+    conversationId: string,
+    clientId: string,
+    changes: Partial<ChatMessage>,
+  ) => void;
   remove: (conversationId: string, clientId: string) => void;
   clear: () => void;
 };
@@ -39,6 +44,20 @@ export const useChatOutboxStore = create<ChatOutboxState>()((set) => ({
           ...state.byConversation,
           [conversationId]: current.map((m) =>
             m.client_id === clientId ? { ...m, local_status: status } : m,
+          ),
+        },
+      };
+    }),
+
+  patch: (conversationId, clientId, changes) =>
+    set((state) => {
+      const current = state.byConversation[conversationId];
+      if (!current) return state;
+      return {
+        byConversation: {
+          ...state.byConversation,
+          [conversationId]: current.map((m) =>
+            m.client_id === clientId ? { ...m, ...changes } : m,
           ),
         },
       };

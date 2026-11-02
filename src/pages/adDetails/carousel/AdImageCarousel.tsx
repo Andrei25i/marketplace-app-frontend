@@ -3,10 +3,14 @@ import type { EmblaCarouselType } from "embla-carousel";
 import { Carousel } from "@mantine/carousel";
 import { Box } from "@mantine/core";
 import type { AdImage } from "@/types/ads.type";
-import CarouselArrowButton from "@/pages/adDetails/carousel/CarouselArrowButton";
+import CarouselArrowButton from "@/components/ui/images/CarouselArrowButton";
 import AdImageThumbnails from "@/pages/adDetails/carousel/AdImageThumbnails";
-import useEmblaActiveIndex from "@/pages/adDetails/carousel/useEmblaActiveIndex";
-import ImageCounter from "@/pages/adDetails/carousel/ImageCounter";
+import useEmblaActiveIndex from "@/components/ui/images/useEmblaActiveIndex";
+import ImageCounter from "@/components/ui/images/ImageCounter";
+import ImageLightbox from "@/components/ui/images/ImageLightbox";
+import useImageLightbox from "@/components/ui/images/useImageLightbox";
+import { cloudinaryUrl } from "@/utils/cloudinary.util";
+import LoadingImage from "@/components/ui/images/LoadingImage";
 
 type AdImageCarouselProps = {
   title: string;
@@ -16,6 +20,11 @@ type AdImageCarouselProps = {
 const AdImageCarousel = ({ title, images }: AdImageCarouselProps) => {
   const [embla, setEmbla] = useState<EmblaCarouselType | null>(null);
   const activeIndex = useEmblaActiveIndex(embla);
+  const lightbox = useImageLightbox();
+  const lightboxImages = images.map((image, index) => ({
+    src: image.url ?? "",
+    alt: `${title} ${index + 1}`,
+  }));
 
   return (
     <Box style={{ width: "100%", maxWidth: 650 }}>
@@ -47,15 +56,17 @@ const AdImageCarousel = ({ title, images }: AdImageCarouselProps) => {
                 justifyContent: "center",
               }}
             >
-              <img
-                src={image.url}
+              <LoadingImage
+                src={cloudinaryUrl(image.url ?? "", { width: 1300 })}
                 alt={`${title}_${index + 1}`}
+                onClick={() => lightbox.open(index)}
                 style={{
                   display: "block",
                   width: "100%",
                   height: "100%",
                   objectFit: "contain",
                   objectPosition: "center",
+                  cursor: "zoom-in",
                 }}
               />
             </Carousel.Slide>
@@ -94,6 +105,13 @@ const AdImageCarousel = ({ title, images }: AdImageCarouselProps) => {
         images={images}
         activeIndex={activeIndex}
         onThumbnailClick={(index) => embla?.scrollTo(index)}
+      />
+
+      <ImageLightbox
+        images={lightboxImages}
+        opened={lightbox.opened}
+        initialIndex={lightbox.initialIndex}
+        onClose={lightbox.close}
       />
     </Box>
   );
