@@ -2,7 +2,11 @@ import { chatService } from "@/services/chat.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useChatOutboxStore } from "@/store/useChatOutboxStore";
 import type { ChatMessage, MessageAdRef } from "@/types/chat.type";
-import { createClientId, MAX_MESSAGE_LENGTH } from "@/utils/chat.util";
+import {
+  createClientId,
+  MAX_ATTACHMENTS,
+  MAX_MESSAGE_LENGTH,
+} from "@/utils/chat.util";
 import { useMutation } from "@tanstack/react-query";
 import { upsertMessage } from "./chatCache";
 import { notifications } from "@mantine/notifications";
@@ -12,11 +16,18 @@ import axios from "axios";
 
 const outbox = () => useChatOutboxStore.getState();
 
+const revokeLocalPreviews = (message: ChatMessage) => {
+  message.attachments.forEach((attachment) => {
+    if (attachment.url.startsWith("blob:")) URL.revokeObjectURL(attachment.url);
+  });
+};
+
 const buildLocalMessage = (
   conversationId: string,
   senderId: string,
   content: string,
   ad: MessageAdRef | null,
+  files: File[],
 ): ChatMessage => {
   const clientId = createClientId();
 
@@ -27,6 +38,14 @@ const buildLocalMessage = (
     content,
     client_id: clientId,
     ad,
+    attachments: files.map((file, index) => ({
+      id: `local-${clientId}-${index}`,
+      kind: "image",
+      url: URL.createObjectURL(file),
+      width: null,
+      height: null,
+      duration_ms: null,
+    })),
     status: "sent",
     created_at: new Date().toISOString(),
     edited_at: null,
@@ -34,6 +53,7 @@ const buildLocalMessage = (
     delivered_at: null,
     read_at: null,
     local_status: "sending",
+    local_files: files,
   };
 };
 
@@ -48,12 +68,28 @@ const useSendMessage = (
   const userId = useAuthStore((state) => state.user?.id);
 
   const { mutate } = useMutation({
-    mutationFn: (message: ChatMessage) =>
-      chatService.sendMessage(message.conversation_id, {
+    mutationFn: async (message: ChatMessage) => {
+      const clientId = message.client_id as string;
+      let attachmentIds = message.local_attachment_ids ?? [];
+
+      if (attachmentIds.length === 0 && message.local_files?.length) {
+        const uploaded = await chatService.uploadAttachments(
+          message.conversation_id,
+          message.local_files,
+        );
+        attachmentIds = uploaded.map((attachment) => attachment.id);
+        outbox().patch(message.conversation_id, clientId, {
+          local_attachment_ids: attachmentIds,
+        });
+      }
+
+      return chatService.sendMessage(message.conversation_id, {
         content: message.content ?? "",
-        clientId: message.client_id as string,
+        clientId,
         adId: message.ad?.id ?? null,
-      }),
+        attachmentIds,
+      });
+    },
 
     onMutate: (message) => {
       outbox().add({ ...message, local_status: "sending" });
@@ -62,16 +98,20 @@ const useSendMessage = (
     onSuccess: (saved, message) => {
       upsertMessage(saved);
       outbox().remove(message.conversation_id, message.client_id as string);
+      revokeLocalPreviews(message);
     },
 
     onError: (error, message) => {
       onFailed?.();
 
-      outbox().setStatus(
-        message.conversation_id,
-        message.client_id as string,
-        "failed",
-      );
+      const clientId = message.client_id as string;
+      outbox().setStatus(message.conversation_id, clientId, "failed");
+
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        outbox().patch(message.conversation_id, clientId, {
+          local_attachment_ids: undefined,
+        });
+      }
 
       const isRateLimited =
         axios.isAxiosError(error) && error.response?.status === 429;
@@ -84,18 +124,24 @@ const useSendMessage = (
               error,
               "Trimiți mesaje prea repede. Așteaptă câteva momente.",
             )
-          : "Încearcă să îl trimiți din nou.",
+          : getErrorMessage(error, "Încearcă să îl trimiți din nou."),
       });
     },
   });
 
-  const send = (content: string, ad: MessageAdRef | null = null): boolean => {
+  const send = (
+    content: string,
+    ad: MessageAdRef | null = null,
+    files: File[] = [],
+  ): boolean => {
     const text = content.trim();
 
     if (!conversationId || userId == null) return false;
-    if (!text || text.length > MAX_MESSAGE_LENGTH) return false;
+    if (text.length > MAX_MESSAGE_LENGTH) return false;
+    if (files.length > MAX_ATTACHMENTS) return false;
+    if (!text && files.length === 0) return false;
 
-    mutate(buildLocalMessage(conversationId, String(userId), text, ad));
+    mutate(buildLocalMessage(conversationId, String(userId), text, ad, files));
     return true;
   };
 
@@ -108,6 +154,7 @@ const useSendMessage = (
 
   const discard = useCallback((message: ChatMessage) => {
     outbox().remove(message.conversation_id, message.client_id as string);
+    revokeLocalPreviews(message);
   }, []);
 
   return { send, retry, discard };

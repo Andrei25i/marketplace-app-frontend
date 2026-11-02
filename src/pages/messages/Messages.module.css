@@ -237,3 +237,7 @@
     animation: none;
   }
 }
+
+.composerImages {
+  padding-bottom: var(--mantine-spacing-xs);
+}

@@ -8,6 +8,18 @@ import type {
 export const MAX_MESSAGE_LENGTH = 2000;
 export const EDIT_WINDOW_MS = 15 * 60 * 1000;
 export const MESSAGE_LENGTH_WARNING = 1800;
+export const MAX_ATTACHMENTS = 10;
+export const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+
+export const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/heic",
+  "image/heif",
+  "image/avif",
+];
 
 type UserId = string | number | null | undefined;
 type NamedUser = Pick<ChatUserDTO, "first_name" | "last_name">;
@@ -81,4 +93,25 @@ export const formatUnreadCount = (count: number): string => {
   }
 
   return String(count);
+};
+
+export const pickImageFiles = (files: File[], alreadySelected: number) => {
+  const valid = files.filter(
+    (file) =>
+      ACCEPTED_IMAGE_TYPES.includes(file.type) &&
+      file.size <= MAX_ATTACHMENT_BYTES,
+  );
+  const slots = Math.max(0, MAX_ATTACHMENTS - alreadySelected);
+  const problems: string[] = [];
+
+  if (valid.length < files.length) {
+    problems.push("Unele fișiere nu sunt imagini acceptate sau depășesc 5MB.");
+  }
+  if (valid.length > slots) {
+    problems.push(
+      `Poți trimite maximum ${MAX_ATTACHMENTS} imagini într-un mesaj.`,
+    );
+  }
+
+  return { accepted: valid.slice(0, slots), problems };
 };

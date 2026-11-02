@@ -7,6 +7,17 @@ export interface MessageAdRef {
   title: string;
 }
 
+export type AttachmentKind = "image" | "audio";
+
+export interface MessageAttachment {
+  id: string;
+  kind: AttachmentKind;
+  url: string;
+  width: number | null;
+  height: number | null;
+  duration_ms: number | null;
+}
+
 export interface MessageDTO {
   id: string;
   conversation_id: string;
@@ -14,6 +25,7 @@ export interface MessageDTO {
   content: string | null;
   client_id: string | null;
   ad: MessageAdRef | null;
+  attachments: MessageAttachment[];
   status: MessageStatus;
   created_at: string;
   edited_at: string | null;
@@ -24,6 +36,8 @@ export interface MessageDTO {
 
 export interface ChatMessage extends MessageDTO {
   local_status?: LocalMessageStatus;
+  local_files?: File[];
+  local_attachment_ids?: string[];
 }
 
 export interface ChatUserDTO {
@@ -51,6 +65,7 @@ export interface SendMessagePayload {
   content: string;
   clientId: string;
   adId?: string | null;
+  attachmentIds?: string[];
 }
 
 export interface MarkReadResponse {
