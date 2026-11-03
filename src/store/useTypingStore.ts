@@ -1,19 +1,23 @@
 import { create } from "zustand";
+import type { ChatActivity } from "@/types/socket.type";
 
 const TYPING_TIMEOUT_MS = 6000;
-
 const timers = new Map<string, ReturnType<typeof setTimeout>>();
 
 type TypingState = {
-  byConversation: Record<string, true>;
-  setTyping: (conversationId: string, isTyping: boolean) => void;
+  byConversation: Record<string, ChatActivity>;
+  setTyping: (
+    conversationId: string,
+    isTyping: boolean,
+    kind?: ChatActivity,
+  ) => void;
   clear: () => void;
 };
 
 export const useTypingStore = create<TypingState>()((set, get) => ({
   byConversation: {},
 
-  setTyping: (conversationId, isTyping) => {
+  setTyping: (conversationId, isTyping, kind = "typing") => {
     const timer = timers.get(conversationId);
     if (timer) clearTimeout(timer);
     timers.delete(conversationId);
@@ -27,9 +31,9 @@ export const useTypingStore = create<TypingState>()((set, get) => ({
         ),
       );
 
-      if (get().byConversation[conversationId]) return;
+      if (get().byConversation[conversationId] === kind) return;
       set((state) => ({
-        byConversation: { ...state.byConversation, [conversationId]: true },
+        byConversation: { ...state.byConversation, [conversationId]: kind },
       }));
       return;
     }
@@ -49,7 +53,10 @@ export const useTypingStore = create<TypingState>()((set, get) => ({
   },
 }));
 
-export const useIsTyping = (conversationId: string | undefined) =>
+export const useChatActivity = (conversationId: string | undefined) =>
   useTypingStore((state) =>
-    conversationId ? Boolean(state.byConversation[conversationId]) : false,
+    conversationId ? (state.byConversation[conversationId] ?? null) : null,
   );
+
+export const useIsTyping = (conversationId: string | undefined) =>
+  useChatActivity(conversationId) !== null;

@@ -236,6 +236,29 @@
   .typingDots span {
     animation: none;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .typingDots span,
+    .recordingIcon {
+      animation: none;
+    }
+  }
+}
+
+.recordingIcon {
+  flex-shrink: 0;
+  color: var(--mantine-color-red-6);
+  animation: recordingPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes recordingPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 .composerImages {

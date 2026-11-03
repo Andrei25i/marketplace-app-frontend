@@ -14,7 +14,7 @@ import classes from "../Messages.module.css";
 import ChatAvatar from "./ChatAvatar";
 import { formatConversationTime } from "@/utils/chatTime.util";
 import MessageStatusIcon from "./MessageStatusIcon";
-import { useIsTyping } from "@/store/useTypingStore";
+import { useChatActivity } from "@/store/useTypingStore";
 import { IconPhoto } from "@tabler/icons-react";
 
 type ConversationListItemProps = {
@@ -33,7 +33,7 @@ const ConversationListItem = ({
   const isDeleted = Boolean(lastMessage?.deleted_at);
   const showStatus =
     lastMessage !== null && !isDeleted && isOwnMessage(lastMessage, userId);
-  const isTyping = useIsTyping(conversation.id);
+  const activity = useChatActivity(conversation.id);
 
   return (
     <UnstyledButton
@@ -66,9 +66,9 @@ const ConversationListItem = ({
 
           <Group justify="space-between" wrap="nowrap" gap="xs" mt={2}>
             <Group gap={4} wrap="nowrap" style={{ minWidth: 0 }}>
-              {isTyping ? (
+              {activity ? (
                 <Text size="sm" c="primary" fs="italic" truncate>
-                  scrie...
+                  {activity === "recording" ? "înregistrează..." : "scrie..."}
                 </Text>
               ) : (
                 <>

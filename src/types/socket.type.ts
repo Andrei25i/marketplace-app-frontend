@@ -25,10 +25,13 @@ export interface UnreadPayload {
   total: number;
 }
 
+export type ChatActivity = "typing" | "recording";
+
 export interface TypingPayload {
   conversationId: string;
   userId: string;
   isTyping: boolean;
+  kind?: ChatActivity;
 }
 
 export interface PresenceDTO {
@@ -50,7 +53,11 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
   "message:received": (payload: { messageIds: string[] }) => void;
-  "typing": (payload: { conversationId: string; isTyping: boolean }) => void;
+  "typing": (payload: {
+    conversationId: string;
+    isTyping: boolean;
+    kind?: ChatActivity;
+  }) => void;
   "presence:subscribe": (
     payload: { userIds: string[] },
     ack: (res: AckResponse<PresenceDTO[]>) => void,

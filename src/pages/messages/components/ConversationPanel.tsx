@@ -22,7 +22,7 @@ import ChatConfirmModal from "./ChatConfirmModal";
 import { isOwnMessage } from "@/utils/chat.util";
 import usePresenceSubscription from "@/hooks/chat/usePresenceSubscription";
 import useTypingEmitter from "@/hooks/chat/useTypingEmitter";
-import { useIsTyping } from "@/store/useTypingStore";
+import { useChatActivity } from "@/store/useTypingStore";
 
 type ConversationPanelProps = {
   conversationId: string;
@@ -84,7 +84,7 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     void loadOlder();
   }, [loadOlder]);
 
-  const isOtherTyping = useIsTyping(conversationId);
+  const otherActivity = useChatActivity(conversationId);
   const { viewportRef, onScroll, isAtBottom, hasNewBelow, scrollToBottom } =
     useChatScroll({
       messages,
@@ -92,7 +92,7 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
       hasOlder,
       isLoadingOlder,
       loadOlder: loadOlderPage,
-      isTyping: isOtherTyping,
+      isTyping: otherActivity !== null,
     });
 
   useMarkConversationRead(conversationId, messages, isAtBottom);
@@ -175,7 +175,7 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
           onDelete={setDeleting}
           unreadMarkerId={unreadMarker?.messageId ?? null}
           unreadCount={unreadMarker?.count ?? 0}
-          isTyping={isOtherTyping}
+          activity={otherActivity}
         />
 
         <Transition mounted={hasNewBelow} transition="slide-up" duration={200}>

@@ -10,6 +10,7 @@ import MessageBubble from "./MessageBubble";
 import DaySeparator from "./DaySeparator";
 import UnreadSeparator from "./UnreadSeparator";
 import TypingBubble from "./TypingBubble";
+import type { ChatActivity } from "@/types/socket.type";
 
 type MessageListProps = {
   messages: ChatMessage[];
@@ -26,7 +27,7 @@ type MessageListProps = {
   onDelete: (message: ChatMessage) => void;
   unreadMarkerId: string | null;
   unreadCount: number;
-  isTyping: boolean;
+  activity: ChatActivity | null;
 };
 
 const MessageList = ({
@@ -44,7 +45,7 @@ const MessageList = ({
   onDelete,
   unreadMarkerId,
   unreadCount,
-  isTyping,
+  activity,
 }: MessageListProps) => {
   const userId = useAuthStore((state) => state.user?.id);
 
@@ -125,7 +126,7 @@ const MessageList = ({
           );
         })}
 
-        {isTyping && <TypingBubble />}
+        {activity && <TypingBubble kind={activity} />}
       </Stack>
     </ScrollArea>
   );

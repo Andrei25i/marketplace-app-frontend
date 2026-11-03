@@ -15,7 +15,7 @@ import { IconArrowLeft } from "@tabler/icons-react";
 import ChatAvatar from "./ChatAvatar";
 import { getFullName } from "@/utils/chat.util";
 import usePresence from "@/hooks/chat/usePresence";
-import { useIsTyping } from "@/store/useTypingStore";
+import { useChatActivity } from "@/store/useTypingStore";
 
 type ConversationHeaderProps = {
   conversation: ConversationSummaryDTO | null;
@@ -29,7 +29,7 @@ const ConversationHeader = ({
   const otherUser = conversation?.other_user;
   const presence = usePresence(otherUser);
   const lastSeen = presence ? formatLastSeen(presence) : "";
-  const isTyping = useIsTyping(conversation?.id);
+  const activity = useChatActivity(conversation?.id);
 
   const [, setTick] = useState(0);
   useEffect(() => {
@@ -71,9 +71,11 @@ const ConversationHeader = ({
                 <Text fw={600} truncate>
                   {getFullName(otherUser)}
                 </Text>
-                {isTyping ? (
+                {activity ? (
                   <Text size="xs" c="primary" fs="italic">
-                    scrie...
+                    {activity === "recording"
+                      ? "înregistrează un mesaj vocal..."
+                      : "scrie..."}
                   </Text>
                 ) : (
                   lastSeen && (
