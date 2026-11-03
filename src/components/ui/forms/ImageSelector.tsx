@@ -20,12 +20,21 @@ import { useRef } from "react";
 import ImageTile from "@/components/ui/images/ImageTile";
 import ImageLightbox from "@/components/ui/images/ImageLightbox";
 import useImageLightbox from "@/components/ui/images/useImageLightbox";
+import { AnimatePresence, MotionConfig, motion } from "motion/react";
 
 interface ImageSelectorProps {
   images: LocalAdImage[];
   onChange: (images: LocalAdImage[]) => void;
   maxImages?: number;
 }
+
+const tileMotion = {
+  layout: true,
+  initial: { opacity: 0, scale: 0.85 },
+  animate: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 0.85 },
+  transition: { type: "spring", stiffness: 500, damping: 35 },
+} as const;
 
 const ImageSelector = ({
   images,
@@ -84,81 +93,95 @@ const ImageSelector = ({
         }}
       />
 
-      <SimpleGrid cols={{ base: 3, sm: 4 }} spacing="sm">
-        {images.map((image, index) => {
-          const isCover = index === 0;
+      <MotionConfig reducedMotion="user">
+        <SimpleGrid
+          cols={{ base: 3, sm: 4 }}
+          spacing="sm"
+          style={{ position: "relative" }}
+        >
+          <AnimatePresence initial={false} mode="popLayout">
+            {images.map((image, index) => {
+              const isCover = index === 0;
 
-          return (
-            <ImageTile
-              key={image.preview}
-              src={image.preview}
-              alt={`Imaginea ${index + 1}`}
-              thumbWidth={400}
-              selected={isCover}
-              onClick={() => lightbox.open(index)}
-              onRemove={() => handleRemove(index)}
-              removeLabel="Șterge imaginea"
-            >
-              {isCover && (
-                <Badge
-                  pos="absolute"
-                  top={6}
-                  left={6}
-                  size="xs"
-                  color="primary"
-                  style={{ pointerEvents: "none" }}
+              return (
+                <motion.div key={image.preview} {...tileMotion}>
+                  <ImageTile
+                    src={image.preview}
+                    alt={`Imaginea ${index + 1}`}
+                    thumbWidth={400}
+                    selected={isCover}
+                    onClick={() => lightbox.open(index)}
+                    onRemove={() => handleRemove(index)}
+                    removeLabel="Șterge imaginea"
+                  >
+                    {isCover && (
+                      <Badge
+                        pos="absolute"
+                        top={6}
+                        left={6}
+                        size="xs"
+                        color="primary"
+                        style={{ pointerEvents: "none" }}
+                      >
+                        Copertă
+                      </Badge>
+                    )}
+
+                    <Tooltip
+                      label={
+                        isCover ? "Imagine principală" : "Setează ca copertă"
+                      }
+                      openDelay={400}
+                    >
+                      <ActionIcon
+                        size="sm"
+                        variant="filled"
+                        color={isCover ? "yellow" : "dark"}
+                        radius="xl"
+                        pos="absolute"
+                        bottom={6}
+                        left={6}
+                        onClick={() => handleSetThumbnail(index)}
+                        aria-label="Setează ca imagine principală"
+                      >
+                        {isCover ? (
+                          <IconStarFilled size={14} />
+                        ) : (
+                          <IconStar size={14} />
+                        )}
+                      </ActionIcon>
+                    </Tooltip>
+                  </ImageTile>
+                </motion.div>
+              );
+            })}
+
+            {images.length < maxImages && (
+              <motion.div key="add" {...tileMotion}>
+                <UnstyledButton
+                  w="100%"
+                  onClick={() => inputRef.current?.click()}
+                  style={{
+                    aspectRatio: "1/1",
+                    borderRadius: "var(--mantine-radius-md)",
+                    border: "1px dashed var(--mantine-color-gray-4)",
+                  }}
                 >
-                  Copertă
-                </Badge>
-              )}
-
-              <Tooltip
-                label={isCover ? "Imagine principală" : "Setează ca copertă"}
-                openDelay={400}
-              >
-                <ActionIcon
-                  size="sm"
-                  variant="filled"
-                  color={isCover ? "yellow" : "dark"}
-                  radius="xl"
-                  pos="absolute"
-                  bottom={6}
-                  left={6}
-                  onClick={() => handleSetThumbnail(index)}
-                  aria-label="Setează ca imagine principală"
-                >
-                  {isCover ? (
-                    <IconStarFilled size={14} />
-                  ) : (
-                    <IconStar size={14} />
-                  )}
-                </ActionIcon>
-              </Tooltip>
-            </ImageTile>
-          );
-        })}
-
-        {images.length < maxImages && (
-          <UnstyledButton
-            onClick={() => inputRef.current?.click()}
-            style={{
-              aspectRatio: "1/1",
-              borderRadius: "var(--mantine-radius-md)",
-              border: "1px dashed var(--mantine-color-gray-4)",
-            }}
-          >
-            <Center h="100%">
-              <Box ta="center" c="dimmed">
-                <IconPhotoPlus
-                  size={20}
-                  color="var(--mantine-color-primary-6)"
-                />
-                <Text size="xs">Adaugă</Text>
-              </Box>
-            </Center>
-          </UnstyledButton>
-        )}
-      </SimpleGrid>
+                  <Center h="100%">
+                    <Box ta="center" c="dimmed">
+                      <IconPhotoPlus
+                        size={20}
+                        color="var(--mantine-color-primary-6)"
+                      />
+                      <Text size="xs">Adaugă</Text>
+                    </Box>
+                  </Center>
+                </UnstyledButton>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </SimpleGrid>
+      </MotionConfig>
 
       <ImageLightbox
         images={images.map((image, index) => ({
