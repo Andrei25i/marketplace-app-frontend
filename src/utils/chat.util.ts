@@ -65,6 +65,7 @@ export const canEditMessage = (
   isOwnMessage(message, userId) &&
   !isDeletedMessage(message) &&
   !message.local_status &&
+  !getVoiceAttachment(message) &&
   now - new Date(message.created_at).getTime() < EDIT_WINDOW_MS;
 
 export const canDeleteMessage = (message: ChatMessage, userId: UserId) =>
@@ -81,6 +82,19 @@ export const getInitials = (user: NamedUser): string =>
 export const countImages = (message: Pick<MessageDTO, "attachments">) =>
   message.attachments.filter((a) => a.kind === "image").length;
 
+export const getVoiceAttachment = (message: Pick<MessageDTO, "attachments">) =>
+  message.attachments.find((a) => a.kind === "audio") ?? null;
+
+export const formatDuration = (ms: number): string => {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+};
+
+export const formatVoiceDuration = (ms: number): string =>
+  formatDuration(Math.round(ms / 1000) * 1000);
+
 export const getMessagePreview = (
   message: MessageDTO | null,
   userId: UserId,
@@ -88,10 +102,14 @@ export const getMessagePreview = (
   if (!message) return "";
   if (isDeletedMessage(message)) return "Mesaj șters";
 
+  const voice = getVoiceAttachment(message);
   const text = (message.content ?? "").replace(/\s+/g, " ").trim();
   const images = countImages(message);
   const label = images === 1 ? "Fotografie" : `${images} fotografii`;
-  const preview = text || (images > 0 ? label : "");
+
+  const preview = voice
+    ? `Mesaj vocal${voice.duration_ms ? ` (${formatVoiceDuration(voice.duration_ms)})` : ""}`
+    : text || (images > 0 ? label : "");
 
   return isOwnMessage(message, userId) ? `Tu: ${preview}` : preview;
 };
@@ -123,11 +141,4 @@ export const pickImageFiles = (files: File[], alreadySelected: number) => {
   }
 
   return { accepted: valid.slice(0, slots), problems };
-};
-
-export const formatDuration = (ms: number): string => {
-  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 };

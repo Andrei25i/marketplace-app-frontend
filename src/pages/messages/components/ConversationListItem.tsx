@@ -6,6 +6,7 @@ import {
   getDisplayStatus,
   getFullName,
   getMessagePreview,
+  getVoiceAttachment,
   isOwnMessage,
 } from "@/utils/chat.util";
 import { Badge, Box, Group, Text, UnstyledButton } from "@mantine/core";
@@ -15,7 +16,7 @@ import ChatAvatar from "./ChatAvatar";
 import { formatConversationTime } from "@/utils/chatTime.util";
 import MessageStatusIcon from "./MessageStatusIcon";
 import { useChatActivity } from "@/store/useTypingStore";
-import { IconPhoto } from "@tabler/icons-react";
+import { IconMicrophone, IconPhoto } from "@tabler/icons-react";
 
 type ConversationListItemProps = {
   conversation: ConversationSummaryDTO;
@@ -34,6 +35,14 @@ const ConversationListItem = ({
   const showStatus =
     lastMessage !== null && !isDeleted && isOwnMessage(lastMessage, userId);
   const activity = useChatActivity(conversation.id);
+  const PreviewIcon =
+    !lastMessage || isDeleted
+      ? null
+      : getVoiceAttachment(lastMessage)
+        ? IconMicrophone
+        : countImages(lastMessage) > 0
+          ? IconPhoto
+          : null;
 
   return (
     <UnstyledButton
@@ -79,15 +88,13 @@ const ConversationListItem = ({
                     />
                   )}
 
-                  {lastMessage &&
-                    !isDeleted &&
-                    countImages(lastMessage) > 0 && (
-                      <IconPhoto
-                        size={14}
-                        color="var(--mantine-color-dimmed)"
-                        style={{ flexShrink: 0 }}
-                      />
-                    )}
+                  {PreviewIcon && (
+                    <PreviewIcon
+                      size={14}
+                      color="var(--mantine-color-dimmed)"
+                      style={{ flexShrink: 0 }}
+                    />
+                  )}
 
                   <Text
                     size="sm"

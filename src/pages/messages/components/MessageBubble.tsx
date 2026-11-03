@@ -1,5 +1,9 @@
 import type { ChatMessage } from "@/types/chat.type";
-import { getDisplayStatus, isDeletedMessage } from "@/utils/chat.util";
+import {
+  getDisplayStatus,
+  getVoiceAttachment,
+  isDeletedMessage,
+} from "@/utils/chat.util";
 import {
   ActionIcon,
   Anchor,
@@ -18,6 +22,7 @@ import MessageTimeDetails from "./MessageTimeDetails";
 import MessageMenu from "./MessageMenu";
 import { memo } from "react";
 import MessageImages from "./MessageImages";
+import VoicePlayer from "./VoicePlayer";
 
 type MessageBubbleProps = {
   message: ChatMessage;
@@ -46,6 +51,7 @@ const MessageBubble = ({
 }: MessageBubbleProps) => {
   const status = getDisplayStatus(message);
   const isDeleted = isDeletedMessage(message);
+  const voice = isDeleted ? null : getVoiceAttachment(message);
 
   const menu = isOwn ? (
     <MessageMenu
@@ -90,6 +96,16 @@ const MessageBubble = ({
               Despre: {message.ad.title}
             </Anchor>
           )}
+
+          {voice && (
+            <VoicePlayer
+              key={voice.id}
+              url={voice.url}
+              durationMs={voice.duration_ms}
+              own={isOwn}
+            />
+          )}
+
           {!isDeleted && (
             <Box pb="2px">
               <MessageImages
