@@ -12,7 +12,7 @@ import type { ChatLocationState } from "@/hooks/chat/useStartConversation";
 import { useAuthStore } from "@/store/useAuthStore";
 import type { ChatMessage, MessageAdRef } from "@/types/chat.type";
 import ConversationHeader from "./ConversationHeader";
-import MessageComposer from "./MessageComposer";
+import MessageComposer from "./composer/MessageComposer";
 import MessageList from "./MessageList";
 import classes from "../Messages.module.css";
 import useMessageActions from "@/hooks/chat/useMessageActions";
