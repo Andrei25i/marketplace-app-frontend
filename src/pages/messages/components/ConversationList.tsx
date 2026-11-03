@@ -4,7 +4,6 @@ import {
   Button,
   Center,
   Group,
-  Loader,
   ScrollArea,
   Stack,
   Text,
@@ -18,6 +17,7 @@ import { Link } from "react-router-dom";
 import ConversationListItem from "./ConversationListItem";
 import BackButton from "@/components/navigation/BackButton";
 import usePresenceSubscription from "@/hooks/chat/usePresenceSubscription";
+import ConversationListSkeleton from "./ConversationListSkeleton";
 
 type ConversationListProps = {
   activeId?: string;
@@ -48,11 +48,7 @@ const ConversationList = ({ activeId }: ConversationListProps) => {
       </Group>
 
       <ScrollArea className={classes.scroll} type="auto" scrollbarSize={6}>
-        {isLoading && (
-          <Center py="xl">
-            <Loader color="primary" />
-          </Center>
-        )}
+        {isLoading && <ConversationListSkeleton />}
 
         {error && (
           <Box px="md">
