@@ -3,11 +3,13 @@ import { socket } from "@/realtime/socket";
 
 const TYPING_REFRESH_MS = 2500;
 const TYPING_IDLE_MS = 3000;
+const RECORDING_REFRESH_MS = 2500;
 
 const useTypingEmitter = (conversationId: string) => {
   const isTypingRef = useRef(false);
   const lastSentAtRef = useRef(0);
   const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const stopTyping = useCallback(() => {
     if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
@@ -47,9 +49,49 @@ const useTypingEmitter = (conversationId: string) => {
     socket.volatile.emit("typing", { conversationId, isTyping: false });
   }, [conversationId]);
 
-  useEffect(() => stopTyping, [stopTyping]);
+  const startRecording = useCallback(() => {
+    markSent();
+    if (recordingTimerRef.current) return;
 
-  return { notifyTyping, stopTyping, markSent, sendFailed };
+    const emit = () =>
+      socket.volatile.emit("typing", {
+        conversationId,
+        isTyping: true,
+        kind: "recording",
+      });
+
+    emit();
+    recordingTimerRef.current = setInterval(emit, RECORDING_REFRESH_MS);
+  }, [conversationId, markSent]);
+
+  const stopRecording = useCallback(() => {
+    if (!recordingTimerRef.current) return;
+    clearInterval(recordingTimerRef.current);
+    recordingTimerRef.current = null;
+
+    socket.volatile.emit("typing", {
+      conversationId,
+      isTyping: false,
+      kind: "recording",
+    });
+  }, [conversationId]);
+
+  useEffect(
+    () => () => {
+      stopTyping();
+      stopRecording();
+    },
+    [stopTyping, stopRecording],
+  );
+
+  return {
+    notifyTyping,
+    stopTyping,
+    markSent,
+    sendFailed,
+    startRecording,
+    stopRecording,
+  };
 };
 
 export default useTypingEmitter;

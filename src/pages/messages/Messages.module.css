@@ -232,8 +232,44 @@
   }
 }
 
+.recordingIcon {
+  flex-shrink: 0;
+  color: var(--mantine-color-red-6);
+  animation: recordingPulse 1.2s infinite ease-in-out;
+}
+
+.recorderStatus {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--mantine-color-default-border);
+  border-radius: var(--mantine-radius-xl);
+}
+
+.recordingDot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--mantine-color-red-6);
+  animation: recordingPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes recordingPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .typingDots span {
+  .typingDots span,
+  .typingDots span,
+  .recordingIcon {
     animation: none;
   }
 }
@@ -259,4 +295,33 @@
   font-size: 26px;
   font-weight: 700;
   pointer-events: none;
+}
+
+.voice {
+  width: 240px;
+  max-width: 100%;
+  padding: 4px 0 2px;
+}
+
+.voiceSlider[data-own] {
+  --slider-track-bg: rgba(255, 255, 255, 0.35);
+}
+
+.voiceThumb {
+  border: none;
+  background-color: var(--slider-color);
+}
+
+.voiceSpeed {
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.bubble[data-own] .voiceSpeed {
+  background-color: rgba(255, 255, 255, 0.2);
 }

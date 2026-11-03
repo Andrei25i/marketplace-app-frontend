@@ -1,11 +1,16 @@
 import { chatService } from "@/services/chat.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useChatOutboxStore } from "@/store/useChatOutboxStore";
-import type { ChatMessage, MessageAdRef } from "@/types/chat.type";
+import type {
+  ChatMessage,
+  MessageAdRef,
+  VoiceRecording,
+} from "@/types/chat.type";
 import {
   createClientId,
   MAX_ATTACHMENTS,
   MAX_MESSAGE_LENGTH,
+  MIN_VOICE_MS,
 } from "@/utils/chat.util";
 import { useMutation } from "@tanstack/react-query";
 import { upsertMessage } from "./chatCache";
@@ -28,8 +33,29 @@ const buildLocalMessage = (
   content: string,
   ad: MessageAdRef | null,
   files: File[],
+  voice?: VoiceRecording,
 ): ChatMessage => {
   const clientId = createClientId();
+
+  const attachments: ChatMessage["attachments"] = voice
+    ? [
+        {
+          id: `local-${clientId}-0`,
+          kind: "audio",
+          url: URL.createObjectURL(voice.file),
+          width: null,
+          height: null,
+          duration_ms: Math.round(voice.durationMs),
+        },
+      ]
+    : files.map((file, index) => ({
+        id: `local-${clientId}-${index}`,
+        kind: "image",
+        url: URL.createObjectURL(file),
+        width: null,
+        height: null,
+        duration_ms: null,
+      }));
 
   return {
     id: `local-${clientId}`,
@@ -38,14 +64,7 @@ const buildLocalMessage = (
     content,
     client_id: clientId,
     ad,
-    attachments: files.map((file, index) => ({
-      id: `local-${clientId}-${index}`,
-      kind: "image",
-      url: URL.createObjectURL(file),
-      width: null,
-      height: null,
-      duration_ms: null,
-    })),
+    attachments,
     status: "sent",
     created_at: new Date().toISOString(),
     edited_at: null,
@@ -54,6 +73,7 @@ const buildLocalMessage = (
     read_at: null,
     local_status: "sending",
     local_files: files,
+    ...(voice ? { local_voice: voice } : {}),
   };
 };
 
@@ -72,15 +92,27 @@ const useSendMessage = (
       const clientId = message.client_id as string;
       let attachmentIds = message.local_attachment_ids ?? [];
 
-      if (attachmentIds.length === 0 && message.local_files?.length) {
-        const uploaded = await chatService.uploadAttachments(
-          message.conversation_id,
-          message.local_files,
-        );
+      if (attachmentIds.length === 0) {
+        const uploaded = message.local_voice
+          ? [
+              await chatService.uploadVoice(
+                message.conversation_id,
+                message.local_voice,
+              ),
+            ]
+          : message.local_files?.length
+            ? await chatService.uploadAttachments(
+                message.conversation_id,
+                message.local_files,
+              )
+            : [];
+
         attachmentIds = uploaded.map((attachment) => attachment.id);
-        outbox().patch(message.conversation_id, clientId, {
-          local_attachment_ids: attachmentIds,
-        });
+        if (attachmentIds.length > 0) {
+          outbox().patch(message.conversation_id, clientId, {
+            local_attachment_ids: attachmentIds,
+          });
+        }
       }
 
       return chatService.sendMessage(message.conversation_id, {
@@ -145,6 +177,19 @@ const useSendMessage = (
     return true;
   };
 
+  const sendVoice = (
+    voice: VoiceRecording,
+    ad: MessageAdRef | null = null,
+  ): boolean => {
+    if (!conversationId || userId == null) return false;
+    if (voice.durationMs < MIN_VOICE_MS) return false;
+
+    mutate(
+      buildLocalMessage(conversationId, String(userId), "", ad, [], voice),
+    );
+    return true;
+  };
+
   const retry = useCallback(
     (message: ChatMessage) => {
       mutate({ ...message, local_status: "sending" });
@@ -157,7 +202,7 @@ const useSendMessage = (
     revokeLocalPreviews(message);
   }, []);
 
-  return { send, retry, discard };
+  return { send, sendVoice, retry, discard };
 };
 
 export default useSendMessage;

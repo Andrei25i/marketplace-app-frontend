@@ -6,6 +6,7 @@ import {
   getDisplayStatus,
   getFullName,
   getMessagePreview,
+  getVoiceAttachment,
   isOwnMessage,
 } from "@/utils/chat.util";
 import { Badge, Box, Group, Text, UnstyledButton } from "@mantine/core";
@@ -14,8 +15,8 @@ import classes from "../Messages.module.css";
 import ChatAvatar from "./ChatAvatar";
 import { formatConversationTime } from "@/utils/chatTime.util";
 import MessageStatusIcon from "./MessageStatusIcon";
-import { useIsTyping } from "@/store/useTypingStore";
-import { IconPhoto } from "@tabler/icons-react";
+import { useChatActivity } from "@/store/useTypingStore";
+import { IconMicrophone, IconPhoto } from "@tabler/icons-react";
 
 type ConversationListItemProps = {
   conversation: ConversationSummaryDTO;
@@ -33,7 +34,15 @@ const ConversationListItem = ({
   const isDeleted = Boolean(lastMessage?.deleted_at);
   const showStatus =
     lastMessage !== null && !isDeleted && isOwnMessage(lastMessage, userId);
-  const isTyping = useIsTyping(conversation.id);
+  const activity = useChatActivity(conversation.id);
+  const PreviewIcon =
+    !lastMessage || isDeleted
+      ? null
+      : getVoiceAttachment(lastMessage)
+        ? IconMicrophone
+        : countImages(lastMessage) > 0
+          ? IconPhoto
+          : null;
 
   return (
     <UnstyledButton
@@ -66,9 +75,9 @@ const ConversationListItem = ({
 
           <Group justify="space-between" wrap="nowrap" gap="xs" mt={2}>
             <Group gap={4} wrap="nowrap" style={{ minWidth: 0 }}>
-              {isTyping ? (
+              {activity ? (
                 <Text size="sm" c="primary" fs="italic" truncate>
-                  scrie...
+                  {activity === "recording" ? "înregistrează..." : "scrie..."}
                 </Text>
               ) : (
                 <>
@@ -79,15 +88,13 @@ const ConversationListItem = ({
                     />
                   )}
 
-                  {lastMessage &&
-                    !isDeleted &&
-                    countImages(lastMessage) > 0 && (
-                      <IconPhoto
-                        size={14}
-                        color="var(--mantine-color-dimmed)"
-                        style={{ flexShrink: 0 }}
-                      />
-                    )}
+                  {PreviewIcon && (
+                    <PreviewIcon
+                      size={14}
+                      color="var(--mantine-color-dimmed)"
+                      style={{ flexShrink: 0 }}
+                    />
+                  )}
 
                   <Text
                     size="sm"

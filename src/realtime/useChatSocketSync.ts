@@ -75,9 +75,12 @@ const onTyping: ServerToClientEvents["typing"] = ({
   conversationId,
   userId,
   isTyping,
+  kind,
 }) => {
   if (userId === currentUserId()) return;
-  useTypingStore.getState().setTyping(conversationId, isTyping);
+  useTypingStore
+    .getState()
+    .setTyping(conversationId, isTyping, kind ?? "typing");
 };
 
 const clearTyping = () => useTypingStore.getState().clear();

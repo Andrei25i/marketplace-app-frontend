@@ -10,9 +10,13 @@ import useMessages from "@/hooks/chat/useMessages";
 import useSendMessage from "@/hooks/chat/useSendMessage";
 import type { ChatLocationState } from "@/hooks/chat/useStartConversation";
 import { useAuthStore } from "@/store/useAuthStore";
-import type { ChatMessage, MessageAdRef } from "@/types/chat.type";
+import type {
+  ChatMessage,
+  MessageAdRef,
+  VoiceRecording,
+} from "@/types/chat.type";
 import ConversationHeader from "./ConversationHeader";
-import MessageComposer from "./MessageComposer";
+import MessageComposer from "./composer/MessageComposer";
 import MessageList from "./MessageList";
 import classes from "../Messages.module.css";
 import useMessageActions from "@/hooks/chat/useMessageActions";
@@ -22,7 +26,7 @@ import ChatConfirmModal from "./ChatConfirmModal";
 import { isOwnMessage } from "@/utils/chat.util";
 import usePresenceSubscription from "@/hooks/chat/usePresenceSubscription";
 import useTypingEmitter from "@/hooks/chat/useTypingEmitter";
-import { useIsTyping } from "@/store/useTypingStore";
+import { useChatActivity } from "@/store/useTypingStore";
 
 type ConversationPanelProps = {
   conversationId: string;
@@ -67,9 +71,16 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     });
   }
 
-  const { notifyTyping, stopTyping, markSent, sendFailed } =
-    useTypingEmitter(conversationId);
-  const { send, retry, discard } = useSendMessage(conversationId, {
+  const {
+    notifyTyping,
+    stopTyping,
+    markSent,
+    sendFailed,
+    startRecording,
+    stopRecording,
+  } = useTypingEmitter(conversationId);
+
+  const { send, sendVoice, retry, discard } = useSendMessage(conversationId, {
     onFailed: sendFailed,
   });
 
@@ -84,7 +95,7 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     void loadOlder();
   }, [loadOlder]);
 
-  const isOtherTyping = useIsTyping(conversationId);
+  const otherActivity = useChatActivity(conversationId);
   const { viewportRef, onScroll, isAtBottom, hasNewBelow, scrollToBottom } =
     useChatScroll({
       messages,
@@ -92,7 +103,7 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
       hasOlder,
       isLoadingOlder,
       loadOlder: loadOlderPage,
-      isTyping: isOtherTyping,
+      isTyping: otherActivity !== null,
     });
 
   useMarkConversationRead(conversationId, messages, isAtBottom);
@@ -106,14 +117,21 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     navigate(location.pathname, { replace: true, state: null });
   };
 
-  const handleSend = (content: string, files: File[]) => {
-    const started = send(content, ad, files);
-    if (!started) return false;
+  const afterSend = () => {
     markSent();
-
     if (ad) clearAd();
     if (unreadMarker?.messageId) setUnreadMarker({ messageId: null, count: 0 });
+  };
 
+  const handleSend = (content: string, files: File[]) => {
+    if (!send(content, ad, files)) return false;
+    afterSend();
+    return true;
+  };
+
+  const handleSendVoice = (voice: VoiceRecording) => {
+    if (!sendVoice(voice, ad)) return false;
+    afterSend();
     return true;
   };
 
@@ -175,7 +193,7 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
           onDelete={setDeleting}
           unreadMarkerId={unreadMarker?.messageId ?? null}
           unreadCount={unreadMarker?.count ?? 0}
-          isTyping={isOtherTyping}
+          activity={otherActivity}
         />
 
         <Transition mounted={hasNewBelow} transition="slide-up" duration={200}>
@@ -204,6 +222,9 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
         onCancelEdit={() => setEditing(null)}
         onTyping={notifyTyping}
         onTypingStop={stopTyping}
+        onSendVoice={handleSendVoice}
+        onRecordingStart={startRecording}
+        onRecordingStop={stopRecording}
       />
 
       <ChatConfirmModal
