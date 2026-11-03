@@ -34,10 +34,16 @@ export interface MessageDTO {
   read_at: string | null;
 }
 
+export interface VoiceRecording {
+  file: File;
+  durationMs: number;
+}
+
 export interface ChatMessage extends MessageDTO {
   local_status?: LocalMessageStatus;
   local_files?: File[];
   local_attachment_ids?: string[];
+  local_voice?: VoiceRecording;
 }
 
 export interface ChatUserDTO {

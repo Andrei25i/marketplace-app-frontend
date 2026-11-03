@@ -7,6 +7,7 @@ import type {
   Paginated,
   SendMessagePayload,
   UnreadCountResponse,
+  VoiceRecording,
 } from "@/types/chat.type";
 
 export const chatService = {
@@ -113,6 +114,22 @@ export const chatService = {
 
     const { data } = await api.post<MessageAttachment[]>(
       `/conversations/${conversationId}/attachments`,
+      formData,
+      { headers: { "Content-Type": undefined } },
+    );
+    return data;
+  },
+
+  uploadVoice: async (
+    conversationId: string,
+    voice: VoiceRecording,
+  ): Promise<MessageAttachment> => {
+    const formData = new FormData();
+    formData.append("durationMs", String(Math.round(voice.durationMs)));
+    formData.append("voice", voice.file);
+
+    const { data } = await api.post<MessageAttachment>(
+      `/conversations/${conversationId}/attachments/voice`,
       formData,
       { headers: { "Content-Type": undefined } },
     );

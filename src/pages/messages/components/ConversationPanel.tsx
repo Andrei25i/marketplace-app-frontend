@@ -10,7 +10,11 @@ import useMessages from "@/hooks/chat/useMessages";
 import useSendMessage from "@/hooks/chat/useSendMessage";
 import type { ChatLocationState } from "@/hooks/chat/useStartConversation";
 import { useAuthStore } from "@/store/useAuthStore";
-import type { ChatMessage, MessageAdRef } from "@/types/chat.type";
+import type {
+  ChatMessage,
+  MessageAdRef,
+  VoiceRecording,
+} from "@/types/chat.type";
 import ConversationHeader from "./ConversationHeader";
 import MessageComposer from "./composer/MessageComposer";
 import MessageList from "./MessageList";
@@ -67,9 +71,16 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     });
   }
 
-  const { notifyTyping, stopTyping, markSent, sendFailed } =
-    useTypingEmitter(conversationId);
-  const { send, retry, discard } = useSendMessage(conversationId, {
+  const {
+    notifyTyping,
+    stopTyping,
+    markSent,
+    sendFailed,
+    startRecording,
+    stopRecording,
+  } = useTypingEmitter(conversationId);
+
+  const { send, sendVoice, retry, discard } = useSendMessage(conversationId, {
     onFailed: sendFailed,
   });
 
@@ -106,14 +117,21 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
     navigate(location.pathname, { replace: true, state: null });
   };
 
-  const handleSend = (content: string, files: File[]) => {
-    const started = send(content, ad, files);
-    if (!started) return false;
+  const afterSend = () => {
     markSent();
-
     if (ad) clearAd();
     if (unreadMarker?.messageId) setUnreadMarker({ messageId: null, count: 0 });
+  };
 
+  const handleSend = (content: string, files: File[]) => {
+    if (!send(content, ad, files)) return false;
+    afterSend();
+    return true;
+  };
+
+  const handleSendVoice = (voice: VoiceRecording) => {
+    if (!sendVoice(voice, ad)) return false;
+    afterSend();
     return true;
   };
 
@@ -204,6 +222,9 @@ const ConversationPanel = ({ conversationId }: ConversationPanelProps) => {
         onCancelEdit={() => setEditing(null)}
         onTyping={notifyTyping}
         onTypingStop={stopTyping}
+        onSendVoice={handleSendVoice}
+        onRecordingStart={startRecording}
+        onRecordingStop={stopRecording}
       />
 
       <ChatConfirmModal

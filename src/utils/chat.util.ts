@@ -10,6 +10,8 @@ export const EDIT_WINDOW_MS = 15 * 60 * 1000;
 export const MESSAGE_LENGTH_WARNING = 1800;
 export const MAX_ATTACHMENTS = 10;
 export const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024;
+export const MAX_VOICE_MS = 5 * 60 * 1000;
+export const MIN_VOICE_MS = 1000;
 
 export const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
@@ -121,4 +123,11 @@ export const pickImageFiles = (files: File[], alreadySelected: number) => {
   }
 
   return { accepted: valid.slice(0, slots), problems };
+};
+
+export const formatDuration = (ms: number): string => {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 };
