@@ -11,6 +11,7 @@ import { Notifications } from "@mantine/notifications";
 import App from "./App.tsx";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./api/queryClient";
+import { MotionConfig } from "motion/react";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -27,7 +28,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             },
           }}
         />
-        <App />
+        <MotionConfig reducedMotion="user">
+          <App />
+        </MotionConfig>
       </MantineProvider>
     </QueryClientProvider>
   </StrictMode>,
