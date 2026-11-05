@@ -1,22 +1,19 @@
 import CategoryCard from "@/components/ui/cards/CategoryCard";
+import CategoryCardSkeleton from "@/components/ui/cards/CategoryCardSkeleton";
 import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
 import { useCategories } from "@/hooks/categories/useCategories";
 import { getCategoryIcon } from "@/utils/categoryIconMapper.util";
-import {
-  Anchor,
-  Box,
-  Center,
-  Group,
-  Loader,
-  SimpleGrid,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Anchor, Box, Group, SimpleGrid, Text, Title } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 
+const GRID_COLS = { base: 2, sm: 3, lg: 6 };
+const CATEGORY_COUNT = 6;
+
 const CategoriesSection = () => {
-  const { categories, isLoading, error, refetch } = useCategories({ limit: 6 });
+  const { categories, isLoading, error, refetch } = useCategories({
+    limit: CATEGORY_COUNT,
+  });
 
   return (
     <Box component="section">
@@ -47,21 +44,27 @@ const CategoriesSection = () => {
       {error ? (
         <RequestErrorAlert compact message={error} onRetry={() => refetch()} />
       ) : isLoading ? (
-        <Center mih={50}>
-          <Loader color="primary" size="sm" />
-        </Center>
+        <SimpleGrid
+          cols={GRID_COLS}
+          spacing="md"
+          role="status"
+          aria-label="Se încarcă categoriile"
+          aria-busy
+        >
+          {Array.from({ length: CATEGORY_COUNT }, (_, index) => (
+            <CategoryCardSkeleton key={index} compact />
+          ))}
+        </SimpleGrid>
       ) : (
-        <SimpleGrid cols={{ base: 2, sm: 3, lg: 6 }} spacing="md">
-          {categories.map((category) => {
-            return (
-              <CategoryCard
-                key={category.id}
-                compact
-                category={category}
-                icon={getCategoryIcon(category.name)}
-              />
-            );
-          })}
+        <SimpleGrid cols={GRID_COLS} spacing="md">
+          {categories.map((category) => (
+            <CategoryCard
+              key={category.id}
+              compact
+              category={category}
+              icon={getCategoryIcon(category.name)}
+            />
+          ))}
         </SimpleGrid>
       )}
     </Box>

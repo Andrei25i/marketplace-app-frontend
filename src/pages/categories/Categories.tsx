@@ -1,9 +1,13 @@
-import { Title, Text, Box, SimpleGrid, Center, Loader } from "@mantine/core";
+import { Title, Text, Box, SimpleGrid } from "@mantine/core";
 import { useCategories } from "@/hooks/categories/useCategories";
 import { getCategoryIcon } from "@/utils/categoryIconMapper.util";
 import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
 import CategoryCard from "@/components/ui/cards/CategoryCard";
 import BackButton from "@/components/navigation/BackButton";
+import CategoryCardSkeleton from "@/components/ui/cards/CategoryCardSkeleton";
+
+const GRID_COLS = { base: 1, sm: 2, md: 3, lg: 4 };
+const SKELETON_COUNT = 8;
 
 const Categories = () => {
   const { categories, isLoading, error, refetch } = useCategories();
@@ -32,20 +36,26 @@ const Categories = () => {
       {error ? (
         <RequestErrorAlert message={error} onRetry={() => void refetch()} />
       ) : isLoading ? (
-        <Center mih={260} style={{ width: "100%" }}>
-          <Loader color="primary" size="lg" />
-        </Center>
+        <SimpleGrid
+          cols={GRID_COLS}
+          spacing="lg"
+          role="status"
+          aria-label="Se încarcă categoriile"
+          aria-busy
+        >
+          {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+            <CategoryCardSkeleton key={index} />
+          ))}
+        </SimpleGrid>
       ) : (
-        <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
-          {categories.map((category) => {
-            return (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                icon={getCategoryIcon(category.name)}
-              />
-            );
-          })}
+        <SimpleGrid cols={GRID_COLS} spacing="lg">
+          {categories.map((category) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              icon={getCategoryIcon(category.name)}
+            />
+          ))}
         </SimpleGrid>
       )}
     </Box>
