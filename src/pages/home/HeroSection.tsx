@@ -1,9 +1,10 @@
 import { Box, Button, TextInput, Title, Text, Overlay } from "@mantine/core";
 import { IconArrowRight, IconSearch } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import heroImageDesktop from "@/assets/heroImageDesktop.jpg";
-import heroImageMobile from "@/assets/heroImageMobile.jpg";
+import { useCallback, useState } from "react";
+import heroDesktop from "@/assets/hero-desktop.webp";
+import heroMobile from "@/assets/hero-mobile.webp";
+import heroBlur from "@/assets/hero-blur.webp";
 import { useMediaQuery } from "@mantine/hooks";
 import classes from "./HeroSection.module.css";
 
@@ -22,7 +23,12 @@ const HeroSection = () => {
 
   const isSmallMobile = useMediaQuery("(max-width: 580px)");
   const isMobile = useMediaQuery("(max-width: 800px)");
-  const heroImage = isMobile ? heroImageMobile : heroImageDesktop;
+
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  const imageRef = useCallback((img: HTMLImageElement | null) => {
+    if (img?.complete && img.naturalWidth > 0) setIsImageLoaded(true);
+  }, []);
 
   const searchPlaceholder = isMobile
     ? "Caută anunțuri..."
@@ -35,12 +41,25 @@ const HeroSection = () => {
           isSmallMobile ? classes.heroCardCompact : classes.heroCardDefault
         }`}
       >
-        <Box
-          component="img"
-          src={heroImage}
-          alt="Imagine interior modern"
-          className={classes.heroImage}
+        <div
+          className={classes.heroPlaceholder}
+          style={{ backgroundImage: `url(${heroBlur})` }}
+          aria-hidden
         />
+
+        <picture>
+          <source media="(max-width: 800px)" srcSet={heroMobile} />
+          <img
+            ref={imageRef}
+            src={heroDesktop}
+            alt="Imagine interior modern"
+            className={classes.heroImage}
+            data-loaded={isImageLoaded || undefined}
+            onLoad={() => setIsImageLoaded(true)}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
 
         <Overlay
           gradient="linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.5) 50%, transparent 100%)"
