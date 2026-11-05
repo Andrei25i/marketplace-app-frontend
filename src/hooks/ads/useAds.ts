@@ -15,15 +15,20 @@ const useAds = (
   { limit }: UseAdsOptions = {},
 ) => {
   const query = useQuery({
-    queryKey: ["ads", filters],
+    queryKey: ["ads", filters] as const,
     queryFn: () => adsService.getAll(filters),
     select: (data) =>
       typeof limit === "number" && limit >= 0 ? data.slice(0, limit) : data,
+    placeholderData: (previousData, previousQuery) =>
+      previousQuery?.queryKey[1].userId === filters.userId
+        ? previousData
+        : undefined,
   });
 
   return {
     ads: query.data ?? NO_ADS,
     isLoading: query.isLoading,
+    isRefreshing: query.isPlaceholderData,
     error: query.error
       ? getErrorMessage(query.error, "Nu s-au putut obține anunțurile.")
       : "",

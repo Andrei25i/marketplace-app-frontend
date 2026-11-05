@@ -22,7 +22,7 @@ const UserAds = () => {
   const { id } = useParams<{ id: string }>();
   const { user, isLoading: isUserLoading } = usePublicUser(id);
   const { filters, page, updateFilters, updatePage } = useSearchFilters();
-  const { ads, isLoading, error, refetch } = useAds({
+  const { ads, isLoading, isRefreshing, error, refetch } = useAds({
     ...filters,
     userId: id,
   });
@@ -127,6 +127,7 @@ const UserAds = () => {
         <SearchResults
           ads={ads}
           isLoading={isLoading}
+          isRefreshing={isRefreshing}
           error={error}
           page={page}
           onPageChange={updatePage}

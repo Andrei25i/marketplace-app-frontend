@@ -19,7 +19,8 @@ import { useState } from "react";
 
 const FavoriteAds = () => {
   const { filters, page, updateFilters, updatePage } = useSearchFilters();
-  const { ads, isLoading, error, refetch } = useFavoriteAds(filters);
+  const { ads, isLoading, isRefreshing, error, refetch } =
+    useFavoriteAds(filters);
   const { ads: allFavoriteAds, isLoading: isCountLoading } = useFavoriteAds({
     sort: "date_desc",
   });
@@ -113,6 +114,7 @@ const FavoriteAds = () => {
         <SearchResults
           ads={ads}
           isLoading={isLoading}
+          isRefreshing={isRefreshing}
           error={error}
           page={page}
           onPageChange={updatePage}

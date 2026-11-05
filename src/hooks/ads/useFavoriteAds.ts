@@ -2,7 +2,7 @@ import { favoritesService } from "@/services/favorites.service";
 import type { GetAdsFilters } from "@/types/ads.type";
 import type { FavoriteAdDTO } from "@/types/favorite.types";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 type UseFavoriteAdsOptions = {
   limit?: number;
@@ -22,11 +22,13 @@ const useFavoriteAds = (
     queryFn: () => favoritesService.getAll(filters),
     select: (data) =>
       typeof limit === "number" && limit >= 0 ? data.slice(0, limit) : data,
+    placeholderData: keepPreviousData,
   });
 
   return {
     ads: query.data ?? NO_ADS,
     isLoading: query.isLoading,
+    isRefreshing: query.isPlaceholderData,
     error: query.error
       ? getErrorMessage(
           query.error,

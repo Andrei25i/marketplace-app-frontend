@@ -1,6 +1,6 @@
 import type { AdDTO } from "@/types/ads.type";
 import RequestErrorAlert from "./feedback/RequestErrorAlert";
-import { SimpleGrid } from "@mantine/core";
+import { Box, SimpleGrid } from "@mantine/core";
 import EmptyResults from "./feedback/EmptyResults";
 import PaginatedGrid from "./PaginatedGrid";
 import AdCard from "./cards/AdCard";
@@ -20,6 +20,7 @@ type GridColumns = {
 interface SearchResultsProps {
   ads: AdDTO[];
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: string | null;
   page: number;
   onPageChange: (page: number) => void;
@@ -30,6 +31,7 @@ interface SearchResultsProps {
 export const SearchResults = ({
   ads,
   isLoading,
+  isRefreshing = false,
   error,
   page,
   onPageChange,
@@ -51,16 +53,28 @@ export const SearchResults = ({
         ))}
       </SimpleGrid>
     );
-  if (ads.length === 0) return <EmptyResults />;
-
   return (
-    <PaginatedGrid
-      items={ads}
-      itemsPerPage={12}
-      page={page}
-      onPageChange={onPageChange}
-      cols={cols}
-      renderItem={(ad) => <AdCard key={ad.id} ad={ad} />}
-    />
+    <Box
+      aria-busy={isRefreshing}
+      style={{
+        opacity: isRefreshing ? 0.55 : 1,
+        transition: isRefreshing
+          ? "opacity 150ms ease 120ms"
+          : "opacity 150ms ease",
+      }}
+    >
+      {ads.length === 0 ? (
+        <EmptyResults />
+      ) : (
+        <PaginatedGrid
+          items={ads}
+          itemsPerPage={12}
+          page={page}
+          onPageChange={onPageChange}
+          cols={cols}
+          renderItem={(ad) => <AdCard key={ad.id} ad={ad} />}
+        />
+      )}
+    </Box>
   );
 };
