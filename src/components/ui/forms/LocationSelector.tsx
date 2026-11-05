@@ -1,10 +1,22 @@
-import { memo, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import { Select, Flex } from "@mantine/core";
 import { IconMap, IconBuildingCommunity } from "@tabler/icons-react";
 import locationsData from "@/data/romanian_locations.json";
 import { useMediaQuery } from "@mantine/hooks";
 
-const countiesList = Object.keys(locationsData).sort();
+const locations = locationsData as Record<string, string[]>;
+const roCollator = new Intl.Collator("ro");
+const countiesList = Object.keys(locations).sort(roCollator.compare);
+
+const useLazyOptions = (options: string[], selected: string) => {
+  const [opened, setOpened] = useState(false);
+
+  return {
+    data: opened ? options : selected ? [selected] : [],
+    onDropdownOpen: () => setOpened(true),
+    onDropdownClose: () => setOpened(false),
+  };
+};
 
 interface LocationSelectorProps {
   selectedCounty: string;
@@ -24,13 +36,13 @@ const LocationSelector = ({
   const availableCities = useMemo(() => {
     if (!selectedCounty) return [];
 
-    const rawCities =
-      (locationsData as Record<string, string[]>)[selectedCounty] || [];
-
-    return Array.from(new Set(rawCities)).sort((a, b) =>
-      a.localeCompare(b, "ro"),
+    return Array.from(new Set(locations[selectedCounty] ?? [])).sort(
+      roCollator.compare,
     );
   }, [selectedCounty]);
+
+  const countyOptions = useLazyOptions(countiesList, selectedCounty);
+  const cityOptions = useLazyOptions(availableCities, selectedCity);
 
   const handleCountySelect = (newCounty: string | null) => {
     onCountyChange(newCounty || "");
@@ -44,7 +56,7 @@ const LocationSelector = ({
       <Select
         label="Județ"
         placeholder="Selectează județul"
-        data={countiesList}
+        {...countyOptions}
         value={selectedCounty || null}
         onChange={handleCountySelect}
         searchable={!isMobile}
@@ -59,7 +71,7 @@ const LocationSelector = ({
         placeholder={
           selectedCounty ? "Selectează localitatea" : "Selectează întâi județul"
         }
-        data={availableCities}
+        {...cityOptions}
         value={selectedCity || null}
         onChange={(val) => onCityChange(val || "")}
         searchable={!isMobile}
