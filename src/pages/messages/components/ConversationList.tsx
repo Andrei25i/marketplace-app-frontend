@@ -18,6 +18,8 @@ import ConversationListItem from "./ConversationListItem";
 import BackButton from "@/components/navigation/BackButton";
 import usePresenceSubscription from "@/hooks/chat/usePresenceSubscription";
 import ConversationListSkeleton from "./ConversationListSkeleton";
+import { AnimatePresence, motion } from "motion/react";
+import { DURATION, springSoft } from "@/theme/motion";
 
 type ConversationListProps = {
   activeId?: string;
@@ -78,13 +80,23 @@ const ConversationList = ({ activeId }: ConversationListProps) => {
           </Stack>
         )}
 
-        {conversations.map((conversation) => (
-          <ConversationListItem
-            key={conversation.id}
-            conversation={conversation}
-            active={conversation.id === activeId}
-          />
-        ))}
+        <AnimatePresence initial={false}>
+          {conversations.map((conversation) => (
+            <motion.div
+              key={conversation.id}
+              layout="position"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: DURATION.fast } }}
+              transition={{ layout: springSoft, duration: DURATION.base }}
+            >
+              <ConversationListItem
+                conversation={conversation}
+                active={conversation.id === activeId}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
 
         {hasNextPage && (
           <Center py="sm">
