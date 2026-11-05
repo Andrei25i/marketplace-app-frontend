@@ -8,11 +8,11 @@
   cursor: pointer;
   transition:
     box-shadow 0.3s ease,
-    transform 0.15s ease;
+    filter 0.15s ease;
 }
 
-.card:active {
-  transform: scale(0.98);
+.card:active:not(:has(button:active)) {
+  filter: brightness(0.96);
 }
 
 .card:hover {
