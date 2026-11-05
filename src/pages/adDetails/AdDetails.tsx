@@ -3,11 +3,12 @@ import BackButton from "@/components/navigation/BackButton";
 import AdImageCarousel from "./carousel/AdImageCarousel";
 import useAd from "@/hooks/ads/useAd";
 import AdDetailsCard from "./AdDetailsCard";
-import { Box, Center, Container, Flex, Loader } from "@mantine/core";
+import { Box, Center, Container, Flex } from "@mantine/core";
 import SellerInfoCard from "./SellerInfoCard";
 import ExpandableText from "@/components/ui/ExpandableText";
 import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
 import AdActions from "./AdActions";
+import AdDetailsSkeleton from "./AdDetailsSkeleton";
 
 const AdDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,9 +28,7 @@ const AdDetails = () => {
     return (
       <>
         <BackButton />
-        <Center mih="60vh">
-          <Loader color="primary" size="lg" />
-        </Center>
+        <AdDetailsSkeleton />
       </>
     );
 
