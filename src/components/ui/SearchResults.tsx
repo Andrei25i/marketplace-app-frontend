@@ -1,9 +1,12 @@
 import type { AdDTO } from "@/types/ads.type";
 import RequestErrorAlert from "./feedback/RequestErrorAlert";
-import { Center, Loader } from "@mantine/core";
+import { Box, SimpleGrid } from "@mantine/core";
 import EmptyResults from "./feedback/EmptyResults";
 import PaginatedGrid from "./PaginatedGrid";
 import AdCard from "./cards/AdCard";
+import AdCardSkeleton from "./cards/AdCardSkeleton";
+
+const SKELETON_COUNT = 8;
 
 type GridColumns = {
   base?: number;
@@ -17,6 +20,7 @@ type GridColumns = {
 interface SearchResultsProps {
   ads: AdDTO[];
   isLoading: boolean;
+  isRefreshing?: boolean;
   error: string | null;
   page: number;
   onPageChange: (page: number) => void;
@@ -27,6 +31,7 @@ interface SearchResultsProps {
 export const SearchResults = ({
   ads,
   isLoading,
+  isRefreshing = false,
   error,
   page,
   onPageChange,
@@ -36,20 +41,40 @@ export const SearchResults = ({
   if (error) return <RequestErrorAlert message={error} onRetry={onRetry} />;
   if (isLoading)
     return (
-      <Center mih={260}>
-        <Loader color="primary" size="lg" />
-      </Center>
+      <SimpleGrid
+        cols={cols}
+        spacing="sm"
+        role="status"
+        aria-label="Se încarcă anunțurile"
+        aria-busy
+      >
+        {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+          <AdCardSkeleton key={index} />
+        ))}
+      </SimpleGrid>
     );
-  if (ads.length === 0) return <EmptyResults />;
-
   return (
-    <PaginatedGrid
-      items={ads}
-      itemsPerPage={12}
-      page={page}
-      onPageChange={onPageChange}
-      cols={cols}
-      renderItem={(ad) => <AdCard key={ad.id} ad={ad} />}
-    />
+    <Box
+      aria-busy={isRefreshing}
+      style={{
+        opacity: isRefreshing ? 0.55 : 1,
+        transition: isRefreshing
+          ? "opacity 150ms ease 120ms"
+          : "opacity 150ms ease",
+      }}
+    >
+      {ads.length === 0 ? (
+        <EmptyResults />
+      ) : (
+        <PaginatedGrid
+          items={ads}
+          itemsPerPage={12}
+          page={page}
+          onPageChange={onPageChange}
+          cols={cols}
+          renderItem={(ad) => <AdCard key={ad.id} ad={ad} />}
+        />
+      )}
+    </Box>
   );
 };

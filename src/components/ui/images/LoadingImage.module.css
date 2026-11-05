@@ -8,7 +8,9 @@
 }
 
 .image {
-  transition: opacity 150ms ease;
+  transition:
+    transform 500ms ease,
+    opacity 150ms ease;
 }
 
 .image[data-status="loading"],

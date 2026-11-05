@@ -12,7 +12,7 @@ const Search = () => {
   const { filters, page, updateFilters, updatePage } = useSearchFilters();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const { ads, isLoading, error, refetch } = useAds(filters);
+  const { ads, isLoading, isRefreshing, error, refetch } = useAds(filters);
   const query = filters.search ?? "";
 
   const activeFilterCount = [
@@ -98,6 +98,7 @@ const Search = () => {
             <SearchResults
               ads={ads}
               isLoading={isLoading}
+              isRefreshing={isRefreshing}
               error={error}
               page={page}
               onPageChange={updatePage}

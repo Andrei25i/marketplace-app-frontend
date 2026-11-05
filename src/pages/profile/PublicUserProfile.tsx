@@ -1,24 +1,17 @@
 import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
 import usePublicUser from "@/hooks/auth/usePublicUser";
-import { Center, Loader, Stack } from "@mantine/core";
+import { Center, Stack } from "@mantine/core";
 import { useParams } from "react-router-dom";
 import ProfileHeader from "./components/ProfileHeader";
 import UserAdsSection from "./components/UserAdsSection";
 import PublicProfileActions from "./components/PublicProfileActions";
+import ProfileHeaderSkeleton from "./components/ProfileHeaderSkeleton";
 
 const PublicUserProfile = () => {
   const { id } = useParams();
   const { user, isLoading, error, refetch } = usePublicUser(id);
 
-  if (isLoading) {
-    return (
-      <Center mih="60vh">
-        <Loader color="primary" />
-      </Center>
-    );
-  }
-
-  if (error || !user) {
+  if (!isLoading && (error || !user)) {
     return (
       <Center mih="60vh">
         <RequestErrorAlert
@@ -31,12 +24,17 @@ const PublicUserProfile = () => {
   }
 
   return (
-    <Stack gap="xl" pb={"md"}>
-      <ProfileHeader
-        user={user}
-        actions={<PublicProfileActions userId={String(user.id)} />}
-      />
-      <UserAdsSection userId={String(user.id)} />
+    <Stack gap="xl" pb="md">
+      {user ? (
+        <ProfileHeader
+          user={user}
+          actions={<PublicProfileActions userId={String(user.id)} />}
+        />
+      ) : (
+        <ProfileHeaderSkeleton withActions />
+      )}
+
+      {id && <UserAdsSection userId={id} />}
     </Stack>
   );
 };

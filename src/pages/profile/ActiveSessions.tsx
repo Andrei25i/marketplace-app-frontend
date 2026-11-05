@@ -7,7 +7,6 @@ import {
   Button,
   Center,
   Group,
-  Loader,
   Modal,
   Paper,
   Stack,
@@ -27,6 +26,7 @@ import {
 import { useActiveSessions } from "@/hooks/auth/useActiveSessions";
 import type { ActiveSession } from "@/types/auth.type";
 import { formatFullDate, formatRelativeTime } from "@/utils/relativeTime.util";
+import SessionsSkeleton from "./components/SessionsSkeleton";
 
 const isMobile = (os: string) => os === "Android" || os === "iOS";
 
@@ -143,11 +143,7 @@ const ActiveSessions = () => {
           </Text>
         </Stack>
 
-        {sessionsQuery.isLoading && (
-          <Center py="lg">
-            <Loader />
-          </Center>
-        )}
+        {sessionsQuery.isLoading && <SessionsSkeleton />}
 
         {sessionsQuery.isError && (
           <Alert color="red" icon={<IconAlertCircle size={18} />}>

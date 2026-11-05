@@ -7,9 +7,8 @@ import { useSearchFilters } from "@/hooks/search/useSearchFilters";
 import {
   Badge,
   Box,
-  Center,
   Group,
-  Loader,
+  Skeleton,
   Stack,
   Text,
   TextInput,
@@ -23,11 +22,11 @@ const UserAds = () => {
   const { id } = useParams<{ id: string }>();
   const { user, isLoading: isUserLoading } = usePublicUser(id);
   const { filters, page, updateFilters, updatePage } = useSearchFilters();
-  const { ads, isLoading, error, refetch } = useAds({
+  const { ads, isLoading, isRefreshing, error, refetch } = useAds({
     ...filters,
     userId: id,
   });
-  const { ads: allUserAds } = useAds({
+  const { ads: allUserAds, isLoading: isCountLoading } = useAds({
     userId: id,
     sort: "date_desc",
   });
@@ -39,14 +38,6 @@ const UserAds = () => {
   if (searchFromUrl !== prevSearchFromUrl) {
     setPrevSearchFromUrl(searchFromUrl);
     setSearchQuery(searchFromUrl);
-  }
-
-  if (isUserLoading) {
-    return (
-      <Center mih="60vh">
-        <Loader color="primary"></Loader>
-      </Center>
-    );
   }
 
   const title = user
@@ -64,14 +55,26 @@ const UserAds = () => {
           align="center"
           wrap="wrap"
         >
-          <Title order={1} size="h3">
-            {title}
-          </Title>
+          {isUserLoading ? (
+            <Skeleton width={300} maw="100%" radius="sm">
+              <Title order={1} size="h3">
+                &nbsp;
+              </Title>
+            </Skeleton>
+          ) : (
+            <Title order={1} size="h3">
+              {title}
+            </Title>
+          )}
 
-          <Badge variant="light" color="primary.2" c="primary.6">
-            {allUserAds.length}{" "}
-            {allUserAds.length === 1 ? "anunț activ" : "anunțuri active"}
-          </Badge>
+          {isCountLoading ? (
+            <Skeleton height={20} width={110} radius="xl" />
+          ) : (
+            <Badge variant="light" color="primary.2" c="primary.6">
+              {allUserAds.length}{" "}
+              {allUserAds.length === 1 ? "anunț activ" : "anunțuri active"}
+            </Badge>
+          )}
         </Group>
 
         <Group align="end" gap="md" wrap="wrap" mb="md">
@@ -124,6 +127,7 @@ const UserAds = () => {
         <SearchResults
           ads={ads}
           isLoading={isLoading}
+          isRefreshing={isRefreshing}
           error={error}
           page={page}
           onPageChange={updatePage}

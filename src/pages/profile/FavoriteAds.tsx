@@ -8,6 +8,7 @@ import {
   Badge,
   Box,
   Group,
+  Skeleton,
   Stack,
   Text,
   TextInput,
@@ -18,7 +19,8 @@ import { useState } from "react";
 
 const FavoriteAds = () => {
   const { filters, page, updateFilters, updatePage } = useSearchFilters();
-  const { ads, isLoading, error, refetch } = useFavoriteAds(filters);
+  const { ads, isLoading, isRefreshing, error, refetch } =
+    useFavoriteAds(filters);
   const { ads: allFavoriteAds, isLoading: isCountLoading } = useFavoriteAds({
     sort: "date_desc",
   });
@@ -48,7 +50,9 @@ const FavoriteAds = () => {
             Anunțurile favorite
           </Title>
 
-          {!isCountLoading && (
+          {isCountLoading ? (
+            <Skeleton height={20} width={120} radius="xl" />
+          ) : (
             <Badge variant="light" color="primary.2" c="primary.6">
               {allFavoriteAds.length}{" "}
               {allFavoriteAds.length === 1
@@ -110,6 +114,7 @@ const FavoriteAds = () => {
         <SearchResults
           ads={ads}
           isLoading={isLoading}
+          isRefreshing={isRefreshing}
           error={error}
           page={page}
           onPageChange={updatePage}
