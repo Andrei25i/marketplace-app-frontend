@@ -54,8 +54,6 @@ const ImageTile = ({
           alt={alt}
           className={classes.image}
           style={{ objectFit: fit }}
-          loaderSize="xs"
-          loaderColor="gray"
           loading="lazy"
           draggable={false}
         />

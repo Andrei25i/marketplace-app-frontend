@@ -1,4 +1,6 @@
+import LoadingImage from "@/components/ui/images/LoadingImage";
 import type { AdImage } from "@/types/ads.type";
+import { cloudinaryUrl } from "@/utils/cloudinary.util";
 import { Box, Group, ScrollArea } from "@mantine/core";
 import { useEffect, useRef } from "react";
 
@@ -61,6 +63,7 @@ const AdImageThumbnails = ({
             }}
             onClick={() => onThumbnailClick(index)}
             style={{
+              position: "relative",
               flexShrink: 0,
               width: 75,
               aspectRatio: "1/1",
@@ -74,8 +77,8 @@ const AdImageThumbnails = ({
               opacity: index === activeIndex ? 1 : 0.6,
             }}
           >
-            <img
-              src={image.url}
+            <LoadingImage
+              src={cloudinaryUrl(image.url ?? "", { width: 150 })}
               alt={`${title} ${index + 1}`}
               style={{
                 display: "block",

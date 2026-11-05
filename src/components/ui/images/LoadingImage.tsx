@@ -1,10 +1,16 @@
 import { useCallback, useState, type ImgHTMLAttributes } from "react";
-import { Loader, type MantineColor, type MantineSize } from "@mantine/core";
+import {
+  Loader,
+  Skeleton,
+  type MantineColor,
+  type MantineSize,
+} from "@mantine/core";
 import { IconPhotoOff } from "@tabler/icons-react";
 import classes from "./LoadingImage.module.css";
 
 type LoadingImageProps = ImgHTMLAttributes<HTMLImageElement> & {
   src: string;
+  loader?: "skeleton" | "spinner";
   loaderColor?: MantineColor;
   loaderSize?: MantineSize;
 };
@@ -12,6 +18,7 @@ type LoadingImageProps = ImgHTMLAttributes<HTMLImageElement> & {
 const LoadingImage = ({
   src,
   className,
+  loader = "skeleton",
   loaderColor = "primary",
   loaderSize = "sm",
   onLoad,
@@ -33,13 +40,19 @@ const LoadingImage = ({
 
   return (
     <>
-      {status !== "loaded" && (
+      {status === "loading" && (
         <span className={classes.overlay}>
-          {status === "loading" ? (
-            <Loader size={loaderSize} color={loaderColor} />
+          {loader === "skeleton" ? (
+            <Skeleton height="100%" width="100%" radius={0} />
           ) : (
-            <IconPhotoOff size={28} color="var(--mantine-color-gray-5)" />
+            <Loader size={loaderSize} color={loaderColor} />
           )}
+        </span>
+      )}
+
+      {status === "error" && (
+        <span className={classes.overlay}>
+          <IconPhotoOff size={28} color="var(--mantine-color-gray-5)" />
         </span>
       )}
 

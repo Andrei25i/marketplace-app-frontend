@@ -60,6 +60,7 @@ const LightboxViewer = ({
                 src={cloudinaryUrl(image.src, { width: 2000 })}
                 alt={image.alt ?? `Imaginea ${index + 1}`}
                 className={classes.image}
+                loader="spinner"
                 loaderColor="primary.6"
                 loaderSize="md"
                 draggable={false}

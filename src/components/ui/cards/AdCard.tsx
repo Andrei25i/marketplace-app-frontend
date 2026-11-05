@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { formatPrice, timeAgo } from "@/utils/format.util";
 import FavoriteButton from "./FavoriteButton";
 import { useMediaQuery } from "@mantine/hooks";
+import LoadingImage from "../images/LoadingImage";
+import { cloudinaryUrl } from "@/utils/cloudinary.util";
 
 export interface AdCardProps {
   ad: AdDTO;
@@ -24,7 +26,12 @@ const AdCard = ({ ad }: AdCardProps) => {
       padding={0}
     >
       <Card.Section className={classes.imageSection}>
-        <img src={ad.images[0]?.url} alt={ad.title} className={classes.image} />
+        <LoadingImage
+          src={cloudinaryUrl(ad.images[0]?.url ?? "", { width: 700 })}
+          alt={ad.title}
+          className={classes.image}
+          loading="lazy"
+        />
 
         <FavoriteButton adId={ad.id} />
       </Card.Section>
