@@ -4,7 +4,7 @@ import { SimpleGrid } from "@mantine/core";
 import EmptyResults from "./feedback/EmptyResults";
 import PaginatedGrid from "./PaginatedGrid";
 import AdCard from "./cards/AdCard";
-import AdCardSkeleton from "./skeletons/AdCardSkeleton";
+import AdCardSkeleton from "./cards/AdCardSkeleton";
 
 const SKELETON_COUNT = 8;
 

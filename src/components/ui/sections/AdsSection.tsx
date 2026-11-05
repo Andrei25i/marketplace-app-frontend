@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { IconChevronRight, type ReactNode } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
-import AdCardSkeleton from "../skeletons/AdCardSkeleton";
+import AdCardSkeleton from "../cards/AdCardSkeleton";
 
 const CARD_WIDTH = { base: 230, xs: 300, sm: 320, md: 350 };
 
