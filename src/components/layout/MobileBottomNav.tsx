@@ -60,7 +60,7 @@ const MobileBottomNav = () => {
                 transition={springSnappy}
               />
             )}
-            
+
             <Stack gap={2} align="center" c={isActive ? "primary" : "gray"}>
               <UnreadIndicator count={item.badge} size={16} offset={2}>
                 <item.icon size={24} stroke={2} />
