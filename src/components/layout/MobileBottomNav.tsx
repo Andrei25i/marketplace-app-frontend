@@ -1,4 +1,4 @@
-import { Group, Stack, UnstyledButton, Text, Indicator } from "@mantine/core";
+import { Group, Stack, UnstyledButton, Text } from "@mantine/core";
 import {
   IconHome,
   IconMessage,
@@ -9,7 +9,9 @@ import {
 import { Link, useLocation } from "react-router-dom";
 import classes from "./MobileBottomNav.module.css";
 import useUnreadCount from "@/hooks/chat/useUnreadCount";
-import { formatUnreadCount } from "@/utils/chat.util";
+import UnreadIndicator from "./UnreadIndicator";
+import { motion } from "motion/react";
+import { springSnappy } from "@/theme/motion";
 
 const MobileBottomNav = () => {
   const location = useLocation();
@@ -51,16 +53,19 @@ const MobileBottomNav = () => {
             to={item.path}
             className={classes.navButton}
           >
+            {isActive && (
+              <motion.span
+                layoutId="bottom-nav-active"
+                className={classes.activePill}
+                transition={springSnappy}
+              />
+            )}
+            
             <Stack gap={2} align="center" c={isActive ? "primary" : "gray"}>
-              <Indicator
-                label={formatUnreadCount(item.badge)}
-                size={16}
-                offset={2}
-                color="red"
-                disabled={item.badge === 0}
-              >
+              <UnreadIndicator count={item.badge} size={16} offset={2}>
                 <item.icon size={24} stroke={2} />
-              </Indicator>
+              </UnreadIndicator>
+
               <Text size={"12px"} fw={"500"} tt="uppercase">
                 {item.label}
               </Text>

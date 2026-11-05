@@ -11,6 +11,8 @@
 }
 
 .navButton {
+  position: relative;
+  isolation: isolate;
   transition:
     transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
     color 0.2s ease;
@@ -21,4 +23,12 @@
 
 .navButton:active {
   transform: scale(0.85);
+}
+
+.activePill {
+  position: absolute;
+  inset: -4px -8px;
+  border-radius: 14px;
+  background-color: var(--mantine-color-primary-0);
+  z-index: -1;
 }

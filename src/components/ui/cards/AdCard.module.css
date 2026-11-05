@@ -6,7 +6,13 @@
   height: 100%;
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow 0.3s ease;
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.15s ease;
+}
+
+.card:active {
+  transform: scale(0.98);
 }
 
 .card:hover {

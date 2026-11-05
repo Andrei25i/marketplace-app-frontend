@@ -6,6 +6,7 @@ import { useFavoriteAdsStore } from "@/store/useFavoriteStore";
 import React, { useState } from "react";
 import { notifications } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";
+import { useAnimate } from "motion/react";
 
 type FavoriteButtonProps = {
   adId: string;
@@ -19,6 +20,7 @@ const FavoriteButton = ({ adId, variant = "icon" }: FavoriteButtonProps) => {
   const toggleFavorite = useFavoriteAdsStore((state) => state.toggleFavorite);
 
   const [isPending, setIsPending] = useState(false);
+  const [heartRef, animate] = useAnimate<HTMLSpanElement>();
   const navigate = useNavigate();
 
   const handleClick = async (event: React.MouseEvent) => {
@@ -37,6 +39,14 @@ const FavoriteButton = ({ adId, variant = "icon" }: FavoriteButtonProps) => {
     }
 
     if (!isLoaded || isPending) return;
+
+    if (!isFavorite && heartRef.current) {
+      void animate(
+        heartRef.current,
+        { scale: [1, 1.35, 1] },
+        { duration: 0.35, ease: "easeOut" },
+      );
+    }
 
     setIsPending(true);
 
@@ -71,7 +81,9 @@ const FavoriteButton = ({ adId, variant = "icon" }: FavoriteButtonProps) => {
         size="xs"
         radius="xl"
         leftSection={
-          <IconHeart size={18} fill={isFavorite ? "currentColor" : "none"} />
+          <span ref={heartRef} style={{ display: "inline-flex" }}>
+            <IconHeart size={18} fill={isFavorite ? "currentColor" : "none"} />
+          </span>
         }
         aria-label={
           isFavorite ? "Elimină de la favorite" : "Adaugă la favorite"
@@ -94,7 +106,9 @@ const FavoriteButton = ({ adId, variant = "icon" }: FavoriteButtonProps) => {
       aria-label={isFavorite ? "Elimină de la favorite" : "Adaugă la favorite"}
       onClick={handleClick}
     >
-      <IconHeart size={20} fill={isFavorite ? "currentColor" : "none"} />
+      <span ref={heartRef} style={{ display: "inline-flex" }}>
+        <IconHeart size={20} fill={isFavorite ? "currentColor" : "none"} />
+      </span>
     </ActionIcon>
   );
 };

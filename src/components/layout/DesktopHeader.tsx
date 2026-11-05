@@ -1,12 +1,12 @@
-import { Group, Text, Button, Indicator, ActionIcon } from "@mantine/core";
+import { Group, Text, Button, ActionIcon } from "@mantine/core";
 import { Link, matchPath, useLocation } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { IconCirclePlusFilled, IconMessage } from "@tabler/icons-react";
 import UserAvatar from "./UserAvatar";
 import { useAuthStore } from "@/store/useAuthStore";
 import useUnreadCount from "@/hooks/chat/useUnreadCount";
-import { formatUnreadCount } from "@/utils/chat.util";
 import classes from "./DesktopHeader.module.css";
+import UnreadIndicator from "./UnreadIndicator";
 
 const DesktopHeader = () => {
   const { pathname } = useLocation();
@@ -29,12 +29,10 @@ const DesktopHeader = () => {
 
       <Group>
         {isAuthenticated && (
-          <Indicator
-            label={formatUnreadCount(unreadCount)}
+          <UnreadIndicator
+            count={unreadCount}
             size={20}
             offset={5}
-            color="red"
-            disabled={unreadCount === 0}
             className={classes.messagesIndicator}
             styles={{ indicator: { pointerEvents: "none" } }}
           >
@@ -49,7 +47,7 @@ const DesktopHeader = () => {
             >
               <IconMessage size={22} />
             </ActionIcon>
-          </Indicator>
+          </UnreadIndicator>
         )}
 
         <Button
