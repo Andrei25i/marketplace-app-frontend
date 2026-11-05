@@ -29,6 +29,11 @@ export const fadeInUp: Variants = {
     y: 0,
     transition: { duration: DURATION.base, ease: EASE_OUT },
   },
+  exit: {
+    opacity: 0,
+    scale: 0.96,
+    transition: { duration: DURATION.fast, ease: "easeIn" },
+  },
 };
 
 export const fadeIn: Variants = {

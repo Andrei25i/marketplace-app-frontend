@@ -17,6 +17,7 @@ export const Stagger = ({ interval = 0.03, ...rest }: StaggerProps) => (
 export const StaggerItem = ({ style, ...rest }: HTMLMotionProps<"div">) => (
   <motion.div
     variants={fadeInUp}
+    exit="exit"
     style={{ height: "100%", ...style }}
     {...rest}
   />
