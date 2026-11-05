@@ -11,8 +11,6 @@ import {
   Text,
   Textarea,
   TextInput,
-  ThemeIcon,
-  Title,
 } from "@mantine/core";
 import {
   IconAlertCircle,
@@ -20,12 +18,12 @@ import {
   IconDeviceFloppy,
   IconFileText,
   IconPhone,
-  IconSpeakerphone,
   IconTag,
 } from "@tabler/icons-react";
 import SectionTitle from "./SectionTitle";
 import ImageSelector from "./ImageSelector";
 import LocationSelector from "./LocationSelector";
+import AdFormHeader from "./AdFormHeader";
 
 type AdFormProps = {
   heading: string;
@@ -97,19 +95,7 @@ const AdForm = ({
         withBorder
         radius="md"
       >
-        <Stack align="center" mb={40} gap="xs">
-          <ThemeIcon size={64} mb="xs">
-            <IconSpeakerphone size={32} />
-          </ThemeIcon>
-
-          <Title ta="center" order={1} size="h3">
-            {heading}
-          </Title>
-
-          <Text ta="center" c={"dimmed"} size="sm">
-            {subheading}
-          </Text>
-        </Stack>
+        <AdFormHeader heading={heading} subheading={subheading} />
 
         <Stack gap="lg">
           <Stack gap="xs">
