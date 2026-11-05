@@ -1,5 +1,7 @@
 import { Center, Pagination, SimpleGrid } from "@mantine/core";
 import { useMemo } from "react";
+import { Stagger, StaggerItem } from "./motion/Stagger";
+import { AnimatePresence } from "motion/react";
 
 type PaginatedGridProps<T> = {
   items: T[];
@@ -7,6 +9,7 @@ type PaginatedGridProps<T> = {
   page?: number;
   onPageChange?: (page: number) => void;
   renderItem: (item: T, index: number) => React.ReactNode;
+  getItemKey: (item: T) => React.Key;
   cols?: {
     base?: number;
     xs?: number;
@@ -22,6 +25,7 @@ const PaginatedGrid = <T,>({
   itemsPerPage = 6,
   page = 1,
   onPageChange,
+  getItemKey,
   renderItem,
   cols = { base: 1, sm: 2, lg: 3 },
 }: PaginatedGridProps<T>) => {
@@ -37,9 +41,17 @@ const PaginatedGrid = <T,>({
 
   return (
     <>
-      <SimpleGrid cols={cols} spacing="sm">
-        {currentItems.map((item, index) => renderItem(item, index))}
-      </SimpleGrid>
+      <Stagger key={activePage}>
+        <SimpleGrid cols={cols} spacing="sm" style={{ position: "relative" }}>
+          <AnimatePresence mode="popLayout">
+            {currentItems.map((item, index) => (
+              <StaggerItem key={getItemKey(item)}>
+                {renderItem(item, index)}
+              </StaggerItem>
+            ))}
+          </AnimatePresence>
+        </SimpleGrid>
+      </Stagger>
 
       {totalPages > 1 && (
         <Center mt="lg">

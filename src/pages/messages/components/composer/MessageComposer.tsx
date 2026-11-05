@@ -21,6 +21,7 @@ import AttachImageButton from "./AttachImageButton";
 import useVoiceRecorder from "./useVoiceRecorder";
 import { notifications } from "@mantine/notifications";
 import VoiceRecorderBar from "./VoiceRecorderBar";
+import Reveal from "@/components/ui/motion/Reveal";
 
 type MessageComposerProps = {
   onSend: (content: string, files: File[]) => boolean;
@@ -144,17 +145,23 @@ const MessageComposer = ({
 
   return (
     <Box className={classes.composer} px="md" py="sm">
-      {editing && (
-        <EditBanner content={editing.content} onCancel={onCancelEdit} />
-      )}
-      {ad && !editing && <AdBadge title={ad.title} onRemove={onRemoveAd} />}
-      {hasImages && (
+      <Reveal show={Boolean(editing)}>
+        {editing && (
+          <EditBanner content={editing.content} onCancel={onCancelEdit} />
+        )}
+      </Reveal>
+
+      <Reveal show={Boolean(ad && !editing)}>
+        {ad && <AdBadge title={ad.title} onRemove={onRemoveAd} />}
+      </Reveal>
+
+      <Reveal show={hasImages}>
         <ComposerImageStrip
           images={images}
           onRemove={removeImage}
           onClear={clearImages}
         />
-      )}
+      </Reveal>
 
       {isRecording ? (
         <VoiceRecorderBar

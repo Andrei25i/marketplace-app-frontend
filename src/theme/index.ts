@@ -44,6 +44,7 @@ export const theme = createTheme({
   primaryColor: "primary",
 
   fontFamily: "Inter, sans-serif",
+  respectReducedMotion: true,
 
   components: {
     Card: {

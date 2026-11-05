@@ -2,6 +2,7 @@ import { AppShell } from "@mantine/core";
 import { Outlet, ScrollRestoration } from "react-router-dom";
 import DesktopHeader from "../components/layout/DesktopHeader";
 import MobileBottomNav from "../components/layout/MobileBottomNav";
+import PageTransition from "@/components/layout/PageTransition";
 
 const MainLayout = () => {
   return (
@@ -22,7 +23,9 @@ const MainLayout = () => {
       </AppShell.Header>
 
       <AppShell.Main>
-        <Outlet />
+        <PageTransition>
+          <Outlet />
+        </PageTransition>
       </AppShell.Main>
 
       <AppShell.Footer hiddenFrom="sm" withBorder={false} bg="transparent">

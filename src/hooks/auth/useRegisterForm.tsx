@@ -9,9 +9,7 @@ import {
 import type { RegisterDTO } from "@/types/auth.type";
 import { useNavigate } from "react-router-dom";
 import { authService } from "@/services/auth.service";
-import { notifications } from "@mantine/notifications";
 import { getErrorMessage } from "@/utils/getErrorMessage.util";
-import { IconCheck } from "@tabler/icons-react";
 
 export const useRegisterForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -90,13 +88,6 @@ export const useRegisterForm = () => {
       };
 
       await authService.register(payload);
-      notifications.show({
-        title: "Succes",
-        message: "Contul a fost creat cu succes.",
-        color: "green",
-        icon: <IconCheck size={18} />,
-        autoClose: 5000,
-      });
       navigate("/");
     } catch (err) {
       console.error("Eroare la înregistrare:", err);

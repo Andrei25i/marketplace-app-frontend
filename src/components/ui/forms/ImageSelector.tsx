@@ -10,19 +10,13 @@ import { arrayMove } from "@dnd-kit/sortable";
 import SortableItem from "./SortableItem";
 import SortableGrid from "./SortableGrid";
 import AddImageTile from "./AddImageTile";
+import { popIn } from "@/theme/motion";
 
 interface ImageSelectorProps {
   images: LocalAdImage[];
   onChange: (images: LocalAdImage[]) => void;
   maxImages?: number;
 }
-
-const tileMotion = {
-  initial: { opacity: 0, scale: 0.85 },
-  animate: { opacity: 1, scale: 1 },
-  exit: { opacity: 0, scale: 0.85 },
-  transition: { type: "spring", stiffness: 500, damping: 35 },
-} as const;
 
 const ImageSelector = ({
   images,
@@ -73,11 +67,7 @@ const ImageSelector = ({
           >
             <AnimatePresence initial={false} mode="popLayout">
               {images.map((image, index) => (
-                <motion.div
-                  key={image.preview}
-                  {...tileMotion}
-                  layout={!isSorting}
-                >
+                <motion.div key={image.preview} {...popIn} layout={!isSorting}>
                   <SortableItem
                     id={image.preview}
                     label={`Imaginea ${index + 1}. Apasă Space și folosește săgețile ca să o muți.`}
@@ -109,7 +99,7 @@ const ImageSelector = ({
               ))}
 
               {images.length < maxImages && (
-                <motion.div key="add" {...tileMotion} layout>
+                <motion.div key="add" {...popIn} layout>
                   <AddImageTile onFiles={handleFiles} />
                 </motion.div>
               )}
