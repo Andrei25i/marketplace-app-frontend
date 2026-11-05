@@ -1,4 +1,5 @@
 import { useForgotPasswordForm } from "@/hooks/auth/useForgotPasswordForm";
+import { fadeInUp } from "@/theme/motion";
 import {
   Alert,
   Button,
@@ -16,6 +17,7 @@ import {
   IconLock,
   IconMail,
 } from "@tabler/icons-react";
+import { AnimatePresence, motion } from "motion/react";
 import { Form, Link } from "react-router-dom";
 
 const ForgotPassword = () => {
@@ -47,89 +49,107 @@ const ForgotPassword = () => {
           </Text>
         </Stack>
 
-        {isSent ? (
-          <Stack align="center">
-            <Text ta="center" fw={500} c="green">
-              Verifică-ți adresa de email!
-            </Text>
-            <Text ta="center" c="dimmed" size="sm">
-              Dacă adresa <b>{email}</b> este asociată unui cont, vei primi un
-              link pentru resetarea parolei.
-            </Text>
-            <Text
-              component={Link}
-              to={"/login"}
-              c="primary"
-              fw={600}
-              size="sm"
-              mt="xs"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "6px",
-              }}
+        <AnimatePresence mode="wait" initial={false}>
+          {isSent ? (
+            <motion.div
+              key="sent"
+              variants={fadeInUp}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
             >
-              <IconArrowLeft size={16} stroke={2} />
-              Înapoi la autentificare
-            </Text>
-          </Stack>
-        ) : (
-          <Form onSubmit={handleSubmit}>
-            <Stack gap="md">
-              <TextInput
-                label="Adresă de email"
-                placeholder="nume@exemplu.ro"
-                leftSection={<IconMail size={18} />}
-                type="email"
-                withAsterisk
-                value={email}
-                onChange={(e) => setEmail(e.currentTarget.value)}
-              />
-
-              {error && (
-                <Alert
-                  variant="light"
-                  color="red"
-                  radius="md"
-                  icon={<IconAlertCircle size={18} />}
-                  mt="sm"
+              <Stack align="center">
+                <Text ta="center" fw={500} c="green">
+                  Verifică adresa de email
+                </Text>
+                <Text ta="center" c="dimmed" size="sm">
+                  Dacă adresa <b>{email}</b> este asociată unui cont, vei primi
+                  un link pentru resetarea parolei.
+                </Text>
+                <Text
+                  component={Link}
+                  to={"/login"}
+                  c="primary"
+                  fw={600}
+                  size="sm"
+                  mt="xs"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                  }}
                 >
-                  {error}
-                </Alert>
-              )}
+                  <IconArrowLeft size={16} stroke={2} />
+                  Înapoi la autentificare
+                </Text>
+              </Stack>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="form"
+              variants={fadeInUp}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <Form onSubmit={handleSubmit}>
+                <Stack gap="md">
+                  <TextInput
+                    label="Adresă de email"
+                    placeholder="nume@exemplu.ro"
+                    leftSection={<IconMail size={18} />}
+                    type="email"
+                    withAsterisk
+                    value={email}
+                    onChange={(e) => setEmail(e.currentTarget.value)}
+                  />
 
-              <Button
-                type="submit"
-                size="lg"
-                radius="md"
-                fullWidth
-                mt="xl"
-                loading={isLoading}
-              >
-                Trimite link de resetare
-              </Button>
+                  {error && (
+                    <Alert
+                      variant="light"
+                      color="red"
+                      radius="md"
+                      icon={<IconAlertCircle size={18} />}
+                      mt="sm"
+                    >
+                      {error}
+                    </Alert>
+                  )}
 
-              <Text
-                component={Link}
-                to={"/login"}
-                c="primary"
-                fw={600}
-                size="sm"
-                mt="xs"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "6px",
-                }}
-              >
-                <IconArrowLeft size={16} stroke={2} />
-                Înapoi la autentificare
-              </Text>
-            </Stack>
-          </Form>
-        )}
+                  <Button
+                    type="submit"
+                    size="lg"
+                    radius="md"
+                    fullWidth
+                    mt="xl"
+                    loading={isLoading}
+                  >
+                    Trimite link de resetare
+                  </Button>
+
+                  <Text
+                    component={Link}
+                    to={"/login"}
+                    c="primary"
+                    fw={600}
+                    size="sm"
+                    mt="xs"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px",
+                    }}
+                  >
+                    <IconArrowLeft size={16} stroke={2} />
+                    Înapoi la autentificare
+                  </Text>
+                </Stack>
+              </Form>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Paper>
     </Center>
   );
