@@ -1,9 +1,12 @@
 import type { AdDTO } from "@/types/ads.type";
 import RequestErrorAlert from "./feedback/RequestErrorAlert";
-import { Center, Loader } from "@mantine/core";
+import { SimpleGrid } from "@mantine/core";
 import EmptyResults from "./feedback/EmptyResults";
 import PaginatedGrid from "./PaginatedGrid";
 import AdCard from "./cards/AdCard";
+import AdCardSkeleton from "./skeletons/AdCardSkeleton";
+
+const SKELETON_COUNT = 8;
 
 type GridColumns = {
   base?: number;
@@ -36,9 +39,17 @@ export const SearchResults = ({
   if (error) return <RequestErrorAlert message={error} onRetry={onRetry} />;
   if (isLoading)
     return (
-      <Center mih={260}>
-        <Loader color="primary" size="lg" />
-      </Center>
+      <SimpleGrid
+        cols={cols}
+        spacing="sm"
+        role="status"
+        aria-label="Se încarcă anunțurile"
+        aria-busy
+      >
+        {Array.from({ length: SKELETON_COUNT }, (_, index) => (
+          <AdCardSkeleton key={index} />
+        ))}
+      </SimpleGrid>
     );
   if (ads.length === 0) return <EmptyResults />;
 

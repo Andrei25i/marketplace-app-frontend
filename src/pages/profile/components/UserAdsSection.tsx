@@ -18,7 +18,7 @@ const UserAdsSection = ({ userId, isOwner = false }: UserAdsSectionProps) => {
 
   return (
     <AdsSection
-      title={`Anunțuri (${ads.length})`}
+      title={isLoading ? "Anunțuri" : `Anunțuri (${ads.length})`}
       ads={ads}
       isLoading={isLoading}
       error={error}

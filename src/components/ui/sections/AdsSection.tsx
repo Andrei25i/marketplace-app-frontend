@@ -5,16 +5,31 @@ import {
   Anchor,
   Box,
   Card,
-  Center,
   Flex,
   Group,
-  Loader,
   ScrollArea,
   Text,
   Title,
 } from "@mantine/core";
-import { IconChevronRight } from "@tabler/icons-react";
+import { IconChevronRight, type ReactNode } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
+import AdCardSkeleton from "../skeletons/AdCardSkeleton";
+
+const CARD_WIDTH = { base: 230, xs: 300, sm: 320, md: 350 };
+
+const AdsRow = ({ children }: { children: ReactNode }) => (
+  <ScrollArea type="hover" scrollbarSize={10} offsetScrollbars>
+    <Flex gap={{ base: "md", md: "lg", lg: 25 }} wrap="nowrap" pb="lg">
+      {children}
+    </Flex>
+  </ScrollArea>
+);
+
+const AdSlot = ({ children }: { children: ReactNode }) => (
+  <Box w={CARD_WIDTH} style={{ flexShrink: 0 }}>
+    {children}
+  </Box>
+);
 
 type AdsSectionProps = {
   title: string;
@@ -85,9 +100,15 @@ const AdsSection = ({
       {error ? (
         <RequestErrorAlert compact message={error} onRetry={onRetry} />
       ) : isLoading ? (
-        <Center mih={50}>
-          <Loader color="primary" size="sm" />
-        </Center>
+        <Box role="status" aria-label="Se încarcă anunțurile" aria-busy>
+          <AdsRow>
+            {Array.from({ length: visibleAdsCount }, (_, index) => (
+              <AdSlot key={index}>
+                <AdCardSkeleton />
+              </AdSlot>
+            ))}
+          </AdsRow>
+        </Box>
       ) : isEmpty ? (
         <Card
           p="sm"
@@ -102,19 +123,13 @@ const AdsSection = ({
           </Text>
         </Card>
       ) : (
-        <ScrollArea type="hover" scrollbarSize={10} offsetScrollbars>
-          <Flex gap={{ base: "md", md: "lg", lg: 25 }} wrap="nowrap" pb="lg">
-            {visibleAds.map((ad) => (
-              <Box
-                key={ad.id}
-                w={{ base: 230, xs: 300, sm: 320, md: 350 }}
-                style={{ flexShrink: 0 }}
-              >
-                <AdCard ad={ad} />
-              </Box>
-            ))}
-          </Flex>
-        </ScrollArea>
+        <AdsRow>
+          {visibleAds.map((ad) => (
+            <AdSlot key={ad.id}>
+              <AdCard ad={ad} />
+            </AdSlot>
+          ))}
+        </AdsRow>
       )}
     </Box>
   );
