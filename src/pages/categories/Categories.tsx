@@ -5,9 +5,10 @@ import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
 import CategoryCard from "@/components/ui/cards/CategoryCard";
 import BackButton from "@/components/navigation/BackButton";
 import CategoryCardSkeleton from "@/components/ui/cards/CategoryCardSkeleton";
+import { Stagger, StaggerItem } from "@/components/ui/motion/Stagger";
 
 const GRID_COLS = { base: 1, sm: 2, md: 3, lg: 4 };
-const SKELETON_COUNT = 8;
+const SKELETON_COUNT = 11;
 
 const Categories = () => {
   const { categories, isLoading, error, refetch } = useCategories();
@@ -48,15 +49,18 @@ const Categories = () => {
           ))}
         </SimpleGrid>
       ) : (
-        <SimpleGrid cols={GRID_COLS} spacing="lg">
-          {categories.map((category) => (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              icon={getCategoryIcon(category.name)}
-            />
-          ))}
-        </SimpleGrid>
+        <Stagger>
+          <SimpleGrid cols={GRID_COLS} spacing="lg">
+            {categories.map((category) => (
+              <StaggerItem key={category.id}>
+                <CategoryCard
+                  category={category}
+                  icon={getCategoryIcon(category.name)}
+                />
+              </StaggerItem>
+            ))}
+          </SimpleGrid>
+        </Stagger>
       )}
     </Box>
   );

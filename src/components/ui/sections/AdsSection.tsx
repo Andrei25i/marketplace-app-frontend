@@ -11,9 +11,11 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { IconChevronRight, type ReactNode } from "@tabler/icons-react";
+import { IconChevronRight } from "@tabler/icons-react";
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import AdCardSkeleton from "../cards/AdCardSkeleton";
+import { Stagger, StaggerItem } from "../motion/Stagger";
 
 const CARD_WIDTH = { base: 230, xs: 300, sm: 320, md: 350 };
 
@@ -123,13 +125,17 @@ const AdsSection = ({
           </Text>
         </Card>
       ) : (
-        <AdsRow>
-          {visibleAds.map((ad) => (
-            <AdSlot key={ad.id}>
-              <AdCard ad={ad} />
-            </AdSlot>
-          ))}
-        </AdsRow>
+        <Stagger>
+          <AdsRow>
+            {visibleAds.map((ad) => (
+              <AdSlot key={ad.id}>
+                <StaggerItem>
+                  <AdCard ad={ad} />
+                </StaggerItem>
+              </AdSlot>
+            ))}
+          </AdsRow>
+        </Stagger>
       )}
     </Box>
   );

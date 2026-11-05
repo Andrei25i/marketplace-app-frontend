@@ -1,6 +1,7 @@
 import CategoryCard from "@/components/ui/cards/CategoryCard";
 import CategoryCardSkeleton from "@/components/ui/cards/CategoryCardSkeleton";
 import RequestErrorAlert from "@/components/ui/feedback/RequestErrorAlert";
+import { Stagger, StaggerItem } from "@/components/ui/motion/Stagger";
 import { useCategories } from "@/hooks/categories/useCategories";
 import { getCategoryIcon } from "@/utils/categoryIconMapper.util";
 import { Anchor, Box, Group, SimpleGrid, Text, Title } from "@mantine/core";
@@ -56,16 +57,19 @@ const CategoriesSection = () => {
           ))}
         </SimpleGrid>
       ) : (
-        <SimpleGrid cols={GRID_COLS} spacing="md">
-          {categories.map((category) => (
-            <CategoryCard
-              key={category.id}
-              compact
-              category={category}
-              icon={getCategoryIcon(category.name)}
-            />
-          ))}
-        </SimpleGrid>
+        <Stagger>
+          <SimpleGrid cols={GRID_COLS} spacing="md">
+            {categories.map((category) => (
+              <StaggerItem key={category.id}>
+                <CategoryCard
+                  compact
+                  category={category}
+                  icon={getCategoryIcon(category.name)}
+                />
+              </StaggerItem>
+            ))}
+          </SimpleGrid>
+        </Stagger>
       )}
     </Box>
   );
