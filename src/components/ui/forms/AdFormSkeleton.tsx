@@ -25,9 +25,9 @@ const FieldSkeleton = ({
   labelWidth: number;
   height?: number;
 }) => (
-  <Stack gap={4}>
+  <Stack gap={6}>
     <Skeleton width={labelWidth} radius="sm">
-      <Text size="sm">&nbsp;</Text>
+      <Text fz={10}>&nbsp;</Text>
     </Skeleton>
     <Skeleton height={height} radius="sm" />
   </Stack>
