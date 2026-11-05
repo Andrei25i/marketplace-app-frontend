@@ -8,6 +8,7 @@ import {
   Badge,
   Box,
   Group,
+  Skeleton,
   Stack,
   Text,
   TextInput,
@@ -48,7 +49,9 @@ const FavoriteAds = () => {
             Anunțurile favorite
           </Title>
 
-          {!isCountLoading && (
+          {isCountLoading ? (
+            <Skeleton height={20} width={120} radius="xl" />
+          ) : (
             <Badge variant="light" color="primary.2" c="primary.6">
               {allFavoriteAds.length}{" "}
               {allFavoriteAds.length === 1

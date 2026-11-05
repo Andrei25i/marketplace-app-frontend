@@ -6,7 +6,7 @@ const FavoriteAdsSection = () => {
 
   return (
     <AdsSection
-      title={`Favorite (${ads.length})`}
+      title={isLoading ? "Favorite" : `Favorite (${ads.length})`}
       ads={ads}
       isLoading={isLoading}
       error={error}
