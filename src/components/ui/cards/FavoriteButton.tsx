@@ -51,16 +51,7 @@ const FavoriteButton = ({ adId, variant = "icon" }: FavoriteButtonProps) => {
     setIsPending(true);
 
     try {
-      const wasAdded = await toggleFavorite(adId);
-      notifications.show({
-        title: wasAdded
-          ? "Anunț adăugat la favorite"
-          : "Anunț eliminat de la favorite",
-        message: wasAdded
-          ? "Anunțul a fost salvat în lista ta."
-          : "Anunțul a fost eliminat din lista ta.",
-        color: "green",
-      });
+      await toggleFavorite(adId);
     } catch {
       notifications.show({
         title: "Eroare",
