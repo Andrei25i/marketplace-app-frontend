@@ -12,7 +12,7 @@ const AppNotifications = () => {
 
   return (
     <Notifications
-      position={isDesktop ? "bottom-right" : "top-center"}
+      position={isDesktop ? "top-right" : "top-center"}
       zIndex={1000}
       styles={{
         root: {
