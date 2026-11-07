@@ -1,9 +1,12 @@
+import type { Ref } from "react";
 import type { LocalAdImage } from "@/types/ads.type";
 import type { CategoryDTO } from "@/types/category.type";
+import type { AdFormErrors } from "@/utils/adForm.util";
 import {
   Alert,
   Button,
   Group,
+  Input,
   NumberInput,
   Paper,
   Select,
@@ -26,6 +29,7 @@ import LocationSelector from "./LocationSelector";
 import AdFormHeader from "./AdFormHeader";
 
 type AdFormProps = {
+  formRef: Ref<HTMLFormElement>;
   heading: string;
   subheading: string;
   submitLabel: string;
@@ -50,13 +54,15 @@ type AdFormProps = {
   categories: CategoryDTO[];
   categoriesLoading: boolean;
   categoriesError: string;
-  error: string;
+  fieldErrors: AdFormErrors;
+  generalError: string;
   isSubmitting: boolean;
   handleSubmit: (e: React.SubmitEvent<HTMLFormElement>) => void;
   handleCancel: () => void;
 };
 
 const AdForm = ({
+  formRef,
   heading,
   subheading,
   submitLabel,
@@ -81,7 +87,8 @@ const AdForm = ({
   categories,
   categoriesLoading,
   categoriesError,
-  error,
+  fieldErrors,
+  generalError,
   isSubmitting,
   handleSubmit,
   handleCancel,
@@ -89,8 +96,10 @@ const AdForm = ({
   return (
     <Stack maw={700} mx="auto" gap="lg">
       <Paper
+        ref={formRef}
         component="form"
         onSubmit={handleSubmit}
+        noValidate
         p={{ base: "md", sm: "xl" }}
         withBorder
         radius="md"
@@ -108,6 +117,7 @@ const AdForm = ({
               onChange={(e) => setTitle(e.currentTarget.value)}
               leftSection={<IconFileText size={18} />}
               withAsterisk
+              error={fieldErrors.title}
             />
 
             <Select
@@ -122,7 +132,7 @@ const AdForm = ({
               searchable
               clearable
               disabled={categoriesLoading}
-              error={categoriesError || undefined}
+              error={fieldErrors.category_id ?? (categoriesError || undefined)}
               leftSection={<IconTag size={18} />}
               withAsterisk
             />
@@ -136,6 +146,7 @@ const AdForm = ({
               maxRows={10}
               autosize
               withAsterisk
+              error={fieldErrors.description}
             />
           </Stack>
 
@@ -147,6 +158,9 @@ const AdForm = ({
               Doar fișiere imagine, maximum 10 imagini, fiecare de cel mult 5MB.
             </Text>
             <ImageSelector images={images} onChange={setImages} />
+            {fieldErrors.images && (
+              <Input.Error data-form-error>{fieldErrors.images}</Input.Error>
+            )}
           </Stack>
 
           <Stack gap="xs">
@@ -162,6 +176,7 @@ const AdForm = ({
                 onChange={setPrice}
                 leftSection={<IconCoin size={18} />}
                 withAsterisk
+                error={fieldErrors.price}
               />
 
               <Select
@@ -172,6 +187,7 @@ const AdForm = ({
                 allowDeselect={false}
                 leftSection={<IconCoin size={18} />}
                 withAsterisk
+                error={fieldErrors.currency}
               />
             </Group>
           </Stack>
@@ -187,6 +203,7 @@ const AdForm = ({
               onChange={handlePhoneChange}
               leftSection={<IconPhone size={18} />}
               withAsterisk
+              error={fieldErrors.phone_number}
             />
 
             <LocationSelector
@@ -194,12 +211,18 @@ const AdForm = ({
               selectedCity={city}
               onCountyChange={setCounty}
               onCityChange={setCity}
+              countyError={fieldErrors.county}
+              cityError={fieldErrors.city}
             />
           </Stack>
 
-          {error && (
-            <Alert color="red" icon={<IconAlertCircle size={18} />}>
-              {error}
+          {generalError && (
+            <Alert
+              color="red"
+              icon={<IconAlertCircle size={18} />}
+              data-form-error
+            >
+              {generalError}
             </Alert>
           )}
 

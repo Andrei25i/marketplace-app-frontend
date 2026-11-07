@@ -20,3 +20,19 @@ export const getErrorMessage = (
 
   return fallback;
 };
+
+export const getFieldErrors = (error: unknown): Record<string, string> => {
+  if (!isAxiosError(error)) return {};
+
+  const fields: unknown = error.response?.data?.fields;
+  if (!fields || typeof fields !== "object") return {};
+
+  const result: Record<string, string> = {};
+  for (const [key, message] of Object.entries(fields)) {
+    const field = key.split(".")[0];
+    if (field && typeof message === "string" && !(field in result)) {
+      result[field] = message;
+    }
+  }
+  return result;
+};

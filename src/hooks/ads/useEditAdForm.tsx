@@ -4,12 +4,13 @@ import { useCategories } from "../categories/useCategories";
 import { useEffect, useState } from "react";
 import type { AdImage, LocalAdImage } from "@/types/ads.type";
 import { adsService } from "@/services/ads.service";
+import { useFormErrors } from "@/hooks/forms/useFormErrors";
+import { AD_FORM_FIELDS, validateAdForm } from "@/utils/adForm.util";
 import {
   isValidPhone,
   normalizeLocation,
   normalizePhone,
 } from "@/utils/validators.util";
-import { getErrorMessage } from "@/utils/getErrorMessage.util";
 import { notifications } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons-react";
 
@@ -32,10 +33,20 @@ export const useEditAdForm = (adId: string) => {
   const [county, setCounty] = useState("");
   const [city, setCity] = useState("");
   const [categoryId, setCategoryId] = useState<string | null>(null);
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notFound, setNotFound] = useState(false);
+
+  const {
+    formRef,
+    fieldErrors,
+    generalError,
+    resetErrors,
+    clearFieldError,
+    showFieldErrors,
+    handleRequestError,
+    bindField,
+  } = useFormErrors(AD_FORM_FIELDS);
 
   useEffect(() => {
     let isMounted = true;
@@ -90,42 +101,32 @@ export const useEditAdForm = (adId: string) => {
     const value = e.currentTarget.value;
     if (value === "" || isValidPhone(value)) {
       setPhone(value);
+      clearFieldError("phone_number");
     }
   };
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
+    resetErrors();
 
-    const numericPrice = typeof price === "number" ? price : Number(price);
     const normalizedTitle = title.trim();
     const normalizedDescription = description.trim();
     const normalizedPhone = normalizePhone(phone);
     const normalizedCity = normalizeLocation(city);
     const normalizedCounty = normalizeLocation(county);
+    const localErrors = validateAdForm({
+      title: normalizedTitle,
+      description: normalizedDescription,
+      categoryId,
+      price,
+      phone: normalizedPhone,
+      county: normalizedCounty,
+      city: normalizedCity,
+      imagesCount: images.length,
+    });
 
-    if (!normalizedTitle || !normalizedDescription) {
-      setError("Completează titlul și descrierea.");
-      return;
-    }
-    if (!categoryId) {
-      setError("Selectează o categorie.");
-      return;
-    }
-    if (price === "" || !Number.isFinite(numericPrice) || numericPrice <= 0) {
-      setError("Introdu un preț mai mare decât 0.");
-      return;
-    }
-    if (!normalizedPhone || !isValidPhone(normalizedPhone)) {
-      setError("Introdu un număr de telefon valid.");
-      return;
-    }
-    if (!normalizedCounty || !normalizedCity) {
-      setError("Completează județul și localitatea.");
-      return;
-    }
-    if (images.length === 0) {
-      setError("Adaugă cel puțin o imagine.");
+    if (Object.keys(localErrors).length > 0) {
+      showFieldErrors(localErrors);
       return;
     }
 
@@ -151,11 +152,11 @@ export const useEditAdForm = (adId: string) => {
       const updatedAd = await adsService.update(adId, {
         title: normalizedTitle,
         description: normalizedDescription,
-        price: numericPrice,
+        price: Number(price),
         phone_number: normalizedPhone,
         currency,
         images: finalImages,
-        category_id: categoryId,
+        category_id: categoryId ?? "",
         city: `${normalizedCity}, ${normalizedCounty}`,
       });
 
@@ -183,7 +184,7 @@ export const useEditAdForm = (adId: string) => {
         }
       }
 
-      setError(getErrorMessage(err, "Anunțul nu a putut fi actualizat."));
+      handleRequestError(err, "Anunțul nu a putut fi actualizat.");
     } finally {
       setIsSubmitting(false);
     }
@@ -194,29 +195,30 @@ export const useEditAdForm = (adId: string) => {
   };
 
   return {
+    formRef,
     title,
-    setTitle,
+    setTitle: bindField(setTitle, "title"),
     description,
-    setDescription,
+    setDescription: bindField(setDescription, "description"),
     images,
-    setImages,
+    setImages: bindField(setImages, "images"),
     price,
-    setPrice,
+    setPrice: bindField(setPrice, "price"),
     currency,
-    setCurrency,
+    setCurrency: bindField(setCurrency, "currency"),
     phone,
-    setPhone,
     handlePhoneChange,
     county,
-    setCounty,
+    setCounty: bindField(setCounty, "county"),
     city,
-    setCity,
+    setCity: bindField(setCity, "city"),
     categoryId,
-    setCategoryId,
+    setCategoryId: bindField(setCategoryId, "category_id"),
     categories,
     categoriesLoading,
     categoriesError,
-    error,
+    fieldErrors,
+    generalError,
     isLoading,
     isSubmitting,
     notFound,

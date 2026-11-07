@@ -33,3 +33,12 @@ export const splitLocation = (value?: string | null) => {
     county: location.slice(separatorIndex + 2),
   };
 };
+
+export const joinLocation = (city: string, county: string) => {
+  const normalizedCity = normalizeLocation(city);
+  const normalizedCounty = normalizeLocation(county);
+
+  return normalizedCity && normalizedCounty
+    ? `${normalizedCity}, ${normalizedCounty}`
+    : "";
+};

@@ -21,8 +21,16 @@ import { AnimatePresence, motion } from "motion/react";
 import { Form, Link } from "react-router-dom";
 
 const ForgotPassword = () => {
-  const { email, setEmail, error, isLoading, isSent, handleSubmit } =
-    useForgotPasswordForm();
+  const {
+    formRef,
+    email,
+    setEmail,
+    fieldErrors,
+    generalError,
+    isLoading,
+    isSent,
+    handleSubmit,
+  } = useForgotPasswordForm();
 
   return (
     <Center mih={{ base: "auto", sm: "80vh" }}>
@@ -93,7 +101,7 @@ const ForgotPassword = () => {
               animate="visible"
               exit="exit"
             >
-              <Form onSubmit={handleSubmit}>
+              <Form ref={formRef} onSubmit={handleSubmit} noValidate>
                 <Stack gap="md">
                   <TextInput
                     label="Adresă de email"
@@ -103,17 +111,19 @@ const ForgotPassword = () => {
                     withAsterisk
                     value={email}
                     onChange={(e) => setEmail(e.currentTarget.value)}
+                    error={fieldErrors.email}
                   />
 
-                  {error && (
+                  {generalError && (
                     <Alert
                       variant="light"
                       color="red"
                       radius="md"
                       icon={<IconAlertCircle size={18} />}
                       mt="sm"
+                      data-form-error
                     >
-                      {error}
+                      {generalError}
                     </Alert>
                   )}
 

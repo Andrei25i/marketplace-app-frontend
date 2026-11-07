@@ -21,13 +21,15 @@ import { Link } from "react-router-dom";
 
 const ChangePassword = () => {
   const {
+    formRef,
     currentPassword,
     setCurrentPassword,
     newPassword,
     setNewPassword,
     confirmPassword,
     setConfirmPassword,
-    error,
+    fieldErrors,
+    generalError,
     isLoading,
     handleSubmit,
   } = useChangePasswordForm();
@@ -54,7 +56,7 @@ const ChangePassword = () => {
           </Text>
         </Stack>
 
-        <form onSubmit={handleSubmit}>
+        <form ref={formRef} onSubmit={handleSubmit} noValidate>
           <Stack gap="md">
             <PasswordInput
               label="Parola actuală"
@@ -64,6 +66,7 @@ const ChangePassword = () => {
               leftSection={<IconLock size={18} />}
               autoComplete="current-password"
               withAsterisk
+              error={fieldErrors.currentPassword}
             />
             <PasswordInput
               label="Parola nouă"
@@ -73,6 +76,7 @@ const ChangePassword = () => {
               leftSection={<IconLock size={18} />}
               autoComplete="new-password"
               withAsterisk
+              error={fieldErrors.newPassword}
             />
             <PasswordInput
               label="Confirmă parola nouă"
@@ -82,15 +86,17 @@ const ChangePassword = () => {
               leftSection={<IconLock size={18} />}
               autoComplete="new-password"
               withAsterisk
+              error={fieldErrors.confirmPassword}
             />
 
-            {error && (
+            {generalError && (
               <Alert
                 color="red"
                 icon={<IconAlertCircle size={18} />}
                 radius="md"
+                data-form-error
               >
-                {error}
+                {generalError}
               </Alert>
             )}
 

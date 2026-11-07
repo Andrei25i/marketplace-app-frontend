@@ -1,15 +1,25 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import type { RegisterDTO } from "@/types/auth.type";
+import { authService } from "@/services/auth.service";
+import { useFormErrors } from "@/hooks/forms/useFormErrors";
 import {
   isValidPhone,
+  joinLocation,
   normalizeEmail,
-  normalizeLocation,
   normalizeName,
   normalizePhone,
 } from "@/utils/validators.util";
-import type { RegisterDTO } from "@/types/auth.type";
-import { useNavigate } from "react-router-dom";
-import { authService } from "@/services/auth.service";
-import { getErrorMessage } from "@/utils/getErrorMessage.util";
+
+const FIELDS = [
+  "last_name",
+  "first_name",
+  "phone_number",
+  "city",
+  "email",
+  "password",
+  "confirmPassword",
+] as const;
 
 export const useRegisterForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -20,9 +30,18 @@ export const useRegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    formRef,
+    fieldErrors,
+    generalError,
+    resetErrors,
+    clearFieldError,
+    showFieldErrors,
+    handleRequestError,
+    bindField,
+  } = useFormErrors(FIELDS);
 
   const navigate = useNavigate();
 
@@ -30,97 +49,63 @@ export const useRegisterForm = () => {
     const val = e.currentTarget.value;
     if (isValidPhone(val) || val === "") {
       setPhone(val);
+      clearFieldError("phone_number");
     }
   };
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-
-    const normalizedFirstName = normalizeName(firstName);
-    const normalizedLastName = normalizeName(lastName);
-    const normalizedPhone = normalizePhone(phone);
-    const normalizedCounty = normalizeLocation(county);
-    const normalizedCity = normalizeLocation(city);
-    const normalizedEmail = normalizeEmail(email);
-
-    if (
-      !normalizedFirstName ||
-      !normalizedLastName ||
-      !normalizedPhone ||
-      !normalizedCounty ||
-      !normalizedCity ||
-      !normalizedEmail ||
-      !password ||
-      !confirmPassword
-    ) {
-      setError("Te rugăm să completezi toate câmpurile obligatorii (*).");
-      return;
-    }
-
-    if (!normalizedEmail.includes("@") || !normalizedEmail.includes(".")) {
-      setError("Te rugăm să introduci o adresă de email validă.");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Parola trebuie să aibă minim 6 caractere.");
-      return;
-    }
+    resetErrors();
 
     if (password !== confirmPassword) {
-      setError("Parolele nu se potrivesc.");
+      showFieldErrors({ confirmPassword: "Parolele nu se potrivesc." });
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const locationString = `${normalizedCity}, ${normalizedCounty}`;
-
       const payload: RegisterDTO = {
-        first_name: normalizedFirstName,
-        last_name: normalizedLastName,
-        email: normalizedEmail,
-        phone_number: normalizedPhone,
+        first_name: normalizeName(firstName),
+        last_name: normalizeName(lastName),
+        email: normalizeEmail(email),
+        phone_number: normalizePhone(phone),
         password,
-        city: locationString,
+        city: joinLocation(city, county),
       };
 
       await authService.register(payload);
       navigate("/");
     } catch (err) {
-      console.error("Eroare la înregistrare:", err);
-
-      const errorMessage = getErrorMessage(
+      handleRequestError(
         err,
         "A apărut o eroare la înregistrarea contului. Încearcă din nou.",
       );
-
-      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   return {
+    formRef,
     firstName,
-    setFirstName,
+    setFirstName: bindField(setFirstName, "first_name"),
     lastName,
-    setLastName,
+    setLastName: bindField(setLastName, "last_name"),
     phone,
     handlePhoneChange,
     county,
-    setCounty,
+    setCounty: bindField(setCounty, "city"),
     city,
-    setCity,
+    setCity: bindField(setCity, "city"),
     email,
-    setEmail,
+    setEmail: bindField(setEmail, "email"),
     password,
-    setPassword,
+    setPassword: bindField(setPassword, "password"),
     confirmPassword,
-    setConfirmPassword,
-    error,
+    setConfirmPassword: bindField(setConfirmPassword, "confirmPassword"),
+    fieldErrors,
+    generalError,
     isLoading,
     handleSubmit,
   };

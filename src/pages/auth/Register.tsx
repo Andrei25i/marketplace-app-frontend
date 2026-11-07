@@ -26,6 +26,7 @@ import { Form, Link } from "react-router-dom";
 
 const Register = () => {
   const {
+    formRef,
     firstName,
     setFirstName,
     lastName,
@@ -42,7 +43,8 @@ const Register = () => {
     setPassword,
     confirmPassword,
     setConfirmPassword,
-    error,
+    fieldErrors,
+    generalError,
     isLoading,
     handleSubmit,
   } = useRegisterForm();
@@ -71,7 +73,7 @@ const Register = () => {
           </Text>
         </Stack>
 
-        <Form onSubmit={handleSubmit}>
+        <Form ref={formRef} onSubmit={handleSubmit} noValidate>
           <Stack gap="md">
             <Flex gap="md" wrap="wrap">
               <TextInput
@@ -83,6 +85,7 @@ const Register = () => {
                 withAsterisk
                 value={lastName}
                 onChange={(e) => setLastName(e.currentTarget.value)}
+                error={fieldErrors.last_name}
               />
               <TextInput
                 label="Prenume"
@@ -93,6 +96,7 @@ const Register = () => {
                 withAsterisk
                 value={firstName}
                 onChange={(e) => setFirstName(e.currentTarget.value)}
+                error={fieldErrors.first_name}
               />
             </Flex>
 
@@ -103,6 +107,7 @@ const Register = () => {
               withAsterisk
               value={phone}
               onChange={handlePhoneChange}
+              error={fieldErrors.phone_number}
             />
 
             <LocationSelector
@@ -110,6 +115,7 @@ const Register = () => {
               selectedCity={city}
               onCountyChange={setCounty}
               onCityChange={setCity}
+              cityError={fieldErrors.city}
             />
 
             <TextInput
@@ -120,6 +126,7 @@ const Register = () => {
               withAsterisk
               value={email}
               onChange={(e) => setEmail(e.currentTarget.value)}
+              error={fieldErrors.email}
             />
 
             <SimpleGrid cols={{ base: 1, xs: 2 }}>
@@ -130,6 +137,7 @@ const Register = () => {
                 withAsterisk
                 value={password}
                 onChange={(e) => setPassword(e.currentTarget.value)}
+                error={fieldErrors.password}
               />
               <PasswordInput
                 label="Confirmare parolă"
@@ -138,18 +146,20 @@ const Register = () => {
                 withAsterisk
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.currentTarget.value)}
+                error={fieldErrors.confirmPassword}
               />
             </SimpleGrid>
 
-            {error && (
+            {generalError && (
               <Alert
                 variant="light"
                 color="red"
                 radius="md"
                 icon={<IconAlertCircle size={18} />}
                 mt="sm"
+                data-form-error
               >
-                {error}
+                {generalError}
               </Alert>
             )}
 
