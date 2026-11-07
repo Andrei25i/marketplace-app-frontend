@@ -79,7 +79,7 @@ const Register = () => {
               <TextInput
                 label="Nume"
                 autoCapitalize="words"
-                placeholder="Popescu"
+                placeholder="Numele de familie"
                 style={{ flex: "1 1 140px" }}
                 leftSection={<IconIdBadge2 size={18} />}
                 withAsterisk
@@ -90,7 +90,7 @@ const Register = () => {
               <TextInput
                 label="Prenume"
                 autoCapitalize="words"
-                placeholder="Andrei"
+                placeholder="Prenumele tău"
                 style={{ flex: "1 1 140px" }}
                 leftSection={<IconIdBadge2 size={18} />}
                 withAsterisk
@@ -102,7 +102,7 @@ const Register = () => {
 
             <TextInput
               label="Telefon"
-              placeholder="07xxxxxxxx"
+              placeholder="Număr de mobil"
               leftSection={<IconPhone size={18} />}
               withAsterisk
               value={phone}
@@ -119,8 +119,8 @@ const Register = () => {
             />
 
             <TextInput
-              label="Adresă de email"
-              placeholder="nume@exemplu.ro"
+              label="Email"
+              placeholder="Adresa ta de email"
               leftSection={<IconMail size={18} />}
               type="email"
               withAsterisk

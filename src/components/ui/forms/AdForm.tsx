@@ -198,7 +198,7 @@ const AdForm = ({
             <TextInput
               label="Telefon"
               type="tel"
-              placeholder="07xxxxxxxx"
+              placeholder="Număr de mobil"
               value={phone}
               onChange={handlePhoneChange}
               leftSection={<IconPhone size={18} />}

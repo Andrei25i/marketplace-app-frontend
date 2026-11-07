@@ -77,7 +77,7 @@ const EditProfile = () => {
               <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
                 <TextInput
                   label="Nume"
-                  placeholder="Popescu"
+                  placeholder="Numele de familie"
                   value={lastName}
                   onChange={(e) => setLastName(e.currentTarget.value)}
                   leftSection={<IconUser size={18} />}
@@ -87,7 +87,7 @@ const EditProfile = () => {
 
                 <TextInput
                   label="Prenume"
-                  placeholder="Andrei"
+                  placeholder="Prenumele tău"
                   value={firstName}
                   onChange={(e) => setFirstName(e.currentTarget.value)}
                   leftSection={<IconUser size={18} />}
@@ -102,8 +102,8 @@ const EditProfile = () => {
 
               <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
                 <TextInput
-                  label="Adresă de email"
-                  placeholder="nume@exemplu.ro"
+                  label="Email"
+                  placeholder="Adresa ta de email"
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.currentTarget.value)}
@@ -114,7 +114,7 @@ const EditProfile = () => {
 
                 <TextInput
                   label="Telefon"
-                  placeholder="07xxxxxxxx"
+                  placeholder="Număr de mobil"
                   type="tel"
                   value={phone}
                   onChange={handlePhoneChange}
