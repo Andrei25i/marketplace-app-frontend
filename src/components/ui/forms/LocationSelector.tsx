@@ -24,6 +24,8 @@ interface LocationSelectorProps {
   onCountyChange: (county: string) => void;
   onCityChange: (city: string) => void;
   register?: boolean;
+  countyError?: string | undefined;
+  cityError?: string | undefined;
 }
 
 const LocationSelector = ({
@@ -32,6 +34,8 @@ const LocationSelector = ({
   onCountyChange,
   onCityChange,
   register = true,
+  countyError,
+  cityError,
 }: LocationSelectorProps) => {
   const availableCities = useMemo(() => {
     if (!selectedCounty) return [];
@@ -62,6 +66,7 @@ const LocationSelector = ({
         searchable={!isMobile}
         clearable
         withAsterisk={register}
+        error={countyError}
         leftSection={<IconMap size={18} />}
         style={{ flex: "1 1 140px" }}
       />
@@ -78,6 +83,7 @@ const LocationSelector = ({
         clearable
         disabled={!selectedCounty}
         withAsterisk={register}
+        error={cityError}
         leftSection={<IconBuildingCommunity size={18} />}
         style={{ flex: "1 1 140px" }}
       />
