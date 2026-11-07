@@ -60,8 +60,8 @@ const Login = () => {
         <Form ref={formRef} onSubmit={handleSubmit} noValidate>
           <Stack gap="md">
             <TextInput
-              label="Adresă de email"
-              placeholder="nume@exemplu.ro"
+              label="Email"
+              placeholder="Adresa ta de email"
               leftSection={<IconMail size={18} />}
               type="email"
               withAsterisk
