@@ -1,20 +1,30 @@
 import { isAxiosError } from "axios";
 
+const SERVER_UNREACHABLE =
+  "Nu ne-am putut conecta la server. Verifică conexiunea și încearcă din nou.";
+const GATEWAY_STATUSES = [502, 503, 504];
+
 export const getErrorMessage = (
   error: unknown,
   fallback = "A apărut o eroare. Încearcă din nou.",
 ): string => {
   if (isAxiosError(error)) {
     const data = error.response?.data;
+    const message: unknown =
+      data && typeof data === "object" ? data.error || data.message : undefined;
 
-    if (typeof data === "string") {
-      return data;
+    if (typeof message === "string" && message.trim()) {
+      return message;
     }
 
-    return data?.error || data?.message || fallback;
+    if (!error.response || GATEWAY_STATUSES.includes(error.response.status)) {
+      return SERVER_UNREACHABLE;
+    }
+
+    return fallback;
   }
 
-  if (error instanceof Error) {
+  if (error instanceof Error && error.message) {
     return error.message;
   }
 
