@@ -3,34 +3,34 @@ import { useNavigate } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons-react";
 import { authService } from "@/services/auth.service";
-import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { useFormErrors } from "@/hooks/forms/useFormErrors";
+
+const FIELDS = ["currentPassword", "newPassword", "confirmPassword"] as const;
 
 export const useChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    formRef,
+    fieldErrors,
+    generalError,
+    resetErrors,
+    showFieldErrors,
+    handleRequestError,
+    bindField,
+  } = useFormErrors(FIELDS);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
+    resetErrors();
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setError("Te rugăm să completezi toate câmpurile obligatorii (*).");
-      return;
-    }
-    if (newPassword.length < 6) {
-      setError("Parola nouă trebuie să aibă minim 6 caractere.");
-      return;
-    }
     if (newPassword !== confirmPassword) {
-      setError("Parolele nu se potrivesc.");
-      return;
-    }
-    if (newPassword === currentPassword) {
-      setError("Parola nouă trebuie să fie diferită de cea actuală.");
+      showFieldErrors({ confirmPassword: "Parolele nu se potrivesc." });
       return;
     }
 
@@ -48,11 +48,9 @@ export const useChangePasswordForm = () => {
 
       navigate("/profile");
     } catch (err) {
-      setError(
-        getErrorMessage(
-          err,
-          "Parola nu a putut fi schimbată. Încearcă din nou.",
-        ),
+      handleRequestError(
+        err,
+        "Parola nu a putut fi schimbată. Încearcă din nou.",
       );
     } finally {
       setIsLoading(false);
@@ -60,13 +58,15 @@ export const useChangePasswordForm = () => {
   };
 
   return {
+    formRef,
     currentPassword,
-    setCurrentPassword,
+    setCurrentPassword: bindField(setCurrentPassword, "currentPassword"),
     newPassword,
-    setNewPassword,
+    setNewPassword: bindField(setNewPassword, "newPassword"),
     confirmPassword,
-    setConfirmPassword,
-    error,
+    setConfirmPassword: bindField(setConfirmPassword, "confirmPassword"),
+    fieldErrors,
+    generalError,
     isLoading,
     handleSubmit,
   };

@@ -1,16 +1,24 @@
 import { useState } from "react";
-import type { LoginDTO } from "@/types/auth.type";
-import { authService } from "@/services/auth.service";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { authService } from "@/services/auth.service";
+import { useFormErrors } from "@/hooks/forms/useFormErrors";
 import { normalizeEmail } from "@/utils/validators.util";
+
+const FIELDS = ["email", "password"] as const;
 
 export const useLoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    formRef,
+    fieldErrors,
+    generalError,
+    resetErrors,
+    handleRequestError,
+    bindField,
+  } = useFormErrors(FIELDS);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,50 +26,30 @@ export const useLoginForm = () => {
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-
-    const normalizedEmail = normalizeEmail(email);
-
-    if (!normalizedEmail || !password) {
-      setError("Te rugăm să completezi toate câmpurile obligatorii (*).");
-      return;
-    }
-
-    if (!normalizedEmail.includes("@") || !normalizedEmail.includes(".")) {
-      setError("Te rugăm să introduci o adresă de email validă.");
-      return;
-    }
-
+    resetErrors();
     setIsLoading(true);
 
     try {
-      const payload: LoginDTO = {
-        email: normalizedEmail,
-        password,
-      };
-
-      await authService.login(payload);
+      await authService.login({ email: normalizeEmail(email), password });
       navigate(from, { replace: true });
     } catch (err) {
-      console.error("Eroare la Login:", err);
-
-      const errorMessage = getErrorMessage(
+      handleRequestError(
         err,
         "A apărut o eroare la conectarea contului. Încearcă din nou.",
       );
-
-      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   return {
+    formRef,
     email,
-    setEmail,
+    setEmail: bindField(setEmail, "email"),
     password,
-    setPassword,
-    error,
+    setPassword: bindField(setPassword, "password"),
+    fieldErrors,
+    generalError,
     isLoading,
     handleSubmit,
   };

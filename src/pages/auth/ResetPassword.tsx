@@ -15,11 +15,13 @@ import { Form, Link } from "react-router-dom";
 
 const ResetPassword = () => {
   const {
+    formRef,
     password,
     setPassword,
     confirmPassword,
     setConfirmPassword,
-    error,
+    fieldErrors,
+    generalError,
     isLoading,
     handleSubmit,
   } = useResetPasswordForm();
@@ -48,7 +50,7 @@ const ResetPassword = () => {
           </Text>
         </Stack>
 
-        <Form onSubmit={handleSubmit}>
+        <Form ref={formRef} onSubmit={handleSubmit} noValidate>
           <Stack gap="md">
             <PasswordInput
               label="Parolă"
@@ -57,6 +59,7 @@ const ResetPassword = () => {
               withAsterisk
               value={password}
               onChange={(e) => setPassword(e.currentTarget.value)}
+              error={fieldErrors.newPassword}
             />
             <PasswordInput
               label="Confirmare parolă"
@@ -65,17 +68,19 @@ const ResetPassword = () => {
               withAsterisk
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.currentTarget.value)}
+              error={fieldErrors.confirmPassword}
             />
 
-            {error && (
+            {generalError && (
               <Alert
                 variant="light"
                 color="red"
                 radius="md"
                 icon={<IconAlertCircle size={18} />}
                 mt="sm"
+                data-form-error
               >
-                {error}
+                {generalError}
               </Alert>
             )}
 

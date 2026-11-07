@@ -26,6 +26,7 @@ import { Form, Link } from "react-router-dom";
 
 const EditProfile = () => {
   const {
+    formRef,
     firstName,
     setFirstName,
     lastName,
@@ -38,7 +39,8 @@ const EditProfile = () => {
     setCounty,
     city,
     setCity,
-    error,
+    fieldErrors,
+    generalError,
     isLoading,
     handleSubmit,
   } = useEditProfileForm();
@@ -67,7 +69,7 @@ const EditProfile = () => {
           </Text>
         </Stack>
 
-        <Form onSubmit={handleSubmit}>
+        <Form ref={formRef} onSubmit={handleSubmit} noValidate>
           <Stack gap="xl">
             <Stack gap="md">
               <SectionTitle>Detalii personale</SectionTitle>
@@ -80,6 +82,7 @@ const EditProfile = () => {
                   onChange={(e) => setLastName(e.currentTarget.value)}
                   leftSection={<IconUser size={18} />}
                   withAsterisk
+                  error={fieldErrors.last_name}
                 />
 
                 <TextInput
@@ -89,6 +92,7 @@ const EditProfile = () => {
                   onChange={(e) => setFirstName(e.currentTarget.value)}
                   leftSection={<IconUser size={18} />}
                   withAsterisk
+                  error={fieldErrors.first_name}
                 />
               </SimpleGrid>
             </Stack>
@@ -105,6 +109,7 @@ const EditProfile = () => {
                   onChange={(event) => setEmail(event.currentTarget.value)}
                   leftSection={<IconMail size={18} />}
                   withAsterisk
+                  error={fieldErrors.email}
                 />
 
                 <TextInput
@@ -115,6 +120,7 @@ const EditProfile = () => {
                   onChange={handlePhoneChange}
                   leftSection={<IconPhone size={18} />}
                   withAsterisk
+                  error={fieldErrors.phone_number}
                 />
               </SimpleGrid>
             </Stack>
@@ -127,16 +133,18 @@ const EditProfile = () => {
                 selectedCity={city}
                 onCountyChange={setCounty}
                 onCityChange={setCity}
+                cityError={fieldErrors.city}
               />
             </Stack>
 
-            {error && (
+            {generalError && (
               <Alert
                 color="red"
                 icon={<IconAlertCircle size={18} />}
                 radius="md"
+                data-form-error
               >
-                {error}
+                {generalError}
               </Alert>
             )}
 

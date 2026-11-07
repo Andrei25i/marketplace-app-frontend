@@ -5,16 +5,24 @@ import { IconCheck } from "@tabler/icons-react";
 
 import { authService } from "@/services/auth.service";
 import { useAuthStore } from "@/store/useAuthStore";
-import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { useFormErrors } from "@/hooks/forms/useFormErrors";
 import {
   isValidPhone,
+  joinLocation,
   normalizeEmail,
-  normalizeLocation,
   normalizeName,
   normalizePhone,
   splitLocation,
 } from "@/utils/validators.util";
 import type { UpdateUserData } from "@/types/auth.type";
+
+const FIELDS = [
+  "last_name",
+  "first_name",
+  "email",
+  "phone_number",
+  "city",
+] as const;
 
 export const useEditProfileForm = () => {
   const user = useAuthStore((state) => state.user);
@@ -27,55 +35,39 @@ export const useEditProfileForm = () => {
   const [email, setEmail] = useState(user?.email ?? "");
   const [county, setCounty] = useState(initialLocation.county);
   const [city, setCity] = useState(initialLocation.city);
-
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const {
+    formRef,
+    fieldErrors,
+    generalError,
+    resetErrors,
+    clearFieldError,
+    handleRequestError,
+    bindField,
+  } = useFormErrors(FIELDS);
 
   const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value;
 
     if (value === "" || isValidPhone(value)) {
       setPhone(value);
+      clearFieldError("phone_number");
     }
   };
 
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError("");
-
-    const normalizedFirstName = normalizeName(firstName);
-    const normalizedLastName = normalizeName(lastName);
-    const normalizedPhone = normalizePhone(phone);
-    const normalizedEmail = normalizeEmail(email);
-    const normalizedCounty = normalizeLocation(county);
-    const normalizedCity = normalizeLocation(city);
-
-    if (
-      !normalizedFirstName ||
-      !normalizedLastName ||
-      !normalizedPhone ||
-      !normalizedEmail ||
-      !normalizedCounty ||
-      !normalizedCity
-    ) {
-      setError("Te rugăm să completezi toate câmpurile obligatorii (*).");
-      return;
-    }
-
-    if (!normalizedEmail.includes("@") || !normalizedEmail.includes(".")) {
-      setError("Te rugăm să introduci o adresă de email validă.");
-      return;
-    }
-
+    resetErrors();
     setIsLoading(true);
 
     try {
       const payload: UpdateUserData = {
-        first_name: normalizedFirstName,
-        last_name: normalizedLastName,
-        email: normalizedEmail,
-        phone_number: normalizedPhone,
-        city: `${normalizedCity}, ${normalizedCounty}`,
+        first_name: normalizeName(firstName),
+        last_name: normalizeName(lastName),
+        email: normalizeEmail(email),
+        phone_number: normalizePhone(phone),
+        city: joinLocation(city, county),
       };
 
       await authService.updateUser(payload);
@@ -89,11 +81,9 @@ export const useEditProfileForm = () => {
 
       navigate("/profile");
     } catch (err) {
-      setError(
-        getErrorMessage(
-          err,
-          "Profilul nu a putut fi actualizat. Încearcă din nou.",
-        ),
+      handleRequestError(
+        err,
+        "Profilul nu a putut fi actualizat. Încearcă din nou.",
       );
     } finally {
       setIsLoading(false);
@@ -101,19 +91,21 @@ export const useEditProfileForm = () => {
   };
 
   return {
+    formRef,
     firstName,
-    setFirstName,
+    setFirstName: bindField(setFirstName, "first_name"),
     lastName,
-    setLastName,
+    setLastName: bindField(setLastName, "last_name"),
     phone,
     handlePhoneChange,
     email,
-    setEmail,
+    setEmail: bindField(setEmail, "email"),
     county,
-    setCounty,
+    setCounty: bindField(setCounty, "city"),
     city,
-    setCity,
-    error,
+    setCity: bindField(setCity, "city"),
+    fieldErrors,
+    generalError,
     isLoading,
     handleSubmit,
   };

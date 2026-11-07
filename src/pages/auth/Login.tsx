@@ -22,11 +22,13 @@ import { Form, Link } from "react-router-dom";
 
 const Login = () => {
   const {
+    formRef,
     email,
     setEmail,
     password,
     setPassword,
-    error,
+    fieldErrors,
+    generalError,
     isLoading,
     handleSubmit,
   } = useLoginForm();
@@ -55,7 +57,7 @@ const Login = () => {
           </Text>
         </Stack>
 
-        <Form onSubmit={handleSubmit}>
+        <Form ref={formRef} onSubmit={handleSubmit} noValidate>
           <Stack gap="md">
             <TextInput
               label="Adresă de email"
@@ -65,6 +67,7 @@ const Login = () => {
               withAsterisk
               value={email}
               onChange={(e) => setEmail(e.currentTarget.value)}
+              error={fieldErrors.email}
             />
 
             <PasswordInput
@@ -74,6 +77,7 @@ const Login = () => {
               withAsterisk
               value={password}
               onChange={(e) => setPassword(e.currentTarget.value)}
+              error={fieldErrors.password}
             />
 
             <Group justify="flex-end" mt={-8}>
@@ -88,15 +92,16 @@ const Login = () => {
               </Text>
             </Group>
 
-            {error && (
+            {generalError && (
               <Alert
                 variant="light"
                 color="red"
                 radius="md"
                 icon={<IconAlertCircle size={18} />}
                 mt="sm"
+                data-form-error
               >
-                {error}
+                {generalError}
               </Alert>
             )}
 

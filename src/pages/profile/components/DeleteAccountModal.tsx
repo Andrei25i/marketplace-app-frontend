@@ -12,7 +12,9 @@ import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconTrash } from "@tabler/icons-react";
 
 import { authService } from "@/services/auth.service";
-import { getErrorMessage } from "@/utils/getErrorMessage.util";
+import { useFormErrors } from "@/hooks/forms/useFormErrors";
+
+const FIELDS = ["password"] as const;
 
 type DeleteAccountModalProps = {
   opened: boolean;
@@ -26,12 +28,21 @@ const DeleteAccountModal = ({
   onDeleted,
 }: DeleteAccountModalProps) => {
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const {
+    formRef,
+    fieldErrors,
+    generalError,
+    resetErrors,
+    handleRequestError,
+    bindField,
+  } = useFormErrors(FIELDS);
+  const changePassword = bindField(setPassword, "password");
 
   const resetForm = () => {
     setPassword("");
-    setError("");
+    resetErrors();
   };
 
   const handleClose = () => {
@@ -44,13 +55,7 @@ const DeleteAccountModal = ({
   };
 
   const handleDeleteAccount = async () => {
-    setError("");
-
-    if (!password.trim()) {
-      setError("Introdu parola pentru a confirma ștergerea contului.");
-      return;
-    }
-
+    resetErrors();
     setIsDeleting(true);
 
     try {
@@ -65,9 +70,7 @@ const DeleteAccountModal = ({
       resetForm();
       onDeleted();
     } catch (err) {
-      setError(
-        getErrorMessage(err, "Contul nu a putut fi șters. Încearcă din nou."),
-      );
+      handleRequestError(err, "Contul nu a putut fi șters. Încearcă din nou.");
     } finally {
       setIsDeleting(false);
     }
@@ -88,6 +91,8 @@ const DeleteAccountModal = ({
       withCloseButton={!isDeleting}
     >
       <form
+        ref={formRef}
+        noValidate
         onSubmit={(event) => {
           event.preventDefault();
           void handleDeleteAccount();
@@ -111,25 +116,21 @@ const DeleteAccountModal = ({
             label="Parola"
             placeholder="Introdu parola"
             value={password}
-            onChange={(event) => {
-              setPassword(event.currentTarget.value);
-
-              if (error) {
-                setError("");
-              }
-            }}
+            onChange={(event) => changePassword(event.currentTarget.value)}
             disabled={isDeleting}
             autoFocus
-            required
+            withAsterisk
+            error={fieldErrors.password}
           />
 
-          {error && (
+          {generalError && (
             <Alert
               color="red"
               icon={<IconAlertCircle size={18} />}
-              title="Ștergerea anunțului a eșuat"
+              title="Ștergerea contului a eșuat"
+              data-form-error
             >
-              {error}
+              {generalError}
             </Alert>
           )}
 

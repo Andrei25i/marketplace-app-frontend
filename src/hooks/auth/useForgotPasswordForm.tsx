@@ -1,51 +1,48 @@
-import { authService } from "@/services/auth.service";
-import { getErrorMessage } from "@/utils/getErrorMessage.util";
-import { normalizeEmail } from "@/utils/validators.util";
 import { useState } from "react";
+import { authService } from "@/services/auth.service";
+import { useFormErrors } from "@/hooks/forms/useFormErrors";
+import { normalizeEmail } from "@/utils/validators.util";
+
+const FIELDS = ["email"] as const;
 
 export const useForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSent, setIsSent] = useState(false);
 
+  const {
+    formRef,
+    fieldErrors,
+    generalError,
+    resetErrors,
+    handleRequestError,
+    bindField,
+  } = useFormErrors(FIELDS);
+
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-
-    const normalizedEmail = normalizeEmail(email);
-
-    if (!normalizedEmail) {
-      setError("Te rugăm să completezi toate câmpurile obligatorii (*).");
-      return;
-    }
-
-    if (!normalizedEmail.includes("@") || !normalizedEmail.includes(".")) {
-      setError("Te rugăm să introduci o adresă de email validă.");
-      return;
-    }
-
+    resetErrors();
     setIsLoading(true);
 
     try {
-      await authService.forgotPassword(normalizedEmail);
+      await authService.forgotPassword(normalizeEmail(email));
       setIsSent(true);
     } catch (err) {
-      console.error("Eroare la forgot password:", err);
-      const errorMessage = getErrorMessage(
+      handleRequestError(
         err,
-        "A apărut o eroare la conectarea contului. Încearcă din nou.",
+        "Link-ul de resetare nu a putut fi trimis. Încearcă din nou.",
       );
-      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   return {
+    formRef,
     email,
-    setEmail,
-    error,
+    setEmail: bindField(setEmail, "email"),
+    fieldErrors,
+    generalError,
     isLoading,
     isSent,
     handleSubmit,
